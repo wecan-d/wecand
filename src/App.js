@@ -1,24 +1,28 @@
 import logo from './logo.svg';
 import './App.css';
+import { Route,Routes } from 'react-router-dom';
+import HomePage from './pages/HomePage';
+import LandPage from './pages/LandPage';
+import MyPage from './pages/MyPage';
+import RegisterPage1 from './pages/RegisterPage1';
+import RegisterPage2 from './pages/RegisterPage2';
+import RegisterPage3 from './pages/RegisterPage3';
+import RegisterPage4 from './pages/RegisterPage4';
+import WelcomePage from './pages/WelcomePage';
+
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Routes>
+      <Route path="/" element={<WelcomePage/>}/>
+      <Route path="/register1" element={<RegisterPage1/>}/>
+      <Route path="/register2" element={<RegisterPage2/>}/>
+      <Route path="/register3" element={<RegisterPage3/>}/>
+      <Route path="/register4" element={<RegisterPage4/>}/>
+      <Route path="/home" element={<HomePage/>}/>
+      <Route path="/land" element={<LandPage/>}/>
+      <Route path="/mypage" element={<MyPage/>}/>
+    </Routes>
   );
 }
 
