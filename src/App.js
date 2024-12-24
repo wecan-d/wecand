@@ -15,10 +15,10 @@ function App() {
   return (
     <Routes>
       <Route path="/" element={<WelcomePage/>}/>
-      <Route path="/register1" element={<RegisterPage1/>}/>
-      <Route path="/register2" element={<RegisterPage2/>}/>
-      <Route path="/register3" element={<RegisterPage3/>}/>
-      <Route path="/register4" element={<RegisterPage4/>}/>
+      <Route path="/register/1" element={<RegisterPage1/>}/>
+      <Route path="/register/2" element={<RegisterPage2/>}/>
+      <Route path="/register/3" element={<RegisterPage3/>}/>
+      <Route path="/register/4" element={<RegisterPage4/>}/>
       <Route path="/home" element={<HomePage/>}/>
       <Route path="/land" element={<LandPage/>}/>
       <Route path="/mypage" element={<MyPage/>}/>
