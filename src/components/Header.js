@@ -6,7 +6,7 @@ const Header = () => {
     <HeaderContainer>
 
       <LogoWrapper>
-        <Logo src="/assets/logosymbol.svg" alt="Logo" />
+        <Logo src="/logo/logosymbol.svg" alt="Logo" />
       </LogoWrapper>
 
         <SearchBar/>
