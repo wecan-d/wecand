@@ -13,21 +13,21 @@ import MyPage from './pages/MyPage'
 
 const Routers = () => {
   return (
-    <Routes>
-      <Route path="/welcome" element={<WelcomePage />} />
-      <Route path="/register/1" element={<RegisterPage1 />}/>
-      <Route path="/register/2" element={<RegisterPage2 />}/>
-      <Route path="/register/3" element={<RegisterPage3 />}/>
-      <Route path="/register/4" element={<RegisterPage4 />}/>
-      {/* <Route path="" element={<Layout />}> */}
-        <Route index element={<HomePage />} />
-        <Route path="/home" element={<HomePage />} />
-        <Route path="/recruiting" element={<RecruitingsPage />}/>
-        <Route path="/detail/:postId" element={<DetailPage />}/>
-        <Route path="/mypage" element={<MyPage />}/>
-      {/* </Route> */}
-      <Route path="/land/:landId" element={<LandPage />}/>
-    </Routes>
+      <Routes>
+        <Route path="/welcome" element={<WelcomePage />} />
+        <Route path="/register/1" element={<RegisterPage1 />}/>
+        <Route path="/register/2" element={<RegisterPage2 />}/>
+        <Route path="/register/3" element={<RegisterPage3 />}/>
+        <Route path="/register/4" element={<RegisterPage4 />}/>
+        {/* <Route path="" element={<Layout />}> */}
+          <Route index element={<HomePage />} />
+          <Route path="/home" element={<HomePage />} />
+          <Route path="/recruiting" element={<RecruitingsPage />}/>
+          <Route path="/detail/:postId" element={<DetailPage />}/>
+          <Route path="/mypage" element={<MyPage/>}/>
+        {/* </Route> */}
+        <Route path="/land/:landId" element={<LandPage/>}/>
+      </Routes>
   )
 }
 
