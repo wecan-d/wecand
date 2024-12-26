@@ -9,8 +9,10 @@ import RegisterPage4 from './pages/RegisterPage4'
 import RecruitingsPage from './pages/RecruitingsPage'
 import LandPage from './pages/LandPage'
 import DetailPage from './pages/DetailPage'
-import MyPage from './pages/MyPage'
 import Layout from './components/Layout'
+import MyPage from './pages/MyPage'
+import { FormProvider } from './context/FormContext'
+import EditPage from './pages/EditPage'
 
 const Routers = () => {
   return (
