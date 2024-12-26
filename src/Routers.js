@@ -9,23 +9,35 @@ import RegisterPage4 from './pages/RegisterPage4'
 import RecruitingsPage from './pages/RecruitingsPage'
 import LandPage from './pages/LandPage'
 import DetailPage from './pages/DetailPage'
-import MyPage from './pages/MyPage'
 import Layout from './components/Layout'
+import MyPage from './pages/MyPage'
+import { FormProvider } from './context/FormContext'
+import EditPage from './pages/EditPage'
 
 const Routers = () => {
   return (
       <Routes>
         <Route path="/welcome" element={<WelcomePage />} />
-        <Route path="/register/1" element={<RegisterPage1 />}/>
-        <Route path="/register/2" element={<RegisterPage2 />}/>
-        <Route path="/register/3" element={<RegisterPage3 />}/>
-        <Route path="/register/4" element={<RegisterPage4 />}/>
+        <Route
+          path="/register/*"
+          element={
+            <FormProvider>
+              <Routes>
+                <Route path="1" element={<RegisterPage1 />} />
+                <Route path="2" element={<RegisterPage2 />} />
+                <Route path="3" element={<RegisterPage3 />} />
+                <Route path="4" element={<RegisterPage4 />} />
+              </Routes>
+            </FormProvider>
+          }
+        />
         <Route element={<Layout />}>
           <Route index element={<HomePage />} />
           <Route path="/home" element={<HomePage />} />
           <Route path="/recruiting" element={<RecruitingsPage />}/>
           <Route path="/detail/:postId" element={<DetailPage />}/>
           <Route path="/mypage" element={<MyPage/>}/>
+          <Route path="/edit" element={<EditPage />} />
         </Route>
         <Route path="/land/:landId" element={<LandPage/>}/>
       </Routes>
