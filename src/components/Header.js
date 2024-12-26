@@ -13,7 +13,6 @@ const Header = () => {
       
       <IconsWrapper>
         <SquareIcon>로그인</SquareIcon>
-        <SquareIcon>회원가입</SquareIcon>
         <CircleIcon />
       </IconsWrapper>
 
