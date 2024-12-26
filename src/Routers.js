@@ -1,5 +1,6 @@
 import React from 'react'
 import { Route, Routes } from 'react-router-dom'
+
 import WelcomePage from './pages/WelcomePage'
 import HomePage from './pages/HomePage'
 import RegisterPage1 from './pages/RegisterPage1'
@@ -9,10 +10,11 @@ import RegisterPage4 from './pages/RegisterPage4'
 import RecruitingsPage from './pages/RecruitingsPage'
 import LandPage from './pages/LandPage'
 import DetailPage from './pages/DetailPage'
-import Layout from './components/Layout'
 import MyPage from './pages/MyPage'
-import { FormProvider } from './context/FormContext'
 import EditPage from './pages/EditPage'
+
+import Layout from './components/Layout'
+import { FormProvider } from './context/FormContext'
 
 const Routers = () => {
   return (
