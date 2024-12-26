@@ -7,7 +7,7 @@ const Footer = () => {
       
       <TopContainer>
         <LeftSection>
-            <Logo src="/assets/logo2.svg" alt="Logo" />
+            <Logo src="/logo/logo2.svg" alt="Logo" />
           <TextWrapper>
             <Title>공모전 팀을 꾸리는 공간</Title>
             <Brand>Wecand:</Brand>
