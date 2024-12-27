@@ -35,7 +35,7 @@ const Land = () => {
                 <KeepScale>
                   <div>
                     <img src={chatpin} alt="pin" style={{ width: "50px", transform: "translate(10px, -30px)" }} />
-                  </div>
+                  </div>  
                 </KeepScale>
               </div>
 

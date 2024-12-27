@@ -1,7 +1,29 @@
 import React from "react";
 import styled from "styled-components";
+import { useNavigate } from "react-router-dom";
 
 const HomePage = () => {
+
+  const navigate = useNavigate();
+
+  const categoryHandler = (category) => {
+    navigate(`/recruiting/${category}`);
+  };
+
+ 
+  const categories = [
+    { id: "art", name: "미술" },
+    { id: "design", name: "디자인" },
+    { id: "media", name: "영상/미디어" },
+    { id: "programming", name: "프로그래밍" },
+    { id: "business", name: "창업/비즈니스" },
+    { id: "photography", name: "사진" },
+    { id: "literature", name: "문학/에세이" },
+    { id: "music", name: "음악/공연" },
+    { id: "volunteering", name: "사회공헌/봉사" },
+    { id: "idea", name: "기획/아이디어" },
+  ];
+
   return (
     <PageContainer>
       {/* 홈 배경 이미지 */}
@@ -14,12 +36,13 @@ const HomePage = () => {
       {/* 카테고리 , 모집 신청 현황 */}
       <CategoryAndStatus>
         <CategoryContainer>
-          
-          <CategoryWrapper>
-            {Array.from({ length: 10 }).map((_, index) => (
-              <CategoryCard key={index}>
-                <CardContent />
-                <CategoryText>카테고리</CategoryText>
+        <CategoryWrapper>
+        {categories.map((category) => (
+              <CategoryCard key={category.id}>
+                <CardContent onClick={() => categoryHandler(category.id)}> 
+                  
+                </CardContent>
+                <CategoryText>{category.name}</CategoryText>
               </CategoryCard>
             ))}
           </CategoryWrapper>
@@ -62,9 +85,13 @@ const HomePage = () => {
 export default HomePage;
 
 // Styled Components
+
+
 const PageContainer = styled.div`
   padding: 4rem;
 `;
+
+
 
 const LandContainer = styled.div`
   position: relative;
@@ -124,12 +151,18 @@ const CategoryCard = styled.div`
   align-items: center;
   
 `;
-
 const CardContent = styled.div`
   width: 120px;
   height: 120px;
-  background-color:#BFBFBF;
+  background-color: #BFBFBF;
   border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  cursor: pointer;
+  border: none;
+  padding: 0;
 
   &:hover {
     border: 1px solid black;
