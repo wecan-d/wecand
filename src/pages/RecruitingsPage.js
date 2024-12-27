@@ -1,20 +1,162 @@
-import React from "react";
+import React, { useState } from "react";
+import { useParams } from "react-router-dom";
 import styled from "styled-components";
 
 const RecruitmentPage = () => {
-  return (
-    <PageContainer>
+
+  const { category } = useParams();
+  const [selectedCategory, setSelectedCategory] = useState(category || "all");
+
+  const categories = [
+    { id: "design", name: "디자인" },
+    { id: "art", name: "미술" },
+    { id: "media", name: "영상/미디어" },
+    { id: "programming", name: "프로그래밍" },
+    { id: "business", name: "창업/비즈니스" },
+    { id: "photography", name: "사진" },
+    { id: "literature", name: "문학/에세이" },
+    { id: "music", name: "음악/공연" },
+    { id: "volunteering", name: "사회공헌/봉사" },
+  ];
+
+  const contests = [
+    {
+      category: "design",
+      title: "2024 Adobe Design Contest",
+      description:
+        "Looking for responsible and skilled illustrators. Everyone is welcome to apply!",
+      author: "Kim Gyuri",
+      deadline: "D-31",
+      recruitmentStatus: "2/5",
+      applicants: 5,
+    },
+    {
+      category: "design",
+      title: "2024 Adobe Design Contest",
+      description:
+        "Looking for responsible and skilled illustrators. Everyone is welcome to apply!",
+      author: "Kim Gyuri",
+      deadline: "D-31",
+      recruitmentStatus: "2/5",
+      applicants: 5,
+    },
+    {
+      category: "art",
+      title: "Art Contest A",
+      description:
+        "Join our art contest and showcase your creativity to the world!",
+      author: "Lee Sunwoo",
+      deadline: "D-15",
+      recruitmentStatus: "3/7",
+      applicants: 12,
+    },
+    {
+      category: "media",
+      title: "Media Production Contest",
+      description:
+        "We need talented media creators. Apply now to join our project!",
+      author: "Park Jihoon",
+      deadline: "D-10",
+      recruitmentStatus: "4/10",
+      applicants: 20,
+    },
+    {
+      category: "programming",
+      title: "2024 Programming Hackathon",
+      description:
+        "Are you a skilled programmer? Join us for an intense 48-hour coding event!",
+      author: "Choi Minji",
+      deadline: "D-20",
+      recruitmentStatus: "5/10",
+      applicants: 25,
+    },
+    {
+      category: "literature",
+      title: "Essay and Literature Contest",
+      description:
+        "Showcase your writing skills and win amazing prizes in our contest!",
+      author: "Han Seojin",
+      deadline: "D-5",
+      recruitmentStatus: "6/8",
+      applicants: 18,
+    },
+    {
+      category: "business",
+      title: "Startup and Business Idea Contest",
+      description:
+        "Have a groundbreaking business idea? Share it and make it a reality!",
+      author: "Jung Hyesoo",
+      deadline: "D-12",
+      recruitmentStatus: "3/6",
+      applicants: 10,
+    },
+    {
+      category: "photography",
+      title: "Photography Contest B",
+      description:
+        "Capture the best moments and share your photography skills with us!",
+      author: "Kim Joonho",
+      deadline: "D-25",
+      recruitmentStatus: "2/5",
+      applicants: 8,
+    },
+    {
+      category: "music",
+      title: "Music and Performance Contest",
+      description:
+        "If you have a passion for music and performance, this contest is for you!",
+      author: "Kang Yejin",
+      deadline: "D-18",
+      recruitmentStatus: "4/8",
+      applicants: 14,
+    },
+    {
+      category: "volunteering",
+      title: "Social Contribution Contest",
+      description:
+        "Create impactful social projects and join our volunteering contest!",
+      author: "Moon Taeho",
+      deadline: "D-8",
+      recruitmentStatus: "5/10",
+      applicants: 20,
+    },
+  ];
+  
+
+  const filteredContests = selectedCategory === "all"
+    ? contests
+    : contests.filter((contest) => contest.category === selectedCategory);
+  
+  return(
+  <PageContainer>
       {/* 카테고리 섹션 */}
+      
       <CategoryContainer>
         <CategoryTitle>카테고리</CategoryTitle>
         <CategoryWrapper>
-          {Array.from({ length: 10 }).map((_, index) => (
-            <CategoryItem key={index}>
+    {Array.from({ length: 10 }).map((_, index) => {
+      const contest = filteredContests[index]; // filteredContests에서 데이터를 가져옴
+      return (
+        <CategoryItem key={index}>
+          {contest ? (
+            <>
+              <CategoryCard>
+                <CardContent>
+                  
+                </CardContent>
+              </CategoryCard>
+              <CategoryText>{contest.category}</CategoryText>
+            </>
+          ) : (
+            <>
               <CategoryCard />
-              <CategoryText>카테고리 {index + 1}</CategoryText>
-            </CategoryItem>
-          ))}
-        </CategoryWrapper>
+              <CategoryText>빈 항목</CategoryText>
+            </>
+          )}
+        </CategoryItem>
+      );
+    })}
+  </CategoryWrapper>
       </CategoryContainer>
 
       {/* 정렬 및 글 작성 버튼 섹션 */}
@@ -28,27 +170,29 @@ const RecruitmentPage = () => {
 
       {/* 모집글 목록 섹션 */}
       <PostListSection>
-        {Array.from({ length: 10 }).map((_, index) => (
-          <PostCard key={index}>
-            <PostLeft>
-              
-            </PostLeft>
-              <PostCenter>
-              <Tag>미술, 디자인</Tag>
-              <PostTitle>2024 어도비 디자인 공모전</PostTitle>
-              <PostDescription>
-                나 성실하다, 나 일러스트 잘한다 하시는 분 모두 지원 부탁드립니다!!
-              </PostDescription>
-              <Author>김규리</Author>
-              </PostCenter>
-            <PostRight>
-              <Deadline>D-31</Deadline>
-              <PostInfo>모집인원 2/5</PostInfo>
-              <PostInfo>지원자 5명</PostInfo>
-            </PostRight>
-          </PostCard>
-        ))}
-      </PostListSection>
+        {filteredContests.length > 0 ? (
+           filteredContests.map((contest, index) => (
+      <PostCard key={index}>
+        <PostLeft>
+          {/* 필요 시 왼쪽 섹션에 추가 데이터 사용 */}
+        </PostLeft>
+        <PostCenter>
+          <Tag>{contest.category}</Tag> {/* 태그 출력 */}
+          <PostTitle>{contest.title}</PostTitle> {/* 제목 출력 */}
+          <PostDescription>{contest.description}</PostDescription> {/* 설명 출력 */}
+          <Author>{contest.author}</Author> {/* 작성자 출력 */}
+        </PostCenter>
+        <PostRight>
+          <Deadline>{contest.deadline}</Deadline> {/* 마감일 출력 */}
+          <PostInfo>모집인원 {contest.recruitmentStatus}</PostInfo> {/* 모집 현황 출력 */}
+          <PostInfo>지원자 {contest.applicants}명</PostInfo> {/* 지원자 수 출력 */}
+        </PostRight>
+      </PostCard>
+    ))
+  ) : (
+    <p>해당 카테고리에 대한 공모전이 없습니다.</p>
+  )}
+</PostListSection>
     </PageContainer>
   );
 };
@@ -87,6 +231,9 @@ const CategoryItem = styled.div`
   
 `;
 
+const CardContent = styled.div`
+
+`;
 const CategoryCard = styled.div`
   display: flex;
   flex-direction: column;
