@@ -31,24 +31,26 @@ const RegisterPage2 = () => {
       timePreference,
       restPreference,
       goal,
-      important,
     } = formData;
 
-    if (
-      !communication.length ||
-      !teamwork.length ||
-      !thinking.length ||
-      !role.length ||
-      !conflictResolution.length ||
-      !timePreference.length ||
-      !restPreference.length ||
-      !goal ||
-      !important
-    ) {
-      alert("모든 항목을 입력해주세요.");
+    // 비어 있는 필수 항목 확인
+    const missingFields = [];
+    if (!communication.length) missingFields.push("소통");
+    if (!teamwork.length) missingFields.push("작업 스타일");
+    if (!thinking.length) missingFields.push("사고 방식");
+    if (!role.length) missingFields.push("역할");
+    if (!conflictResolution.length) missingFields.push("갈등 해결");
+    if (!timePreference.length) missingFields.push("시간 선호");
+    if (!restPreference.length) missingFields.push("휴식 선호");
+    if (!goal.length) missingFields.push("지원 목적");
+
+    // 누락된 항목이 있으면 알림 표시 후 종료
+    if (missingFields.length) {
+      alert(`다음 항목을 입력해주세요: ${missingFields.join(", ")}`);
       return;
     }
 
+    // 모든 필드가 입력된 경우 다음 단계로 이동
     navigate("/register/3");
   };
 
@@ -62,13 +64,18 @@ const RegisterPage2 = () => {
         <div className="circle">2</div>
         <h1 className="label1">작업 스타일</h1>
         <p className="label2">
-        작업 스타일을 알려주세요!<br/>
-        작업 스타일로 자신에게 맞는 사람과 공모전에<br/>
-        참가할 수 있는 기회를 얻을 수 있어요!
+          작업 스타일을 알려주세요!<br />
+          작업 스타일로 자신에게 맞는 사람과 공모전에<br />
+          참가할 수 있는 기회를 얻을 수 있어요!
         </p>
         <div className="image-placeholder"></div>
       </div>
       <div className="right">
+        <div className="progress-bar">
+          <div className="progress-step"></div>
+          <div className="progress-step active"></div>
+          <div className="progress-step"></div>
+        </div>
         {[
           { label: "소통", category: "communication", options: ["비대면 소통을 선호해요", "대면 소통을 선호해요", "새벽 연락은 피해주세요"] },
           { label: "작업", category: "teamwork", options: ["다같이 작업하고 싶어요", "일을 나눠서 하고 싶어요", "평일에 하고 싶어요", "주말에 하고 싶어요"] },
@@ -77,7 +84,7 @@ const RegisterPage2 = () => {
           { label: "갈등 해결", category: "conflictResolution", options: ["바로 해결해요", "시간이 필요해요", "솔직하게 말해요", "먼저 다가가요", "혼자 해결해요"] },
           { label: "시간", category: "timePreference", options: ["새벽(00~06시)", "아침(06-12)", "낮(12-18)", "저녁(18-00)"] },
           { label: "휴식", category: "restPreference", options: ["짧게 자주 쉬고 싶어요", "한번에 푹 쉬고 싶어요"] },
-          { label: "지원 목적", category: "goal", options: ["참여하는 것에 의의를 두고 싶어요", "함께 하는 것에 의의를 두고 싶어요", "즐기면서 하고 싶어요", "꼭 수상하고 싶어요", "많은 시간과 노력을 부으며 하고 싶어요"] },
+          { label: "지원 목적", category: "goal", options: ["참여하는 것에 의의를 두고 싶어요", "함께 하는 것에 의의를 두고 싶어요", "즐기면서 하고 싶어요", "꼭 수상하고 싶어요"] },
         ].map((item) => (
           <div key={item.category} className="question">
             <label>{item.label}:</label>
@@ -96,29 +103,21 @@ const RegisterPage2 = () => {
           </div>
         ))}
         <div className="question">
-            <label>중요하게 생각해요:</label>
-            <textarea
-                name="important"
-                placeholder="~은 꼭 지켜줬으면 좋겠어요."
-                value={formData.important}
-                onChange={handleTextChange}
-            />
+          <label>중요하게 생각해요 (선택):</label>
+          <textarea
+            name="important"
+            placeholder="~은 꼭 지켜줬으면 좋겠어요."
+            value={formData.important}
+            onChange={handleTextChange}
+          />
         </div>
-
-        <div className="footer">
-          <div className="progress-bar">
-            <div className="progress-step"></div>
-            <div className="progress-step active"></div>
-            <div className="progress-step"></div>
-          </div>
-          <div className="footer-buttons">
-            <button className="btn-prev" onClick={handlePrevious}>
-              이전
-            </button>
-            <button className="btn-next" onClick={handleNext}>
-              다음
-            </button>
-          </div>
+        <div className="footer-buttons">
+          <button className="btn-prev" onClick={handlePrevious}>
+            이전
+          </button>
+          <button className="btn-next" onClick={handleNext}>
+            다음
+          </button>
         </div>
       </div>
     </div>
