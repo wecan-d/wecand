@@ -16,12 +16,17 @@ const RegisterPage1 = () => {
   };
 
   const handleNext = () => {
-    const { name, gender, identity, major, phone, email } = formData;
+    const { name, gender, identity, major, age, phone, email } = formData;
 
-    console.log("현재 formData:", formData); // 디버깅용 로그
-    
-    if (!name || !gender || !identity || !major) {
-      alert("필수 항목을 입력해 주세요.");
+    const missingFields = [];
+    if (!name) missingFields.push("이름");
+    if (!gender) missingFields.push("성별");
+    if (!identity) missingFields.push("신분");
+    if (!major) missingFields.push("직종/학과");
+    if (!age) missingFields.push("나이");
+
+    if (missingFields.length > 0) {
+      alert(`다음 항목을 입력해주세요: ${missingFields.join(", ")}`);
       return;
     }
 
@@ -32,6 +37,11 @@ const RegisterPage1 = () => {
 
     if (email && !validateEmail(email)) {
       alert("이메일 형식이 올바르지 않습니다.");
+      return;
+    }
+
+    if (isNaN(age)) {
+      alert("나이는 숫자만 입력할 수 있습니다.");
       return;
     }
 
@@ -55,6 +65,11 @@ const RegisterPage1 = () => {
         <div className="image-placeholder"></div>
       </div>
       <div className="right">
+        <div className="progress-bar">
+          <div className="progress-step active"></div>
+          <div className="progress-step"></div>
+          <div className="progress-step"></div>
+        </div>
         <div className="question">
           <label>이름 (필수):</label>
           <input
@@ -68,7 +83,7 @@ const RegisterPage1 = () => {
         <div className="question">
           <label>성별 (필수):</label>
           <div className="button-group">
-            {["남", "여", "기타"].map((option) => (
+            {["남", "여"].map((option) => (
               <button
                 key={option}
                 type="button"
@@ -106,9 +121,9 @@ const RegisterPage1 = () => {
           />
         </div>
         <div className="question">
-          <label>나이:</label>
+          <label>나이 (필수):</label>
           <input
-            type="text"
+            type="number"
             name="age"
             value={formData.age}
             onChange={handleInputChange}
@@ -135,12 +150,7 @@ const RegisterPage1 = () => {
             placeholder="이메일을 입력해주세요"
           />
         </div>
-        <div className="footer">
-          <div className="progress-bar">
-            <div className="progress-step active"></div>
-            <div className="progress-step"></div>
-            <div className="progress-step"></div>
-          </div>
+        <div className="footer-buttons">
           <button className="btn-next" onClick={handleNext}>
             다음
           </button>
