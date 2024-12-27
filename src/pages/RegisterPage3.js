@@ -47,6 +47,11 @@ const RegisterPage3 = () => {
         <div className="image-placeholder"></div>
       </div>
       <div className="right">
+          <div className="progress-bar">
+            <div className="progress-step"></div>
+            <div className="progress-step"></div>
+            <div className="progress-step active"></div>
+          </div>
         <div className="question">
           <label>자격증:</label>
           <input
@@ -101,12 +106,6 @@ const RegisterPage3 = () => {
           <label>파일 첨부:</label>
           <input type="file" name="file" onChange={handleFileChange} />
         </div>
-        <div className="footer">
-          <div className="progress-bar">
-            <div className="progress-step"></div>
-            <div className="progress-step"></div>
-            <div className="progress-step active"></div>
-          </div>
           <div className="footer-buttons">
             <button className="btn-prev" onClick={handlePrevious}>
               이전
@@ -115,7 +114,6 @@ const RegisterPage3 = () => {
               다음
             </button>
           </div>
-        </div>
       </div>
     </div>
   );

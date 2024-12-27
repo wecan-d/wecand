@@ -1,72 +1,153 @@
-import React from "react";
+import React, {useState, useEffect} from "react";
 import styled from "styled-components";
+import {useNavigate} from "react-router-dom";
+import axios from "axios";
 
 const HomePage = () => {
-  return (
-    <PageContainer>
-      {/* 홈 배경 이미지 */}
-      <LandContainer>
-        <Overlay>
-          <LandButton>내 공모전 랜드 들어가기</LandButton>
-        </Overlay>
-      </LandContainer>
 
-      {/* 카테고리 , 모집 신청 현황 */}
-      <CategoryAndStatus>
-        <CategoryContainer>
-          
-          <CategoryWrapper>
-            {Array.from({ length: 10 }).map((_, index) => (
-              <CategoryCard key={index}>
-                <CardContent />
-                <CategoryText>카테고리</CategoryText>
-              </CategoryCard>
-            ))}
-          </CategoryWrapper>
-        </CategoryContainer>
+    // 임시 목업데이터 확인용 hook
+    const [users, setUsers] = useState([]);
 
-        <StatusWrapper>
-          <StatusHeader>
-            <StatusTitle>모집 신청 현황</StatusTitle>
-            <MoreButton>더보기</MoreButton>
-          </StatusHeader>
-          <StatusContent>
-            <StatusList>
-              {Array.from({ length: 6 }).map((_, index) => (
-                <StatusItem key={index}>
-                  아이아이아아
-                  <StatusButton>{index === 5 ? "거절" : "수락"}</StatusButton>
-                </StatusItem>
-              ))}
-            </StatusList>
-          </StatusContent>
-        </StatusWrapper>
-      </CategoryAndStatus>
+    useEffect(() => {
+        const fetchUsers = async () => {
+            try {
+                const response = await axios.get(
+                    "https://676e83a3df5d7dac1ccae100.mockapi.io/post"
+                );
+                setUsers(response.data);
+            } catch (err) {
+                console.error(err);
+            }
+        };
+        fetchUsers();
+    }, []);
+    //
 
-      {/* 새로 올라온 공모전 모집 글 */}
-      <NewPostsSection>
-        <SectionTitle>새로 올라온 공모전 모집 글</SectionTitle>
-        <PostsWrapper>
-          {Array.from({ length: 6 }).map((_, index) => (
-            <PostCard key={index}>
-              <Tag>미술, 디자인</Tag>
-              <PostTitle>2024 디자인 공모전 할 사람 구해요</PostTitle>
-            </PostCard>
-          ))}
-        </PostsWrapper>
-      </NewPostsSection>
-    </PageContainer>
-  );
+    // 한 화면에 6개만 표시
+    const visibleUsers = users.slice(0, 6);
+
+    const navigate = useNavigate();
+
+    const categoryHandler = (category) => {
+        navigate(`/recruiting/${category}?sort=latest`);
+    };
+
+    const newFeedHandler = (postId) => {
+        navigate(`/detail/${postId}`)
+    }
+
+    const categories = [
+        {
+            id: "art",
+            name: "미술"
+        }, {
+            id: "design",
+            name: "디자인"
+        }, {
+            id: "media",
+            name: "영상/미디어"
+        }, {
+            id: "programming",
+            name: "프로그래밍"
+        }, {
+            id: "business",
+            name: "창업/비즈니스"
+        }, {
+            id: "photography",
+            name: "사진"
+        }, {
+            id: "literature",
+            name: "문학/에세이"
+        }, {
+            id: "music",
+            name: "음악/공연"
+        }, {
+            id: "volunteering",
+            name: "사회공헌/봉사"
+        }, {
+            id: "idea",
+            name: "기획/아이디어"
+        }
+    ];
+
+    return (
+        <PageContainer>
+            {/* 홈 배경 이미지 */}
+            <LandContainer>
+                <Overlay>
+                    <LandButton>내 공모전 랜드 들어가기</LandButton>
+                </Overlay>
+            </LandContainer>
+
+            {/* 카테고리 , 모집 신청 현황 */}
+            <CategoryAndStatus>
+                <CategoryContainer>
+                    <CategoryWrapper>
+                        {
+                            categories.map((category) => (
+                                <CategoryCard key={category.id}>
+                                    <CardContent onClick={() => categoryHandler(category.id)}></CardContent>
+                                    <CategoryText>{category.name}</CategoryText>
+                                </CategoryCard>
+                            ))
+                        }
+                    </CategoryWrapper>
+                </CategoryContainer>
+
+                <StatusWrapper>
+                    <StatusHeader>
+                        <StatusTitle>모집 신청 현황</StatusTitle>
+                        <MoreButton>더보기</MoreButton>
+                    </StatusHeader>
+                    <StatusContent>
+                        <StatusList>
+                            {
+                                Array
+                                    .from({length: 6})
+                                    .map((_, index) => (
+                                        <StatusItem key={index}>
+                                            아이아이아아
+                                            <StatusButton>{
+                                                    index === 5
+                                                        ? "거절"
+                                                        : "수락"
+                                                }</StatusButton>
+                                        </StatusItem>
+                                    ))
+                            }
+                        </StatusList>
+                    </StatusContent>
+                </StatusWrapper>
+            </CategoryAndStatus>
+
+            {/* 새로 올라온 공모전 모집 글 */}
+            <NewPostsSection>
+                <SectionTitle>새로 올라온 공모전 모집 글</SectionTitle>
+                <PostsWrapper>
+                    {
+                        visibleUsers.map((users) => (
+                            <PostCard key={users.postId} onClick={newFeedHandler}>
+                                <Tag>{users.category}</Tag>
+                                <PostTitle>{users.title}
+                                    날짜{users.date}</PostTitle>
+                            </PostCard>
+                        ))
+                    }
+                </PostsWrapper>
+            </NewPostsSection>
+        </PageContainer>
+    );
 };
 
 export default HomePage;
 
 // Styled Components
-const PageContainer = styled.div`
+
+const PageContainer = styled.div `
   padding: 4rem;
 `;
 
-const LandContainer = styled.div`
+const LandContainer = styled.div `
   position: relative;
   width: 100%;
   height: 300px;
@@ -75,7 +156,7 @@ const LandContainer = styled.div`
   background-position: center;
 `;
 
-const Overlay = styled.div`
+const Overlay = styled.div `
   position: absolute;
   top: 0;
   left: 0;
@@ -86,7 +167,7 @@ const Overlay = styled.div`
   justify-content: center;
 `;
 
-const LandButton = styled.button`
+const LandButton = styled.button `
   padding: 10px 20px;
   background-color: white;
   border: none;
@@ -98,13 +179,13 @@ const LandButton = styled.button`
   }
 `;
 
-const CategoryAndStatus = styled.div`
+const CategoryAndStatus = styled.div `
   display: flex;
   gap: 2rem;
-  margin: 2rem 0;
+  margin: 2rem 6rem;
 `;
 
-const CategoryContainer = styled.div`
+const CategoryContainer = styled.div `
   flex: 7;
   display: flex;
   flex-direction: column;
@@ -112,41 +193,47 @@ const CategoryContainer = styled.div`
   justify-content: center;
 `;
 
-const CategoryWrapper = styled.div`
+const CategoryWrapper = styled.div `
   display: grid;
   grid-template-columns: repeat(5, minmax(120px, 1fr));
   gap: 2rem;
 `;
 
-const CategoryCard = styled.div`
+const CategoryCard = styled.div `
   display: flex;
   flex-direction: column;
   align-items: center;
   
 `;
-
-const CardContent = styled.div`
+const CardContent = styled.div `
   width: 120px;
   height: 120px;
-  background-color:#BFBFBF;
+  background-color: #BFBFBF;
   border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  cursor: pointer;
+  border: none;
+  
 
   &:hover {
     border: 1px solid black;
   }
 `;
 
-const CategoryText = styled.div`
+const CategoryText = styled.div `
   font-size: 0.9rem;
   color: #333;
 `;
 
-const StatusWrapper = styled.div`
+const StatusWrapper = styled.div `
   flex: 3;
   background: #7b7b7b;
 `;
 
-const StatusHeader = styled.div`
+const StatusHeader = styled.div `
   height: 12%;
   display: flex;
   justify-content: space-between;
@@ -156,11 +243,11 @@ const StatusHeader = styled.div`
   padding: 0.5rem 1rem;
 `;
 
-const StatusTitle = styled.h3`
+const StatusTitle = styled.h3 `
   margin: 0;
 `;
 
-const MoreButton = styled.button`
+const MoreButton = styled.button `
   background: #888;
   color: white;
   border: none;
@@ -172,18 +259,18 @@ const MoreButton = styled.button`
   }
 `;
 
-const StatusContent = styled.div`
+const StatusContent = styled.div `
   background: #d9d9d9;
   padding: 1rem;
 `;
 
-const StatusList = styled.div`
+const StatusList = styled.div `
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
 `;
 
-const StatusItem = styled.div`
+const StatusItem = styled.div `
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -191,7 +278,7 @@ const StatusItem = styled.div`
   background: #d9d9d9;
 `;
 
-const StatusButton = styled.button`
+const StatusButton = styled.button `
   background: white;
   color: black;
   border: none;
@@ -203,26 +290,26 @@ const StatusButton = styled.button`
   }
 `;
 
-const NewPostsSection = styled.section`
+const NewPostsSection = styled.section `
   margin: 2rem 0;
 `;
 
-const SectionTitle = styled.h2`
+const SectionTitle = styled.h2 `
   margin-bottom: 1rem;
 `;
 
-const PostsWrapper = styled.div`
+const PostsWrapper = styled.div `
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 1rem;
 `;
 
-const PostCard = styled.div`
+const PostCard = styled.div `
   background-color: white;
   padding: 1rem;
 `;
 
-const Tag = styled.div`
+const Tag = styled.div `
   background: #c4c4c4;
   color: black;
   font-size: 0.8rem;
@@ -231,7 +318,7 @@ const Tag = styled.div`
   width: 4rem;
 `;
 
-const PostTitle = styled.h3`
+const PostTitle = styled.h3 `
   font-size: 1rem;
   color: #333;
 `;

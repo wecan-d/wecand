@@ -1,13 +1,17 @@
 import React from "react";
 import styled from "styled-components";
+import { Link } from "react-router-dom";
 
 const Header = () => {
   return (
     <HeaderContainer>
 
       <LogoWrapper>
+      <Link to="/">
         <Logo src="/logo/logosymbol.svg" alt="Logo" />
+      </Link>
       </LogoWrapper>
+      
 
         <SearchBar/>
       
@@ -27,7 +31,7 @@ const HeaderContainer = styled.header`
   justify-content: space-between;
   align-items: center;
   padding: 1% 2%;
-  margin: 0 4rem;
+  margin: 0 8rem;
 `;
 
 const LogoWrapper = styled.div`
@@ -37,7 +41,11 @@ const LogoWrapper = styled.div`
 `;
 
 const Logo = styled.img`
-  width: 80%;
+  width: 250px;
+
+  @media (max-width: 768px) {
+    display: none;
+  }
 `;
 
 const IconsWrapper = styled.div`
