@@ -29,6 +29,7 @@ const Routers = () => {
                 <Route path="2" element={<RegisterPage2 />} />
                 <Route path="3" element={<RegisterPage3 />} />
                 <Route path="4" element={<RegisterPage4 />} />
+                <Route path="edit/:id" element={<EditPage />} />
               </Routes>
             </FormProvider>
           }
@@ -39,7 +40,6 @@ const Routers = () => {
           <Route path="/recruiting/:category" element={<RecruitingsPage />}/>
           <Route path="/detail/:postId" element={<DetailPage />}/>
           <Route path="/mypage" element={<MyPage/>}/>
-          <Route path="/edit" element={<EditPage />} />
         </Route>
         <Route path="/land/:landId" element={<LandPage/>}/>
       </Routes>

@@ -1,185 +1,174 @@
+// EditPage.js
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { useForm } from "../context/FormContext";
+import { useNavigate, useParams } from "react-router-dom";
+import {
+  useForm,
+  getMembersAPI,
+  updateMemberAPI,
+  deleteMemberAPI,
+} from "../context/FormContext";
 import "../styles/CommonStyles.css";
 
 const EditPage = () => {
-  const { formData, setFormData } = useForm(); // 기존 데이터 사용
-  const [updatedData, setUpdatedData] = useState(null); // 수정 데이터 상태
+  const { id } = useParams(); // URL에서 ID 추출
+  const { formData, setFormData } = useForm();
+  const [updatedData, setUpdatedData] = useState(null); // 수정할 데이터 상태
   const navigate = useNavigate();
 
-  // 데이터 초기화
   useEffect(() => {
-    if (formData) {
-      setUpdatedData({ ...formData });
-    }
-  }, [formData]);
+    const fetchData = async () => {
+      try {
+        if (id) {
+          const data = await getMembersAPI(); // 서버에서 데이터 가져오기
+          const targetData = data.find((item) => String(item.id) === id); // 해당 ID의 데이터 찾기
+          if (targetData) {
+            setUpdatedData(targetData);
+          } else {
+            alert("해당 ID의 데이터를 찾을 수 없습니다.");
+            navigate("/register/1"); // 데이터가 없으면 첫 페이지로 이동
+          }
+        } else {
+          setUpdatedData(formData); // 로컬 데이터를 사용
+        }
+      } catch (error) {
+        console.error("데이터 로드 에러:", error);
+        alert("데이터를 가져오는 중 문제가 발생했습니다.");
+      }
+    };
 
-  // 데이터가 로드되지 않았을 때 로딩 표시
+    fetchData();
+  }, [id, formData, navigate]);
+
   if (!updatedData) {
     return <div>로딩 중...</div>;
   }
 
-  // 데이터 변경 처리
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setUpdatedData((prevData) => ({ ...prevData, [name]: value }));
+    setUpdatedData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleMultiSelectChange = (category, value) => {
-    setUpdatedData((prevData) => ({
-      ...prevData,
-      [category]: prevData[category].includes(value)
-        ? prevData[category].filter((item) => item !== value)
-        : [...prevData[category], value],
+  const handleArrayChange = (fieldName, index, value) => {
+    setUpdatedData((prev) => {
+      const updatedArray = Array.isArray(prev[fieldName]) ? [...prev[fieldName]] : [];
+      updatedArray[index] = value;
+      return { ...prev, [fieldName]: updatedArray };
+    });
+  };
+
+  const handleAddArrayItem = (fieldName) => {
+    setUpdatedData((prev) => ({
+      ...prev,
+      [fieldName]: Array.isArray(prev[fieldName]) ? [...prev[fieldName], ""] : [""],
     }));
   };
 
-  const handleSave = () => {
-    // 데이터 저장
-    setFormData(updatedData);
-    alert("수정 내용이 저장되었습니다.");
-    navigate("/register/4");
+  const handleRemoveArrayItem = (fieldName, index) => {
+    setUpdatedData((prev) => {
+      const updatedArray = Array.isArray(prev[fieldName]) ? [...prev[fieldName]] : [];
+      updatedArray.splice(index, 1);
+      return { ...prev, [fieldName]: updatedArray };
+    });
   };
 
-  return (
-    <div className="container">
-      <div className="left">
-        <div className="circle">수정</div>
-        <h1 className="label1">역량 카드 수정</h1>
-        <p className="label2">
-          입력하신 내용을 수정하고 저장해주세요!
-          <br />
-          저장된 내용은 역량 카드로 반영됩니다.
-        </p>
-      </div>
-      <div className="right">
-        {/* 기본 정보 */}
-        <div className="question">
-          <label>이름:</label>
-          <input
-            type="text"
-            name="name"
-            value={updatedData.name || ""}
-            onChange={handleInputChange}
-          />
-        </div>
-        <div className="question">
-          <label>성별:</label>
-          <div className="button-group">
-            {["남", "여", "기타"].map((option) => (
-              <button
-                key={option}
-                type="button"
-                onClick={() =>
-                  setUpdatedData((prevData) => ({ ...prevData, gender: option }))
-                }
-                className={updatedData.gender === option ? "active" : ""}
-              >
-                {option}
-              </button>
-            ))}
-          </div>
-        </div>
-        <div className="question">
-          <label>신분:</label>
-          <div className="button-group">
-            {["직장인", "취업준비생", "대학생"].map((option) => (
-              <button
-                key={option}
-                type="button"
-                onClick={() =>
-                  setUpdatedData((prevData) => ({
-                    ...prevData,
-                    identity: option,
-                  }))
-                }
-                className={updatedData.identity === option ? "active" : ""}
-              >
-                {option}
-              </button>
-            ))}
-          </div>
-        </div>
-        <div className="question">
-          <label>직종/학과:</label>
-          <input
-            type="text"
-            name="major"
-            value={updatedData.major || ""}
-            onChange={handleInputChange}
-          />
-        </div>
-        <div className="question">
-          <label>나이:</label>
-          <input
-            type="text"
-            name="age"
-            value={updatedData.age || ""}
-            onChange={handleInputChange}
-          />
-        </div>
-        <div className="question">
-          <label>전화번호:</label>
-          <input
-            type="text"
-            name="phone"
-            value={updatedData.phone || ""}
-            onChange={handleInputChange}
-          />
-        </div>
-        <div className="question">
-          <label>이메일:</label>
-          <input
-            type="email"
-            name="email"
-            value={updatedData.email || ""}
-            onChange={handleInputChange}
-          />
-        </div>
+  const handleSave = async () => {
+    try {
+      await updateMemberAPI(id, updatedData);
+      alert("데이터가 수정되었습니다.");
+      setFormData(updatedData);
+      navigate("/home");
+    } catch (error) {
+      console.error("저장 중 에러:", error);
+      alert("저장 중 문제가 발생했습니다.");
+    }
+  };
 
-        {/* 작업 역량 */}
-        {[
-          {
-            label: "소통",
-            category: "communication",
-            options: ["비대면 소통을 선호해요", "대면 소통을 선호해요", "새벽 연락은 피해주세요"],
-          },
-          {
-            label: "작업 스타일",
-            category: "teamwork",
-            options: ["다같이 작업하고 싶어요", "일을 나눠서 하고 싶어요", "평일에 하고 싶어요", "주말에 하고 싶어요"],
-          },
-          // ... 나머지 항목 생략
-        ].map((item) => (
-          <div key={item.category} className="question">
-            <label>{item.label}:</label>
-            <div className="button-group">
-              {item.options.map((option) => (
-                <button
-                  key={option}
-                  type="button"
-                  onClick={() => handleMultiSelectChange(item.category, option)}
-                  className={
-                    updatedData[item.category]?.includes(option) ? "active" : ""
-                  }
-                >
-                  {option}
-                </button>
-              ))}
+  const handleDelete = async () => {
+    try {
+      await deleteMemberAPI(id);
+      alert("데이터가 삭제되었습니다.");
+      navigate("/register/1");
+    } catch (error) {
+      console.error("삭제 중 에러:", error);
+      alert("삭제 중 문제가 발생했습니다.");
+    }
+  };
+
+  const renderField = (label, name, type = "text") => (
+    <div className="question">
+      <label>{label}:</label>
+      <input
+        type={type}
+        name={name}
+        value={updatedData[name] || ""}
+        onChange={handleInputChange}
+      />
+    </div>
+  );
+
+  const renderArrayField = (label, fieldName, placeholder) => (
+    <div className="question">
+      <label>{label}:</label>
+      <div style={{ display: "flex",flexWrap: "wrap", gap: "10px" }}>
+        {Array.isArray(updatedData[fieldName]) ? (
+          updatedData[fieldName]?.map((value, idx) => (
+            <div key={idx} style={{ display: "flex", alignItems: "center" }}>
+              <input
+                type="text"
+                value={value}
+                onChange={(e) => handleArrayChange(fieldName, idx, e.target.value)}
+                placeholder={placeholder}
+                style={{ marginRight: "10px" }}
+              />
+              <button
+                type="button"
+                onClick={() => handleRemoveArrayItem(fieldName, idx)}
+              >
+                삭제
+              </button>
             </div>
-          </div>
-        ))}
+          ))
+        ) : (
+          <p>유효한 데이터가 없습니다.</p>
+        )}
+        <button type="button" onClick={() => handleAddArrayItem(fieldName)}>
+          추가
+        </button>
+      </div>
+    </div>
+  );
 
-        {/* Footer */}
-        <div className="footer">
-          <button className="btn-prev" onClick={() => navigate("/register/4")}>
-            취소
-          </button>
-          <button className="btn-next" onClick={handleSave}>
-            저장
-          </button>
-        </div>
+  return (
+    <div className="container" style={{flexDirection: "column"}}>
+      <h1>수정 페이지</h1>
+      {renderField("이름", "name")}
+      {renderField("성별", "gender")}
+      {renderField("신분", "identity")}
+      {renderField("직종/학과", "major")}
+      {renderField("나이", "age", "number")}
+      {renderField("전화번호", "phone")}
+      {renderField("이메일", "email", "email")}
+      {renderField("중요한 것", "important")}
+      {renderArrayField("소통 스타일", "communication", "소통 스타일 입력")}
+      {renderArrayField("작업 스타일", "teamwork", "작업 스타일 입력")}
+      {renderArrayField("사고 방식", "thinking", "사고 방식 입력")}
+      {renderArrayField("역할", "role", "역할 입력")}
+      {renderArrayField("갈등 해결 방법", "conflictResolution", "갈등 해결 입력")}
+      {renderArrayField("시간 선호", "timePreference", "시간 선호 입력")}
+      {renderArrayField("휴식 선호", "restPreference", "휴식 선호 입력")}
+      {renderArrayField("친목 여부", "friendship", "친목 여부 입력")}
+      {renderArrayField("자격증", "certificates", "자격증 입력")}
+      {renderArrayField("사용 가능한 툴", "tools", "사용 가능한 툴 입력")}
+      {renderArrayField("수상 경력", "awards", "수상 경력 입력")}
+      {renderArrayField("URL", "url", "URL 입력")}
+      {renderField("추가 정보", "additionalInfo", "textarea")}
+      <div style={{ display: "flex", gap: "10px", marginTop: "20px" }}>
+        <button onClick={handleSave} style={{ backgroundColor: "#4CAF50", color: "white", padding: "10px 20px" }}>
+          저장
+        </button>
+        <button onClick={handleDelete} style={{ backgroundColor: "#f44336", color: "white", padding: "10px 20px" }}>
+          삭제
+        </button>
       </div>
     </div>
   );
