@@ -50,7 +50,7 @@ const EditPage = () => {
 
   const handleArrayChange = (fieldName, index, value) => {
     setUpdatedData((prev) => {
-      const updatedArray = [...prev[fieldName]];
+      const updatedArray = Array.isArray(prev[fieldName]) ? [...prev[fieldName]] : [];
       updatedArray[index] = value;
       return { ...prev, [fieldName]: updatedArray };
     });
@@ -59,13 +59,13 @@ const EditPage = () => {
   const handleAddArrayItem = (fieldName) => {
     setUpdatedData((prev) => ({
       ...prev,
-      [fieldName]: [...(prev[fieldName] || []), ""],
+      [fieldName]: Array.isArray(prev[fieldName]) ? [...prev[fieldName], ""] : [""],
     }));
   };
 
   const handleRemoveArrayItem = (fieldName, index) => {
     setUpdatedData((prev) => {
-      const updatedArray = [...prev[fieldName]];
+      const updatedArray = Array.isArray(prev[fieldName]) ? [...prev[fieldName]] : [];
       updatedArray.splice(index, 1);
       return { ...prev, [fieldName]: updatedArray };
     });
@@ -109,69 +109,66 @@ const EditPage = () => {
   const renderArrayField = (label, fieldName, placeholder) => (
     <div className="question">
       <label>{label}:</label>
-      {updatedData[fieldName]?.map((value, idx) => (
-        <div
-          key={idx}
-          style={{ marginBottom: "8px", display: "inline-block", marginRight: "10px" }}
-        >
-          <input
-            type="text"
-            value={value}
-            onChange={(e) => handleArrayChange(fieldName, idx, e.target.value)}
-            placeholder={placeholder}
-          />
-          <button
-            type="button"
-            onClick={() => handleRemoveArrayItem(fieldName, idx)}
-            style={{ marginLeft: "8px" }}
-          >
-            삭제
-          </button>
-        </div>
-      ))}
-      <button type="button" onClick={() => handleAddArrayItem(fieldName)}>
-        추가
-      </button>
+      <div style={{ display: "flex",flexWrap: "wrap", gap: "10px" }}>
+        {Array.isArray(updatedData[fieldName]) ? (
+          updatedData[fieldName]?.map((value, idx) => (
+            <div key={idx} style={{ display: "flex", alignItems: "center" }}>
+              <input
+                type="text"
+                value={value}
+                onChange={(e) => handleArrayChange(fieldName, idx, e.target.value)}
+                placeholder={placeholder}
+                style={{ marginRight: "10px" }}
+              />
+              <button
+                type="button"
+                onClick={() => handleRemoveArrayItem(fieldName, idx)}
+              >
+                삭제
+              </button>
+            </div>
+          ))
+        ) : (
+          <p>유효한 데이터가 없습니다.</p>
+        )}
+        <button type="button" onClick={() => handleAddArrayItem(fieldName)}>
+          추가
+        </button>
+      </div>
     </div>
   );
 
   return (
-    <div className="container">
+    <div className="container" style={{flexDirection: "column"}}>
       <h1>수정 페이지</h1>
-      <div style={{ display: "flex", flexWrap: "wrap", gap: "20px" }}>
-        <div style={{ flex: "1 1 calc(33.33% - 20px)", minWidth: "300px" }}>
-          {renderField("이름", "name")}
-          {renderField("성별", "gender")}
-          {renderField("신분", "identity")}
-          {renderField("직종/학과", "major")}
-          {renderField("나이", "age", "number")}
-          {renderField("전화번호", "phone")}
-          {renderField("이메일", "email", "email")}
-          {renderField("중요한 것", "important")}
-        </div>
-        <div style={{ flex: "1 1 calc(33.33% - 20px)", minWidth: "300px" }}>
-          {renderArrayField("소통 스타일", "communication", "소통 스타일 입력")}
-          {renderArrayField("작업 스타일", "teamwork", "작업 스타일 입력")}
-          {renderArrayField("사고 방식", "thinking", "사고 방식 입력")}
-          {renderArrayField("역할", "role", "역할 입력")}
-        </div>
-        <div style={{ flex: "1 1 calc(33.33% - 20px)", minWidth: "300px" }}>
-          {renderArrayField("갈등 해결 방법", "conflictResolution", "갈등 해결 입력")}
-          {renderArrayField("시간 선호", "timePreference", "시간 선호 입력")}
-          {renderArrayField("휴식 선호", "restPreference", "휴식 선호 입력")}
-          {renderArrayField("친목 여부", "friendship", "친목 여부 입력")}
-        </div>
-        <div style={{ flex: "1 1 calc(33.33% - 20px)", minWidth: "300px" }}>
-          {renderArrayField("자격증", "certificates", "자격증 입력")}
-          {renderArrayField("사용 가능한 툴", "tools", "사용 가능한 툴 입력")}
-          {renderArrayField("수상 경력", "awards", "수상 경력 입력")}
-          {renderArrayField("URL", "url", "URL 입력")}
-          {renderField("추가 정보", "additionalInfo", "textarea")}
-        </div>
-      </div>
-      <div style={{ marginTop: "20px" }}>
-        <button onClick={handleSave} style={{ marginRight: "10px" }}>저장</button>
-        <button onClick={handleDelete}>삭제</button>
+      {renderField("이름", "name")}
+      {renderField("성별", "gender")}
+      {renderField("신분", "identity")}
+      {renderField("직종/학과", "major")}
+      {renderField("나이", "age", "number")}
+      {renderField("전화번호", "phone")}
+      {renderField("이메일", "email", "email")}
+      {renderField("중요한 것", "important")}
+      {renderArrayField("소통 스타일", "communication", "소통 스타일 입력")}
+      {renderArrayField("작업 스타일", "teamwork", "작업 스타일 입력")}
+      {renderArrayField("사고 방식", "thinking", "사고 방식 입력")}
+      {renderArrayField("역할", "role", "역할 입력")}
+      {renderArrayField("갈등 해결 방법", "conflictResolution", "갈등 해결 입력")}
+      {renderArrayField("시간 선호", "timePreference", "시간 선호 입력")}
+      {renderArrayField("휴식 선호", "restPreference", "휴식 선호 입력")}
+      {renderArrayField("친목 여부", "friendship", "친목 여부 입력")}
+      {renderArrayField("자격증", "certificates", "자격증 입력")}
+      {renderArrayField("사용 가능한 툴", "tools", "사용 가능한 툴 입력")}
+      {renderArrayField("수상 경력", "awards", "수상 경력 입력")}
+      {renderArrayField("URL", "url", "URL 입력")}
+      {renderField("추가 정보", "additionalInfo", "textarea")}
+      <div style={{ display: "flex", gap: "10px", marginTop: "20px" }}>
+        <button onClick={handleSave} style={{ backgroundColor: "#4CAF50", color: "white", padding: "10px 20px" }}>
+          저장
+        </button>
+        <button onClick={handleDelete} style={{ backgroundColor: "#f44336", color: "white", padding: "10px 20px" }}>
+          삭제
+        </button>
       </div>
     </div>
   );
