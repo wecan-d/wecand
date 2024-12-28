@@ -10,6 +10,8 @@ import styled from "styled-components";
  * @param {string}    positionLeft   모달의 left 위치 (기본값: "50%")
  * @param {boolean}   centerByTransform  모달을 중앙에 맞출지 여부 (기본값: true)
  */
+
+
 function SkillCardModal({
   isOpen,
   onClose,
