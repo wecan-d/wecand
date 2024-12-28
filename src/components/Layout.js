@@ -1,10 +1,15 @@
 import React from "react";
-import { Outlet } from "react-router-dom";
+import { Outlet,useLocation } from "react-router-dom";
 import styled from "styled-components";
 import Header from './Header';
 import Footer from "./Footer";
 
+
+
 const Layout = () => {
+  const location = useLocation();
+  const hideFooter = location.pathname.includes("/detail");
+
   return (
     <LayoutContainer>
       <Header/>
@@ -13,7 +18,7 @@ const Layout = () => {
         <Outlet />
       </MainContent>
 
-      <Footer/>
+      {!hideFooter && <Footer />}
     </LayoutContainer>
   );
 };
@@ -29,5 +34,5 @@ const LayoutContainer = styled.div`
 const MainContent = styled.main`
   flex: 1;
   padding: 20px;
-  background-color: #f9f9f9;
+  
 `;
