@@ -15,7 +15,6 @@ import EditPage from './pages/EditPage'
 
 import Layout from './components/Layout'
 import { FormProvider } from './context/FormContext'
-import SomePage from './pages/SomePage'
 
 const Routers = () => {
   return (
