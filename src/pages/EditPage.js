@@ -1,4 +1,3 @@
-// EditPage.js
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import {
@@ -63,7 +62,7 @@ const EditPage = () => {
     }));
   };
 
-  const handleRemoveArrayItem = (fieldName, index) => {
+  const handleDeleteArrayItem = (fieldName, index) => {
     setUpdatedData((prev) => {
       const updatedArray = Array.isArray(prev[fieldName]) ? [...prev[fieldName]] : [];
       updatedArray.splice(index, 1);
@@ -109,10 +108,10 @@ const EditPage = () => {
   const renderArrayField = (label, fieldName, placeholder) => (
     <div className="question">
       <label>{label}:</label>
-      <div style={{ display: "flex",flexWrap: "wrap", gap: "10px" }}>
+      <div>
         {Array.isArray(updatedData[fieldName]) ? (
           updatedData[fieldName]?.map((value, idx) => (
-            <div key={idx} style={{ display: "flex", alignItems: "center" }}>
+            <div key={idx} style={{ display: "flex", alignItems: "center", marginBottom: "5px" }}>
               <input
                 type="text"
                 value={value}
@@ -122,7 +121,7 @@ const EditPage = () => {
               />
               <button
                 type="button"
-                onClick={() => handleRemoveArrayItem(fieldName, idx)}
+                onClick={() => handleDeleteArrayItem(fieldName, idx)}
               >
                 삭제
               </button>
@@ -138,35 +137,97 @@ const EditPage = () => {
     </div>
   );
 
+  const renderButtonGroup = (label, category, options) => (
+    <div className="question">
+      <label>{label}:</label>
+      <div className="button-group">
+        {options.map((option) => (
+          <button
+            key={option}
+            type="button"
+            onClick={() => handleInputChange({ target: { name: category, value: option } })}
+            className={updatedData[category]?.includes(option) ? "active" : ""}
+          >
+            {option}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+
   return (
-    <div className="container" style={{flexDirection: "column"}}>
+    <div className="container" style={{ flexDirection: "column" }}>
       <h1>수정 페이지</h1>
       {renderField("이름", "name")}
-      {renderField("성별", "gender")}
+      {renderButtonGroup("성별", "gender", ["남성", "여성"])}
       {renderField("신분", "identity")}
       {renderField("직종/학과", "major")}
       {renderField("나이", "age", "number")}
       {renderField("전화번호", "phone")}
       {renderField("이메일", "email", "email")}
       {renderField("중요한 것", "important")}
-      {renderArrayField("소통 스타일", "communication", "소통 스타일 입력")}
-      {renderArrayField("작업 스타일", "teamwork", "작업 스타일 입력")}
-      {renderArrayField("사고 방식", "thinking", "사고 방식 입력")}
-      {renderArrayField("역할", "role", "역할 입력")}
-      {renderArrayField("갈등 해결 방법", "conflictResolution", "갈등 해결 입력")}
-      {renderArrayField("시간 선호", "timePreference", "시간 선호 입력")}
-      {renderArrayField("휴식 선호", "restPreference", "휴식 선호 입력")}
-      {renderArrayField("친목 여부", "friendship", "친목 여부 입력")}
-      {renderArrayField("자격증", "certificates", "자격증 입력")}
+      {renderButtonGroup("소통", "communication", [
+        "비대면 소통을 선호해요",
+        "대면 소통을 선호해요",
+        "새벽 연락은 피해주세요",
+        "새벽연락도 가능해요",
+      ])}
+      {renderButtonGroup("작업", "teamwork", [
+        "다같이 작업하고 싶어요",
+        "일을 나눠서 하고 싶어요",
+        "평일에 하고 싶어요",
+        "주말에 하고 싶어요",
+      ])}
+      {renderButtonGroup("사고", "thinking", [
+        "논리적이에요",
+        "비판적이에요",
+        "창의적이에요",
+        "결과 중심적이에요",
+        "과정 중심적이에요",
+      ])}
+      {renderButtonGroup("역할", "role", [
+        "리더십이 있어요",
+        "계획적이에요",
+        "설득력이 있어요",
+        "호기심이 많아요",
+        "기록을 잘 남겨요",
+      ])}
+      {renderButtonGroup("갈등 해결", "conflictResolution", [
+        "바로 해결해요",
+        "시간이 필요해요",
+        "솔직하게 말해요",
+        "먼저 다가가요",
+        "혼자 해결해요",
+      ])}
+      {renderButtonGroup("시간", "timePreference", [
+        "새벽(00~06시)",
+        "아침(06-12시)",
+        "낮(12-18시)",
+        "저녁(18-00시)",
+      ])}
+      {renderButtonGroup("휴식", "restPreference", [
+        "짧게 자주 쉬고 싶어요",
+        "한번에 푹 쉬고 싶어요",
+      ])}
+      {renderButtonGroup("친목", "friendship", [
+        "작업에만 집중하고 싶어요",
+        "친목시간도 가지고 싶어요",
+      ])}
       {renderArrayField("사용 가능한 툴", "tools", "사용 가능한 툴 입력")}
       {renderArrayField("수상 경력", "awards", "수상 경력 입력")}
       {renderArrayField("URL", "url", "URL 입력")}
       {renderField("추가 정보", "additionalInfo", "textarea")}
-      <div style={{ display: "flex", gap: "10px", marginTop: "20px" }}>
-        <button onClick={handleSave} style={{ backgroundColor: "#4CAF50", color: "white", padding: "10px 20px" }}>
+      <div className="footer-buttons">
+        <button
+          onClick={handleSave}
+          style={{ backgroundColor: "#4CAF50", color: "white", padding: "10px 20px" }}
+        >
           저장
         </button>
-        <button onClick={handleDelete} style={{ backgroundColor: "#f44336", color: "white", padding: "10px 20px" }}>
+        <button
+          onClick={handleDelete}
+          style={{ backgroundColor: "#f44336", color: "white", padding: "10px 20px" }}
+        >
           삭제
         </button>
       </div>

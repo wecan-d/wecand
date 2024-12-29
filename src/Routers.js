@@ -26,11 +26,13 @@ const Routers = () => {
           element={
             <FormProvider>
               <Routes>
+              <Route element={<Layout />}>
                 <Route path="1" element={<RegisterPage1 />} />
                 <Route path="2" element={<RegisterPage2 />} />
                 <Route path="3" element={<RegisterPage3 />} />
                 <Route path="4" element={<RegisterPage4 />} />
                 <Route path="edit/:id" element={<EditPage />} />
+              </Route>
               </Routes>
             </FormProvider>
           }

@@ -2,6 +2,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { postMemberAPI, useForm } from "../context/FormContext";
 import "../styles/CommonStyles.css";
+import SurveyIcon from "../assets/register.svg";
 
 const RegisterPage2 = () => {
   const { formData, setFormData } = useForm();
@@ -79,22 +80,26 @@ const RegisterPage2 = () => {
 
   return (
     <div className="container">
-      <div className="left">
-        <div className="circle">2</div>
-        <h1 className="label1">작업 스타일</h1>
+      <div className="left2">
+        <div className="title-wrapper">
+          <img src={SurveyIcon} alt="Survey Icon" className="survey-icon" />
+          <h1 className="label1">작업 스타일</h1>
+        </div>
+        <div className="progress-bar">
+          <div className="progress-step active"></div>
+          <div className="progress-step active"></div>
+          <div className="progress-step"></div>
+        </div>
         <p className="label2">
-          작업 스타일을 알려주세요!<br />
-          작업 스타일로 자신에게 맞는 사람과 공모전에<br />
+          작업 스타일을 알려주세요!
+          <br />
+          작업 스타일로 자신에게 맞는 사람과 공모전에
+          <br />
           참가할 수 있는 기회를 얻을 수 있어요!
         </p>
         <div className="image-placeholder"></div>
       </div>
-      <div className="right">
-        <div className="progress-bar">
-          <div className="progress-step"></div>
-          <div className="progress-step active"></div>
-          <div className="progress-step"></div>
-        </div>
+      <div className="r2">
         {[
           { label: "소통", category: "communication", options: ["비대면 소통을 선호해요", "대면 소통을 선호해요", "새벽 연락은 피해주세요", "새벽연락도 가능해요"] },
           { label: "작업", category: "teamwork", options: ["다같이 작업하고 싶어요", "일을 나눠서 하고 싶어요", "평일에 하고 싶어요", "주말에 하고 싶어요"] },
@@ -105,7 +110,7 @@ const RegisterPage2 = () => {
           { label: "휴식", category: "restPreference", options: ["짧게 자주 쉬고 싶어요", "한번에 푹 쉬고 싶어요"] },
           { label: "친목", category: "friendship", options: ["작업에만 집중하고 싶어요", "친목시간도 가지고 싶어요"] },
         ].map((item) => (
-          <div key={item.category} className="question">
+          <div key={item.category} className="question2">
             <label>{item.label}:</label>
             <div className="button-group">
               {item.options.map((option) => (
@@ -121,7 +126,7 @@ const RegisterPage2 = () => {
             </div>
           </div>
         ))}
-        <div className="question">
+        <div className="question2">
           <label>중요하게 생각해요 (선택):</label>
           <textarea
             name="important"
