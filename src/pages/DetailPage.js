@@ -127,6 +127,7 @@ export default function DetailPage() {
     <Divider />
     <ModalBody>
       <SectionTitle>저장된 내 역량카드</SectionTitle>
+      <SectionStyle>작업 스타일</SectionStyle>
 
 
 
@@ -136,6 +137,7 @@ export default function DetailPage() {
     <CardTitle>소통</CardTitle>
     <CardContent>
       <p>비대면 소통을 선호해요</p>
+      <p>새벽연락도 가능해요</p>
       <p>새벽연락도 가능해요</p>
     </CardContent>
   </Card>
@@ -184,27 +186,32 @@ export default function DetailPage() {
     <CardTitle>친목</CardTitle>
     <CardContent>
       <p>작업에만 집중하고 싶어요</p>
+      <p>새벽연락도 가능해요</p>
+      <p>새벽연락도 가능해요</p>
     </CardContent>
   </Card>
   <Card style={{ gridArea: "important" }}>
     <CardTitle>중요하게 생각해요</CardTitle>
     <CardContent>
       <p>팀플 시간을 꼭 지켜주기</p>
+      <p>새벽연락도 가능해요</p>
     </CardContent>
   </Card>
 </CardGrid>
+<div style={({marginTop:'30px'})}/>
+<Divider />
 
   
       <AdditionalSection>
         <SectionColumn>
           <SectionTitle>경력 / 경험</SectionTitle>
-          <p>삼성 디자인 멤버십 수료</p>
-          <p>2020 해커톤 대상</p>
-          <p>피그마, 어도비 사용 가능</p>
+            <SectionText>삼성 디자인 멤버십 수료</SectionText>
+            <SectionText>2020 해커톤 대상</SectionText>
+            <SectionText>피그마, 어도비 사용 가능</SectionText>
         </SectionColumn>
         <SectionColumn>
           <SectionTitle>기타사항</SectionTitle>
-          <p>작성된 글이 없습니다.</p>
+            <SectionArea>작성된 글이 없습니다.</SectionArea>
         </SectionColumn>
       </AdditionalSection>
     </ModalBody>
@@ -218,6 +225,34 @@ export default function DetailPage() {
 }
 
 // Styled Components
+
+const SectionArea = styled.div`
+  color: #767676;
+font-family: Pretendard;
+font-size: 18px;
+font-style: normal;
+font-weight: 400;
+line-height: normal;
+`;
+
+const SectionText = styled.p`
+  color: #111;
+font-family: Pretendard;
+font-size: 18px;
+font-style: normal;
+font-weight: 400;
+line-height: normal;
+`;
+
+const SectionStyle = styled.div`
+  color: #111;
+font-family: Pretendard;
+font-size: 22px;
+font-style: normal;
+font-weight: 600;
+line-height: normal;
+margin-bottom: 20px;
+`;
 const PageWrapper = styled.div`
   display: flex;
   /* height: 100vh; */
@@ -250,20 +285,18 @@ const CategoryAndTitle = styled.div`
 `;
 
 const Category = styled.span`
-  font-size: 1rem;
   font-weight: 500;
   color: #6c54f7;
+  font-size: 18px;
 `;
 
 const Title = styled.h1`
-  font-size: 2rem;
-  font-weight: bold;
+  font-weight: 600;
+  font-size: 32px;
 `;
 
 const MainContent = styled.div`
   display: flex;
-  flex: 1;
-  gap: 2rem;
 
   @media (max-width: 768px) {
     flex-direction: column;
@@ -271,13 +304,7 @@ const MainContent = styled.div`
 `;
 
 const MainBox = styled.div`
-  
   display: flex;
-  justify-content: center;
-  align-items: center;
-  
-
-
   @media (max-width: 768px) {
     flex: 1;
   }
@@ -285,11 +312,7 @@ const MainBox = styled.div`
 
 const Image = styled.img`
   width: 100%;
-  max-width: 80%; /* 너비를 90%로 줄임 */
-  max-height: 100%; /* 높이를 90%로 줄임 */
-  
-  
-  
+  max-width: 84%; /* 너비를 90%로 줄임 */
   border-radius: 8px;
 `;
 
@@ -297,7 +320,7 @@ const SideBox = styled.div`
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 0.2rem;
 `;
 
 const InfoSection = styled.div`
@@ -323,15 +346,15 @@ const InfoRow = styled.div`
 
 
 const InfoLabel = styled.span`
-  font-size: 0.9rem;
-  color: #888;
-  
+  font-size: 22px;
+  color: #767676;
+  font-weight: 400;
 `;
 
 const InfoValue = styled.span`
-  font-size: 1rem;
-  font-weight: bold;
+  font-size: 26px;
   display: flex;
+  font-weight: 500;
   align-items: center;
   gap: 0.5rem; /* 역할 태그와 텍스트 간 간격 */
 `;
@@ -340,10 +363,9 @@ const InfoValue = styled.span`
 const RoleTag = styled.span`
   background-color: #6c54f7;
   color: white;
-  font-size: 0.8rem;
-  font-weight: bold;
-  padding: 0.2rem 0.5rem;
-  border-radius: 8px;
+  font-size: 18px;
+  padding: 0.3rem 0.5rem;
+  border-radius: 30px;
   display: inline-block;
 `;
 
@@ -352,7 +374,9 @@ const Section = styled.div``;
 
 
 const Text = styled.p`
-  line-height: 1.6;
+  line-height: 140%;
+  font-size: 22px;
+  color: #4E5968;
 `;
 
 const Description = styled.div`
@@ -360,15 +384,22 @@ const Description = styled.div`
   padding: 1rem;
   border-radius: 8px;
   line-height: 1.6;
+  font-weight: 400;
+  color: #4E5968;
 `;
 
 const ActionButtons = styled.div`
   display: flex;
   justify-content: flex-end;
   gap: 1rem;
+  margin-top: 1rem;
 `;
 
 const LinkButton = styled.button`
+width: 187px;
+height: 64px;
+font-size: 22px;
+gap: 10px;
   
   padding: 0.7rem 1rem;
   background: white;
@@ -394,7 +425,9 @@ const ApplyButton = styled(LinkButton)`
 
 const UnorderedList = styled.ul`
   list-style-type: none;
+  line-height: 160%; 
   padding: 0;
+  font-size: 22px;
 `;
 
 const ListItem = styled.li`
@@ -424,11 +457,12 @@ const ModalOverlay = styled.div`
 `;
 
 const ModalContent = styled.div`
-  width: 90%;
-  max-width: 800px;
+  width: 1058px;
+  height: 941px;
+  
   max-height: 90vh;
   background: #fff;
-  padding: 2rem;
+  padding: 60px;
   border-radius: 10px;
   overflow-y: auto;
 `;
@@ -437,14 +471,16 @@ const ModalHeader = styled.div`
   position: relative; /* 자식 요소가 부모를 기준으로 위치하도록 설정 */
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  
 
 `;
 
 const ModalTitle = styled.h2`
-  font-size: 1.5rem;
-  font-weight: bold;
+  font-size: 32px;
+  font-weight: 600;
   color: #6C54F7;
+  margin-top: 70px;
+  
 `;
 
 const HeaderButtons = styled.div`
@@ -459,6 +495,11 @@ const EditButton = styled.button`
   border-radius: 8px;
   cursor: pointer;
   border: 1px solid black;
+  width: 164px;
+height: 64px;
+font-size: 22px;
+font-style: normal;
+font-weight: 500;
 `;
 
 const SubmitButton = styled(EditButton)`
@@ -509,7 +550,6 @@ const ModalBody = styled.div`
 const AdditionalSection = styled.div`
   display: flex;
   justify-content: space-between;
-  margin-top: 2rem;
 `;
 
 const SectionColumn = styled.div`
@@ -520,8 +560,12 @@ const SectionColumn = styled.div`
 `;
 
 const SectionTitle = styled.h4`
-  font-weight: bold;
-  margin-bottom: 0.5rem;
+  color: #111;
+font-family: Pretendard;
+font-size: 22px;
+font-style: normal;
+font-weight: 600;
+line-height: normal;
 `;
 
 const CardGrid = styled.div`
@@ -538,8 +582,8 @@ const CardGrid = styled.div`
 
 const Card = styled.div`
   background: #f0f3fa;
-  padding: 1rem;
   border-radius: 8px;
+  padding: 16px;
 `;
 
 const CardTitle = styled.div`
@@ -547,13 +591,19 @@ const CardTitle = styled.div`
   color: white;
   padding: 0.2rem 0.5rem;
   border-radius: 8px;
-  font-size: 0.9rem;
+  font-size: 18px;
   font-weight: bold;
   display: inline-block;
   margin-bottom: 0.5rem;
+  height: 31px;
+  font-weight: 500;
 `;
 
 const CardContent = styled.div`
-  font-size: 0.9rem;
-  color: #6c6c6c;
+  font-size: 18px;
+  font-weight: 400;
+  color: #111111;
+  
 `;
+
+

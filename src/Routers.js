@@ -15,6 +15,7 @@ import EditPage from './pages/EditPage'
 
 import Layout from './components/Layout'
 import { FormProvider } from './context/FormContext'
+import SomePage from './pages/SomePage'
 
 const Routers = () => {
   return (
@@ -40,6 +41,7 @@ const Routers = () => {
           <Route path="/detail/:postId" element={<DetailPage />}/>
           <Route path="/mypage" element={<MyPage/>}/>
           <Route path="/edit" element={<EditPage />} />
+          <Route path="/some" element={<SomePage/>}/>
         </Route>
         <Route path="/land/:landId" element={<LandPage/>}/>
       </Routes>
