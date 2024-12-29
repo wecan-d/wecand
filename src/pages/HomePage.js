@@ -1,47 +1,154 @@
-
-import React from 'react';
-import styled from 'styled-components';
-import bgsvg from "../assets/LandPage/background.svg";
-import mon from "../assets/LandPage/human.svg";
+import React, { useState, useEffect, useContext } from "react";
+import axios from "axios";
+import styled, { createGlobalStyle } from "styled-components";
+import { SearchContext } from '../context/SearchContext';
+import bgsvg from "../assets/homepage/homeLand.svg";
+import whitelogo from "../assets/homepage/whitelogo.svg"; 
+import { useSearchParams } from "react-router-dom";
 
 const HomePage = () => {
+  // 단어 로테이션 로직 및 기존 코드 유지
+
+  const [newTitle, setNewTitle] = useState("");
+  const [newCategory, setNewCategory] = useState("");
+
+  const handlePostSubmit = async () => {
+    try {
+      const response = await axios.post("http://172.30.1.79:8080/post", {
+        title: newTitle,
+        category: newCategory,
+      });
+      console.log("Post success:", response.data);
+
+      // 새 데이터 추가 후 목록 갱신
+      setUsers((prevUsers) => [...prevUsers, response.data]);
+      setFilteredUsers((prevUsers) => [...prevUsers, response.data]);
+    } catch (err) {
+      console.error("Error posting data:", err);
+    }
+  };
+
+
+
+
+
+
+
+
+
+  //단어 로테이션 로직
+  const words = ['etermine','ream', 'iscover', 'evelop', 'iscuss', 'esign']; 
+  const [currentWordIndex, setCurrentWordIndex] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentWordIndex((prevIndex) => (prevIndex + 1) % words.length);
+    }, 1000); 
+    return () => clearInterval(interval);
+  }, [words.length]);
+
+  // 검색 로직
+  const [users, setUsers] = useState([]);
+  const [filteredUsers, setFilteredUsers] = useState([]); // 필터링된 데이터
+  const { searchTerm, setSearchTerm } = useContext(SearchContext); // 전역 검색 상태 가져오기
+
+  const [, setSearchParams] = useSearchParams(); 
+
+  const handleSearchChange = (e) => {
+    const newSearchTerm = e.target.value;
+    setSearchTerm(newSearchTerm);
+    setSearchParams({ search: newSearchTerm }); // URL 파라미터 업데이트
+};
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+        try {
+            // const response = await axios.get(
+            //     "https://676e83a3df5d7dac1ccae100.mockapi.io/post"
+            // );
+            const response = await axios.get("http://172.30.1.79:8080/post");
+            console.log(response.data);
+            setUsers(response.data);
+            setFilteredUsers(response.data); // 초기 데이터 설정
+        } catch (err) {
+            console.error(err);
+        }
+    };
+    fetchUsers();
+}, []);
+
+useEffect(() => {
+  if (searchTerm === "") {
+    // setFilteredUsers(users); // 검색어가 없으면 전체 데이터 표시
+  } else {
+    const filtered = users.filter((user) =>
+      user.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    user.category.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    setFilteredUsers(filtered);
+  }
+}, [searchTerm, users]);
+
+
+
+
+
   return (
+
+    
     <Container>
-
-
+     
+       <GlobalStyle />
       {/* 헤더 */}
       <Header>
-        <Logo>Wecand:</Logo>
+        <Logo src={whitelogo} alt="Wecand Logo"/>
         <LoginButton>로그인</LoginButton>
       </Header>
 
-      {/* 배경 색상 */}
       {/* 메인 배너 */}
       <MainBanner>
-      <Background />
         <SVGImage src={bgsvg} alt="Main Banner" />
-        <MonImage src={mon} alt="Foreground Layer" />
         <MainText>
-          <Title>
-            We can 
-          </Title><br/>
-
-          <Title2>D <Highlight>
-          <TextDiscuss>iscuss
-          </TextDiscuss></Highlight></Title2>
-          <Subtitle>화합이 시작되는 공간</Subtitle>
-          <CTAButton href="/create">내 아일랜드 생성하기 '{'>'}'</CTAButton>
+          <RotatingTextContainer>
+            <StaticText>D</StaticText>
+            <HighlightBox>
+              <RotatingText>{words[currentWordIndex]}</RotatingText>
+            </HighlightBox>
+          </RotatingTextContainer>
+          <CTAButton href="/create">내 아일랜드 생성하기 {'>'}</CTAButton>
         </MainText>
       </MainBanner>
+      <HighlightBox><RotatingText>{words[currentWordIndex]}</RotatingText></HighlightBox>
 
       {/* 콘텐츠 섹션 */}
       <ContentSection>
-        <ContentTitle>환상의 팀워크는 서로를 아는 데서 시작됩니다!</ContentTitle>
-        <ContentDescription>
+        <SectionTitle>환상의 팀워크는 서로를 아는 데서 시작됩니다!</SectionTitle>
+        <Description>
           팀원들의 역할, 작업 스타일, 커뮤니케이션 방식을 한눈에 파악 후 최적의 팀을 찾아보세요.
-        </ContentDescription>
-        <SearchBar type="text" placeholder="찾고자 하는 공모전을 입력해 주세요" />
-      </ContentSection>
+          
+        </Description>
+        <SearchBar 
+        type="text" 
+        placeholder="찾고자 하는 공모전을 입력해 주세요" 
+        onChange={handleSearchChange}/>
+
+
+      {searchTerm && (
+    <ResultContainer>
+      {filteredUsers.length > 0 ? (
+        filteredUsers.slice(0, 6).map((user) => (
+          <ResultCard key={user.id}>
+            <ResultBox>
+              <PostTitle>{user.title}</PostTitle>
+            </ResultBox>
+          </ResultCard>
+        ))
+      ) : (
+        <></>
+      )}
+    </ResultContainer>
+  )}
+</ContentSection>
 
       {/* 공모전 및 아일랜드 섹션 */}
       <CompetitionSection>
@@ -51,6 +158,22 @@ const HomePage = () => {
           <Card>카드 2</Card>
           <Card>카드 3</Card>
           <Card>카드 4</Card>
+           {/* 데이터 입력 폼 */}
+      <FormContainer>
+        <Input
+          type="text"
+          placeholder="Enter title"
+          value={newTitle}
+          onChange={(e) => setNewTitle(e.target.value)}
+        />
+        <Input
+          type="text"
+          placeholder="Enter category"
+          value={newCategory}
+          onChange={(e) => setNewCategory(e.target.value)}
+        />
+        <SubmitButton onClick={handlePostSubmit}>Submit</SubmitButton>
+      </FormContainer>
         </CardContainer>
       </CompetitionSection>
     </Container>
@@ -59,45 +182,118 @@ const HomePage = () => {
 
 export default HomePage;
 
+const ResultBox = styled.div`
+
+  display: flex;
+  justify-content:flex-start;
+
+`;
+
+const ResultContainer = styled.div`
+  border: 1px solid #DBDBDB;
+  overflow: hidden; 
+  padding: 10px;
+`;
+
+// 전역 스타일
+const GlobalStyle = createGlobalStyle`
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  body {
+    font-family: Pretendard, sans-serif;
+    line-height: 1.4;
+    overflow-x: hidden; /* 좌우 스크롤 방지 */
+  }
+`;
+
+const StaticText = styled.span`
+  font-size: 85px;
+  font-weight: 700;
+  color: #6c54f7;
+  margin-right: 10px;
+`;
+
+
+const HighlightBox = styled.div`
+  position: absolute;
+  display: inline-flex;
+  z-index: 1000;
+  background: #eaf557;
+  border-radius: 16px;
+  padding: 0 20px;
+  height: 60px;
+  /* display: flex;
+  align-items: center;
+  justify-content: center; */
+  top: 370px;
+  right: 245px;
+   
+  
+`;
+
+const RotatingTextContainer = styled.div`
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
+const RotatingText = styled.span`
+
+font-family: Roboto;
+  font-size: 60px;
+  font-weight: 800;
+  color: #6c54f7;
+  position: absolute;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  height: 100%;
+`;
+
+// 공통 스타일 변수
+const flexCenter = `
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
 // Styled Components
 const Container = styled.div`
   width: 100%;
-  position: relative; /* 위치 기준 설정 */
+  position: relative;
   overflow: hidden;
 `;
 
-const Background = styled.div`
-  position: absolute;
-  top: 0;
-  left: 0;
-  
-  height: 1005px;
-  background: #6C54F7; /* 고정된 배경 색상 */
-  z-index: 1; /* 배경이 가장 뒤에 위치 */
-`;
-
-
 const Header = styled.header`
+  ${flexCenter};
   position: absolute;
   top: 0;
-  width: inherit;
-  z-index: 5;
-  display: flex;
+  width: 100%;
+  z-index: 7;
   justify-content: space-between;
-  align-items: center;
   padding: 16px 32px;
-  background: #6C54F7;
+  background: transparent;
   color: white;
+  padding: 30px 116px;
 `;
 
-const Logo = styled.div`
-  font-size: 1.5rem;
-  font-weight: bold;
+const Logo = styled.img`
+  width: 119px;
+  height: 30.311px;
 `;
 
 const LoginButton = styled.div`
-  font-size: 1rem;
-  cursor: pointer;
+  color: #FFF;
+  text-align: right;
+  font-family: Pretendard;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 140%; /* 22.4px */
+  letter-spacing: -0.32px;
 `;
 
 const MainBanner = styled.section`
@@ -108,130 +304,100 @@ const MainBanner = styled.section`
   overflow: hidden;
 `;
 
+
+
 const SVGImage = styled.img`
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  /* object-fit: cover; */
-  transform: translate(-35%, 10%) scale(1.6); /* 이미지 확대 */
-  z-index: 5;
-`;
-const MonImage = styled.img`
-  position: absolute;
-  top: 300px; /* bgsvg 위에서의 위치 */
-  left: 880px; /* bgsvg 위에서의 위치 */
-  width: 112px; /* 크기 */
-  height: 271px;
-  z-index: 6; /* bgsvg(5)보다 높은 레이어에 위치 */
+  object-fit: cover;
+  z-index: 6;
 `;
 
 const MainText = styled.div`
   position: relative;
-  z-index: 6;
+  z-index: 3;
   text-align: right;
   padding-right: 120px;
-  /* transform: translateX(50px); */
-`;
-
-const Title = styled.h1`
-  color: #FFF;
-font-family: Roboto;
-font-size: 85px;
-font-style: normal;
-font-weight: 700;
-transform: translate(-350px,215px);
-
-`;
-const Title2 = styled.h1`
-
-  color: #FFF;
-font-family: Roboto;
-font-size: 85px;
-font-style: normal;
-font-weight: 700;
-transform: translate(-106px,35px);
-
-
-`;
-
-const Highlight = styled.span`
-  display: inline-block; 
-  background: #EAF557;
-  border-radius: 16px;
-  padding: 0 15px; /* 텍스트와 배경 사이 간격 */
-  color: #6C54F7;
-  font-family: Roboto;
-  font-size: 60px;
-  font-style: normal;
-  font-weight: 700;
-  line-height: 140%; /* 줄 간격 설정 */
-  vertical-align: middle; /* 텍스트 중앙 정렬 */
-  gap: 10px;
-  width: 235px;
-  height: 70px;
-`;
-
-
-const Subtitle = styled.p`
-color: #FFF;
-text-align: right;
-font-family: Pretendard;
-font-size: 40px;
-font-style: normal;
-font-weight: 600;
-line-height: 140%; /* 56px */
-padding-right: 120px;
-transform: translate(20px,-30px);
 `;
 
 const CTAButton = styled.a`
   display: inline-block;
   margin-top: 20px;
   padding: 10px 20px;
-  color: #FFF;
-text-align: right;
-font-family: Pretendard;
-font-size: 20px;
-font-style: normal;
-font-weight: 500;
-line-height: 140%; /* 28px */
-letter-spacing: -0.4px;
+  font-size: 20px;
+  font-weight: 500;
   color: white;
+  background: #6c54f7;
   text-decoration: none;
   border-radius: 4px;
+  letter-spacing: -0.4px;
+  position: absolute;
+  top: 550px;
+  right: 110px;
 `;
 
 const ContentSection = styled.section`
+   display: flex;
+  flex-direction: column;
+  align-items: center; /* 수평 가운데 정렬 */
+  justify-content: center; /* 수직 가운데 정렬 */
   padding: 40px 20px;
   text-align: center;
 `;
 
-const ContentTitle = styled.h2`
-  font-size: 2rem;
-  color: #333;
+const SectionTitle = styled.h2`
+color: #111;
+text-align: center;
+font-family: Pretendard;
+font-size: 28px;
+font-style: normal;
+font-weight: 600;
+line-height: 140%; /* 39.2px */
+letter-spacing: -0.56px;
 `;
 
-const ContentDescription = styled.p`
-  font-size: 1.2rem;
+const Description = styled.p`
+  font-size: 28px;
+  font-weight: 600;
   color: #555;
 `;
 
 const SearchBar = styled.input`
   margin-top: 20px;
   padding: 10px;
-  width: 60%;
+  width: 559px;
+  height: 54px;
+  padding: 15px 22px;
+  border-radius: 16px;
+  background: #F0F3FA;
   font-size: 1rem;
+  border: none;
 `;
+
+const ResultCard = styled.div`
+  width: 537px;
+
+  background: #fff;
+  
+  border-radius: 8px;
+  padding: 10px;
+  position: relative;
+  
+`;
+
+const PostTitle = styled.h3 `
+  font-size: 18;
+  color: #111;
+  font-weight:500;
+`;
+
+
 
 const CompetitionSection = styled.section`
   padding: 40px 20px;
-`;
-
-const SectionTitle = styled.h3`
-  font-size: 1.8rem;
-  margin-bottom: 20px;
 `;
 
 const CardContainer = styled.div`
@@ -247,12 +413,41 @@ const Card = styled.div`
   text-align: center;
 `;
 
-const TextDiscuss = styled.span`
-  font-family: Roboto;
-  font-size: 60px;
-  font-weight: 700;
-  color: #6C54F7;
+//임시 post용
+// 스타일 컴포넌트
+const FormContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 20px auto;
+  max-width: 400px;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background: #f9f9f9;
 `;
+
+const Input = styled.input`
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 1rem;
+`;
+
+const SubmitButton = styled.button`
+  padding: 10px 20px;
+  font-size: 1rem;
+  color: white;
+  background-color: #6c54f7;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #5543c5;
+  }
+`;
+
 
 
 
