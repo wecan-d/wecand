@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { useForm } from "../context/FormContext";
+import { postMemberAPI, useForm } from "../context/FormContext";
 import "../styles/CommonStyles.css";
 
 const validatePhoneNumber = (phone) => /^\d{3}-\d{4}-\d{4}$/.test(phone);
@@ -43,6 +43,14 @@ const RegisterPage1 = () => {
     if (isNaN(age)) {
       alert("나이는 숫자만 입력할 수 있습니다.");
       return;
+    }
+
+    try {
+      alert("보냅니다잇!");
+      const response = postMemberAPI(formData);
+      console.log("RegisterPage1 POST response:", response.data); // 콘솔에 응답 데이터 출력
+    } catch (error) {
+      console.error("RegisterPage1 POST error:", error);
     }
 
     navigate("/register/2");

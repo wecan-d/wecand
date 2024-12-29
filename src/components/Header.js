@@ -5,21 +5,26 @@ import { Link } from "react-router-dom";
 const Header = () => {
   return (
     <HeaderContainer>
-
+      {/* Logo Section */}
       <LogoWrapper>
-      <Link to="/">
-        <Logo src="/logo/logosymbol.svg" alt="Logo" />
-      </Link>
+        <Link to="/">
+          <Logo src="/logo/logosymbol.svg" alt="Logo" />
+        </Link>
+        
       </LogoWrapper>
-      
 
-        <SearchBar/>
-      
+      {/* Search and Profile Section */}
       <IconsWrapper>
-        <SquareIcon>로그인</SquareIcon>
-        <CircleIcon />
-      </IconsWrapper>
+        <SearchWrapper>
+          <SearchInput placeholder="원하는 검색어를 입력하세요" />
+          <SearchIcon>🔍</SearchIcon>
+        </SearchWrapper>
 
+        <UserWrapper>
+          <UserName>김규리님</UserName>
+          <ProfileImage src="/profile-image.svg" alt="Profile" />
+        </UserWrapper>
+      </IconsWrapper>
     </HeaderContainer>
   );
 };
@@ -30,22 +35,19 @@ const HeaderContainer = styled.header`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1% 2%;
-  margin: 0 8rem;
+  padding: 1rem 11%;
+  background-color: white;
+  
 `;
 
 const LogoWrapper = styled.div`
   display: flex;
   align-items: center;
-  padding-bottom: 0.8rem;
+  gap: 0.5rem;
 `;
 
 const Logo = styled.img`
-  width: 250px;
-
-  @media (max-width: 768px) {
-    display: none;
-  }
+  width: 150px;
 `;
 
 const IconsWrapper = styled.div`
@@ -54,29 +56,48 @@ const IconsWrapper = styled.div`
   gap: 1.5rem;
 `;
 
-const SquareIcon = styled.div`
+const SearchWrapper = styled.div`
   display: flex;
-  justify-content: center;
   align-items: center;
-  width: 6rem;
-  height: 2.5rem;
-  color: white;
-  background-color: #888;
-  border-radius: 4px;
-`;
-
-const CircleIcon = styled.div`
-  width: 50px;
-  height: 50px;
-  background-color: #888;
-  border-radius: 50%;
-`;
-
-const SearchBar = styled.input`
-  width: 50%;
-  height: 3rem;
-  padding: 0.5rem;
+  width: 300px;
+  background-color: #f0f3fa;
   border-radius: 32px;
-  background-color: #F5F5F5;
+  padding: 0.5rem 1rem;
+`;
+
+const SearchInput = styled.input`
+  flex: 1;
   border: none;
+  outline: none;
+  background: transparent;
+  font-size: 1rem;
+  color: #6c6c6c;
+
+  &::placeholder {
+    color: #b0b0b0;
+  }
+`;
+
+const SearchIcon = styled.span`
+  font-size: 1.2rem;
+  color: #6c6c6c;
+  cursor: pointer;
+`;
+
+const UserWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+`;
+
+const UserName = styled.span`
+  font-size: 1rem;
+  color: #6c6c6c;
+`;
+
+const ProfileImage = styled.img`
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
 `;
