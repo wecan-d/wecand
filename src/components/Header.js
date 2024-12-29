@@ -1,11 +1,21 @@
-import React from "react";
+import React, { useContext } from "react";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
+import { SearchContext } from "../context/SearchContext";
+import { useSearchParams } from "react-router-dom";
 
 const Header = () => {
+  const { searchTerm, setSearchTerm } = useContext(SearchContext);
+  const [, setSearchParams] = useSearchParams(); 
+
+  const handleSearchChange = (e) => {
+    const newSearchTerm = e.target.value;
+    setSearchTerm(newSearchTerm);
+    setSearchParams({ search: newSearchTerm }); // URL 파라미터 업데이트
+};
   return (
     <HeaderContainer>
-      {/* Logo Section */}
+      {/* 로고 섹션 */}
       <LogoWrapper>
         <Link to="/">
           <Logo src="/logo/logosymbol.svg" alt="Logo" />
@@ -13,16 +23,21 @@ const Header = () => {
         
       </LogoWrapper>
 
-      {/* Search and Profile Section */}
+      {/* 검색 섹션 */}
       <IconsWrapper>
         <SearchWrapper>
-          <SearchInput placeholder="원하는 검색어를 입력하세요" />
+          <SearchInput
+          type="text"
+          placeholder="검색어를 입력하세요..."
+          value={searchTerm}
+          onChange={handleSearchChange}// 검색 상태 업데이트
+        />
           <SearchIcon>🔍</SearchIcon>
         </SearchWrapper>
 
         <UserWrapper>
           <UserName>김규리님</UserName>
-          <ProfileImage src="/profile-image.svg" alt="Profile" />
+          <ProfileImage src="/profile/userprofile.svg" alt="Profile" />
         </UserWrapper>
       </IconsWrapper>
     </HeaderContainer>
@@ -59,10 +74,12 @@ const IconsWrapper = styled.div`
 const SearchWrapper = styled.div`
   display: flex;
   align-items: center;
-  width: 300px;
+  width: 360px;
+  height: 54px;
   background-color: #f0f3fa;
-  border-radius: 32px;
-  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  justify-content: space-between;
+  padding: 15px;
 `;
 
 const SearchInput = styled.input`
