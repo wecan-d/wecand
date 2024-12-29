@@ -58,23 +58,7 @@ const Land = ({ teamMembers, hoveredMemberIds, onHover, onOpenSkillCard }) => {
         initialPositionY={0}
         minScale={0.7}
         maxScale={3}
-        limitToBounds={false}
-        // 이동 제한
-        onPanningStop={(ref) => {
-          const { scale, positionX, positionY } = ref.state;
-          
-          const minX = -0.3 * SCR_WIDTH;
-          const maxX = 0.3 * SCR_WIDTH;
-          const minY = -0.3 * SCR_HEIGHT;
-          const maxY = 0.3 * SCR_HEIGHT;
-      
-          let clampedX = Math.min(Math.max(positionX, minX), maxX);
-          let clampedY = Math.min(Math.max(positionY, minY), maxY);
-      
-          if (clampedX !== positionX || clampedY !== positionY) {
-            ref.setTransform(clampedX, clampedY, scale);
-          }
-        }}
+        limitToBounds={true}
       >
 
         {({ zoomIn, zoomOut, resetTransform, ...rest }) => (
@@ -145,13 +129,13 @@ const Land = ({ teamMembers, hoveredMemberIds, onHover, onOpenSkillCard }) => {
 
 }
 
-const FloatingContainer = styled.div`
+const TeamListFloatingContainer = styled.div`
   position: absolute;
-  top: calc(5vh + 20px + 8px);
-  left: 98vw;
-  transform: translateX(-100%);
-  width: 200px;
-  padding: 16px;
+  top: 80px;
+  left: calc(100vw - 30px);
+  transform: translate(-100%, 0);
+  width: 230px;
+  padding: 16px 16px 0 16px;
   background-color: rgba(0, 0, 0, 0.5);
   border-radius: 12px;
   z-index: 5;
@@ -174,11 +158,6 @@ const MemberRow = styled.div`
   align-items: center;
   justify-content: space-between;
   padding: 6px 0;
-  border-bottom: 1px solid #ddd;
-
-  &:last-child {
-    border-bottom: none;
-  }
 `;
 
 const ProfileWrapper = styled.div`
@@ -210,7 +189,7 @@ const SkillButton = styled.button`
 const ExpandButton = styled.button`
   margin-top: 8px;
   margin-bottom: 0;
-  padding: 4px 8px;
+  padding: 0;
   background-color: rgba(0, 0, 0, 0);
   color: white;
   border: none;
@@ -220,13 +199,94 @@ const ExpandButton = styled.button`
   width: 100%;
 `;
 
-const TeamListFloating = ({ members, onHover, onOpenSkillCard }) => {
+// Modal Overlay
+const ModalOverlay = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+// Modal Container
+const ModalContainer = styled.div`
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  width: 300px;
+`;
+
+// Input Field
+const InputField = styled.input`
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 12px;
+  box-sizing: border-box;
+`;
+
+// Button Group
+const ButtonGroup = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+`;
+
+const AddShortcutModal = ({ isOpen, onClose, onAdd }) => {
+  const [shortcutName, setShortcutName] = useState("");
+  const [shortcutURL, setShortcutURL] = useState("");
+
+  const handleAdd = () => {
+    if (shortcutName.trim() === "" || shortcutURL.trim() === "") {
+      alert("이름과 URL을 모두 입력해주세요.");
+      return;
+    }
+    onAdd({ name: shortcutName, url: shortcutURL });
+    setShortcutName("");
+    setShortcutURL("");
+    onClose();
+  };
+
+  if (!isOpen) return null;
+
+  return (
+    <ModalOverlay>
+      <ModalContainer>
+        <h3>바로가기 추가</h3>
+        <label>이름</label>
+        <InputField
+          type="text"
+          value={shortcutName}
+          onChange={(e) => setShortcutName(e.target.value)}
+          placeholder="바로가기 이름"
+        />
+        <label>URL</label>
+        <InputField
+          type="text"
+          value={shortcutURL}
+          onChange={(e) => setShortcutURL(e.target.value)}
+          placeholder="URL"
+        />
+        <ButtonGroup>
+          <button onClick={onClose}>취소</button>
+          <button onClick={handleAdd}>추가</button>
+        </ButtonGroup>
+      </ModalContainer>
+    </ModalOverlay>
+  );
+};
+
+
+const TeamListFloating = ({ members, onHover, onOpenSkillCard, onToggleExpand }) => {
   const [expanded, setExpanded] = useState(false);
 
   const visibleCount = expanded ? members.length : Math.min(members.length, 4);
 
   return (
-    <FloatingContainer>
+    <TeamListFloatingContainer>
       <Title>팀원 목록</Title>
       <MemberList>
         {members.slice(0, visibleCount).map((member) => (
@@ -245,7 +305,7 @@ const TeamListFloating = ({ members, onHover, onOpenSkillCard }) => {
       </MemberList>
 
       {members.length > 4 && (
-        <ExpandButton onClick={() => setExpanded(!expanded)}>
+        <ExpandButton onClick={() => {onToggleExpand(!expanded); setExpanded(!expanded); }}>
           {expanded ? (
               <MdExpandLess />
           ) : (
@@ -253,7 +313,96 @@ const TeamListFloating = ({ members, onHover, onOpenSkillCard }) => {
           )}
         </ExpandButton>
       )}
-    </FloatingContainer>
+    </TeamListFloatingContainer>
+  );
+};
+
+const TeamPageFloatingContainer = styled.div`
+  position: absolute;
+  left: calc(100vw - 30px);
+  transform: translateX(-100%);
+  width: 230px;
+  padding: 16px 16px 0 16px;
+  background-color: rgba(0, 0, 0, 0.5);
+  border-radius: 12px;
+  z-index: 5;
+`;
+
+const TeamPageTitleWrapper = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`;
+
+const AddButton = styled.button`
+  color: white;
+  background-color: rgba(0, 0, 0, 0);
+  border: none;
+  margin-bottom: 12px;
+  padding: 0;
+  cursor: pointer;
+`;
+
+const ShortcutList = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+const ShortcutRow = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 0;
+
+  &:last-child {
+    margin-bottom: 12px;
+  }
+`;
+
+const ShortcutName = styled.span`
+  font-size: 0.95rem;
+  color: white;
+  cursor: pointer;
+  text-decoration: underline;
+`;
+
+const TeamPageFloating = ({ memberNum, isTeamListExpanded, shortcuts, onAddShortcut }) => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleAddClick = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleAddShortcut = (shortcut) => {
+    onAddShortcut(shortcut);
+  };
+
+  return (
+    <TeamPageFloatingContainer 
+      style={{ top: `calc(86px + 22.5px + ${(memberNum > 4 && (!isTeamListExpanded))? 180: (memberNum <= 4)? 44 * memberNum - 24.5 : 44*memberNum}px + 24.5px + 40px)` }}
+    >
+      <TeamPageTitleWrapper>
+        <Title>팀 페이지</Title>
+        {shortcuts.length < 3 && (
+          <AddButton onClick={handleAddClick}>추가하기</AddButton>
+        )}
+      </TeamPageTitleWrapper>
+      <ShortcutList>
+        {shortcuts.map((shortcut, index) => (
+          <ShortcutRow key={index}>
+            <ShortcutName onClick={() => window.open(shortcut.url, "_blank")}>
+              {shortcut.name}
+            </ShortcutName>
+          </ShortcutRow>
+        ))}
+      </ShortcutList>
+
+      <AddShortcutModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onAdd={handleAddShortcut}
+      />
+    </TeamPageFloatingContainer>
   );
 };
 
@@ -286,18 +435,21 @@ const LeftTopButton = styled.img`
 
 const RightTopButton = styled.img`
   position: absolute;
-  left: 97vw;
-  top: 5vh;
+  left: calc(100vw - 30px);
+  top: 23px;
   width: 40px;
-  transform: translate(-70%, -50%);
+  transform: translate(-100%, 0);
 `;
 
-const RightBottomButton = styled.img`
+const RightBottomButton = styled.button`
   position: absolute;
-  left: 97vw;
-  top: 95vh;
-  width: 30px;
-  transform: translate(-50%, -50%);
+  left: calc(100vw - 30px);
+  top: calc(100vh - 23px);
+  transform: translate(-100%, -100%);
+
+  width: 100px;
+  height: 40px;
+  border-radius: 32px;
 
   cursor: pointer;
 `;
@@ -310,11 +462,8 @@ const LandPage = () => {
     { id: 3, profile: "profile.png", name: "지석영" },
     { id: 4, profile: "profile.png", name: "지석영" },
     { id: 5, profile: "profile.png", name: "정민찬" },
+    // { id: 6, profile: "profile.png", name: "정민찬" },
 
-    { id: 6, profile: "profile.png", name: "정민찬" },
-    { id: 7, profile: "profile.png", name: "정민찬" },
-    { id: 8, profile: "profile.png", name: "정민찬" },
-    { id: 9, profile: "profile.png", name: "정민찬" },
 
 
 
@@ -323,6 +472,8 @@ const LandPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSkillCardOpen, setIsSkillCardOpen] = useState(false);
   const [hoveredMemberIds, setHoveredMemberIds] = useState([]);
+  const [isTeamListExpanded, setIsTeamListExpanded] = useState(false);
+  const [shortcuts, setShortcuts] = useState([]);
 
   const handleOpenModal = () => {
     setIsModalOpen(true);
@@ -351,6 +502,12 @@ const LandPage = () => {
     });
   };
 
+  const handleAddShortcut = (shortcut) => {
+    if (shortcuts.length < 3) {
+      setShortcuts([...shortcuts, shortcut]);
+    }
+  };
+
   return (
     <div style={{ position: "relative", width: "100vw", height: "100vh", overflow: "hidden", backgroundColor: "#6C54F7" }}>
       <Land 
@@ -365,14 +522,23 @@ const LandPage = () => {
         {/* <MdExpandMore /> */}
       </LandTitleDiv>
 
+      
       <RightTopButton src={profile} onClick={() => setIsSkillCardOpen(true) } />
-      <TeamListFloating
-        members={teamMembers}
-        onHover={handleHover}
-        onOpenSkillCard={openSkillCard}
-      />
+      
+        <TeamListFloating
+          members={teamMembers}
+          onHover={handleHover}
+          onOpenSkillCard={openSkillCard}
+          onToggleExpand={setIsTeamListExpanded}
+        />
+        <TeamPageFloating
+          memberNum={teamMembers.length}
+          isTeamListExpanded={isTeamListExpanded}
+          shortcuts={shortcuts}
+          onAddShortcut={handleAddShortcut}
+        />
 
-      <RightBottomButton src={exit} onClick={handleOpenModal} />
+      <RightBottomButton onClick={handleOpenModal} >홈 이동하기</RightBottomButton>
 
       <ConfirmModal 
         isOpen={isModalOpen}
