@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { TransformWrapper, TransformComponent, KeepScale } from "react-zoom-pan-pinch";
 import { MdExpandMore, MdExpandLess } from "react-icons/md";
 import styled from "styled-components";
@@ -20,7 +20,10 @@ import bubble10 from "../assets/LandPage/Bubbles/bubble10.svg";
 import exit from "../assets/icon_exit.png";
 import profile from "../assets/profile.png";
 import ConfirmModal from "../components/modals/ConfirmModal";
-import SkillCardModal from "../components/modals/SkillCardModal";
+import SkillCardModal from "../components/modals/LandSkillCard";
+
+import { getMembersAPI } from "../context/FormContext";
+import axios from "axios";
 
 const SCR_HEIGHT = window.screen.height - (window.outerHeight - window.innerHeight);
 const SCR_WIDTH = window.screen.width - (window.outerWidth - window.innerWidth);
@@ -75,15 +78,15 @@ const Land = ({ teamMembers, hoveredMemberIds, onHover, onOpenSkillCard }) => {
                   const monLeft = `${fromleft}%`;
                   const bubbleTop = `calc(${fromtop}% - ${SCR_HEIGHT * 0.07}px)`;
 
-                  const isHovered = hoveredMemberIds.includes(member.id);
+                  const isHovered = hoveredMemberIds.includes(member.userId);
 
                   let bubbleSrc = isHovered ? bubble0 : bubbleArr[i];
 
                   return (
-                    <React.Fragment key={member.id}>
+                    <React.Fragment key={member.userId}>
                       <img
                         src={mon}
-                        alt={`monster-${member.name}`}
+                        alt={`monster of ${member.name}`}
                         style={{
                           width: `${SCR_HEIGHT * 0.038}px`,
                           position: "absolute",
@@ -101,8 +104,8 @@ const Land = ({ teamMembers, hoveredMemberIds, onHover, onOpenSkillCard }) => {
                           zIndex: 2,
                         }}
 
-                        onMouseEnter={() => onHover(member.id, true)}
-                        onMouseLeave={() => onHover(member.id, false)}
+                        onMouseEnter={() => onHover(member.userId, true)}
+                        onMouseLeave={() => onHover(member.userId, false)}
 
                         onClick={() => onOpenSkillCard?.()}
                       >
@@ -291,12 +294,12 @@ const TeamListFloating = ({ members, onHover, onOpenSkillCard, onToggleExpand })
       <MemberList>
         {members.slice(0, visibleCount).map((member) => (
           <MemberRow
-            key={member.id}
-            onMouseEnter={() => onHover(member.id, true)}
-            onMouseLeave={() => onHover(member.id, false)}
+            key={member.userId}
+            onMouseEnter={() => onHover(member.userId, true)}
+            onMouseLeave={() => onHover(member.userId, false)}
           >
             <ProfileWrapper>
-              <ProfileImage src={require(`../assets/${member.profile}`)} alt={member.name} />
+              <ProfileImage src={require("../assets/profile.png")} alt={member.name} />
               <MemberName>{member.name}</MemberName>
             </ProfileWrapper>
             <SkillButton onClick={() => onOpenSkillCard?.()}>역량카드</SkillButton>
@@ -454,50 +457,87 @@ const RightBottomButton = styled.button`
   cursor: pointer;
 `;
 
+
 const LandPage = () => {
 
-  const teamMembers = [
+  const [teamMembers, setTeamMembers] = useState([]); // 초기값은 빈 배열
+
+  useEffect(() => {
+    const fetchTeamMembers = async () => {
+      try {
+        console.log("쏩니다");
+        const response = await axios.get("http://172.30.1.79:8080/land/2/members");
+        setTeamMembers(response.data); // 서버로부터 데이터 설정
+        console.log(response.data);
+      } catch (error) {
+        console.error("API 호출 에러(GET)", error);
+      }
+    };
+
+    fetchTeamMembers(); // 데이터 가져오기
+  }, []); // 컴포넌트 마운트 시 1회 실행
+
+  if (!Array.isArray(teamMembers)) {
+    alert("에러 발생");
+  }
+
+  const teamMembers2 = [
     { id: 1, profile: "profile.png", name: "강신엽" },
     { id: 2, profile: "profile.png", name: "강신엽" },
     { id: 3, profile: "profile.png", name: "지석영" },
     { id: 4, profile: "profile.png", name: "지석영" },
     { id: 5, profile: "profile.png", name: "정민찬" },
     // { id: 6, profile: "profile.png", name: "정민찬" },
-
-
-
-
   ];
 
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const allCards = [
+    { id: 'communication', title: '소통', content: ['비대면 소통을 선호해요', '새벽연락도 가능해요'] },
+    { id: 'work', title: '작업', content: ['다같이 작업하고 싶어요', '평일에 하고 싶어요'] },
+    { id: 'thinking', title: '사고', content: ['논리적이에요', '창의적이에요'] },
+    { id: 'role', title: '역할', content: ['리더십이 있어요', '기록을 잘 남겨요'] },
+    { id: 'conflict', title: '갈등 해결', content: ['바로 해결해요', '솔직하게 표현해요'] },
+    { id: 'time', title: '시간', content: ['오전(06-12)', '저녁(18-00)'] },
+    { id: 'rest', title: '휴식', content: ['짧게 자주 쉬고 싶어요'] },
+    { id: 'friendship', title: '친목', content: ['작업에만 집중하고 싶어요'] },
+    { id: 'important', title: '중요하게 생각해요', content: ['팀플 시간을 꼭 지켜주기'] },
+  ];
+
+  const [isAddTeamPageOpen, setIsAddTeamPageOpen] = useState(false);
   const [isSkillCardOpen, setIsSkillCardOpen] = useState(false);
   const [hoveredMemberIds, setHoveredMemberIds] = useState([]);
   const [isTeamListExpanded, setIsTeamListExpanded] = useState(false);
   const [shortcuts, setShortcuts] = useState([]);
 
-  const handleOpenModal = () => {
-    setIsModalOpen(true);
+  const handleOpenAddTeamPage = () => {
+    setIsAddTeamPageOpen(true);
   };
 
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
+  const handleCloseAddTeamPage = () => {
+    setIsAddTeamPageOpen(false);
   };
+
+  const handleOpenSkillCard = () => {
+    setIsSkillCardOpen(true);
+  }
+
+  const handleCloseSkillCard = () => {
+    setIsSkillCardOpen(false);
+  }
+
   const handleConfirm = () => {
-    setIsModalOpen(false);
+    setIsAddTeamPageOpen(false);
     alert("팀에서 나갔습니다!");
   };
 
-  const openSkillCard = () => setIsSkillCardOpen(true);
-
-  const handleHover = (memberId, isHovered) => {
+  const handleHover = (MemberId, isHovered) => {
     setHoveredMemberIds((prev) => {
       if (isHovered) {
-        if (!prev.includes(memberId)) {
-          return [...prev, memberId];
+        if (!prev.includes(MemberId)) {
+          return [...prev, MemberId];
         }
         return prev;
       } else {
-        return prev.filter((id) => id !== memberId);
+        return prev.filter((id) => id !== MemberId);
       }
     });
   };
@@ -508,41 +548,42 @@ const LandPage = () => {
     }
   };
 
+  document.body.style.overflow = 'hidden';
+
   return (
     <div style={{ position: "relative", width: "100vw", height: "100vh", overflow: "hidden", backgroundColor: "#6C54F7" }}>
       <Land 
         teamMembers={teamMembers} 
         hoveredMemberIds={hoveredMemberIds}
         onHover={handleHover}
-        onOpenSkillCard={openSkillCard}
+        onOpenSkillCard={handleOpenSkillCard}
       />
 
       <LandTitleDiv>
         <LandTitle>PARD</LandTitle>
-        {/* <MdExpandMore /> */}
       </LandTitleDiv>
 
       
       <RightTopButton src={profile} onClick={() => setIsSkillCardOpen(true) } />
       
-        <TeamListFloating
-          members={teamMembers}
-          onHover={handleHover}
-          onOpenSkillCard={openSkillCard}
-          onToggleExpand={setIsTeamListExpanded}
-        />
-        <TeamPageFloating
-          memberNum={teamMembers.length}
-          isTeamListExpanded={isTeamListExpanded}
-          shortcuts={shortcuts}
-          onAddShortcut={handleAddShortcut}
-        />
+      <TeamListFloating
+        members={teamMembers}
+        onHover={handleHover}
+        onOpenSkillCard={handleOpenSkillCard}
+        onToggleExpand={setIsTeamListExpanded}
+      />
+      <TeamPageFloating
+        memberNum={teamMembers.length}
+        isTeamListExpanded={isTeamListExpanded}
+        shortcuts={shortcuts}
+        onAddShortcut={handleOpenAddTeamPage}
+      />
 
-      <RightBottomButton onClick={handleOpenModal} >홈 이동하기</RightBottomButton>
+      <RightBottomButton onClick={handleOpenAddTeamPage} >홈 이동하기</RightBottomButton>
 
       <ConfirmModal 
-        isOpen={isModalOpen}
-        onClose={handleCloseModal}
+        isOpen={isAddTeamPageOpen}
+        onClose={handleCloseAddTeamPage}
         onConfirm={handleConfirm}
         title="팀을 나가시겠습니까?"
         message="팀을 나가면 진행 중인 활동에 더 이상 참여할 수 없습니다."
@@ -554,7 +595,7 @@ const LandPage = () => {
 
       <SkillCardModal
         isOpen={isSkillCardOpen}
-        onClose={() => setIsSkillCardOpen(false)}
+        onClose={handleCloseSkillCard}
         userInfo={{
           profileImage: {profile},
           name: "홍길동",
