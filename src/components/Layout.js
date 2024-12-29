@@ -9,10 +9,12 @@ import Footer from "./Footer";
 const Layout = () => {
   const location = useLocation();
   const hideFooter = location.pathname.includes("/detail");
+  const isHomePage = location.pathname === '/';
+  
 
   return (
     <LayoutContainer>
-      <Header/>
+      {!isHomePage && <Header/>}
 
       <MainContent>
         <Outlet />
@@ -33,6 +35,5 @@ const LayoutContainer = styled.div`
 
 const MainContent = styled.main`
   flex: 1;
-  padding: 20px;
   
 `;
