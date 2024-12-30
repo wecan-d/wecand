@@ -84,7 +84,7 @@
   display: flex;
   align-items: center;
   justify-content: flex-start; /* 왼쪽 정렬 */
-  width: 60%; /* 전체 넓이 사용 */
+  width: 70%; /* 전체 넓이 사용 */
   margin-bottom: 60px;
   box-sizing: border-box;
 }
