@@ -101,7 +101,7 @@ const HomePage = () => {
 
         <CTAButtonWrapper>
           <CTAButton href="/recruiting">공모전을 찾아보세요</CTAButton>
-          <CTAButton href="/create">팀 모집을 위한 글 작성하기</CTAButton>
+          <CTAButton href="/maketeam">팀 모집을 위한 글 작성하기</CTAButton>
         </CTAButtonWrapper>
 
         <ScrollWrapper>
