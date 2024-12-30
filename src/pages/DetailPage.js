@@ -32,7 +32,8 @@ export default function DetailPage() {
     useEffect(() => {
         const fetchPostData = async () => {
             try {
-                const response = await axios.get(`http://172.30.1.44:8080/post/${postId}`);
+                const response = await axios.get(`http://192.168.0.29:8080/post/${postId}`);
+                // const response = await axios.get(`https://676e83a3df5d7dac1ccae100.mockapi.io/post/1`);
                 setPostData(response.data);
                 console.log("HTTP Status Code:", response.status);
             } catch (err) {
@@ -122,28 +123,26 @@ export default function DetailPage() {
                         <Text>
                             {/* !ERD memo = 메모 */}
                             {postData.memo}
+
                             {/* 총 상금 2400만원 같이 따실 분 구합니다.
               <br />
               <br />
               많이 지원해주세요! 열정 넘치는 분이라면 플러스 요인이 됩니다!
               <br />
               저는 열정만 있다면 잘할 수 있다고 생각합니다 ㅎㅎ */
-                            }
+            }
                         </Text>
                     </Section>
+            
 
                     {/* 자격 요건 */}
                     <Section>
                         <SectionTitle>자격 요건</SectionTitle>
                         <Description>
                             <UnorderedList>
-                                <ListItem>밝은 성격을 가지신 분</ListItem>
-                                <ListItem>열정 넘치시는 분</ListItem>
-                                <ListItem>협업을 좋아하는 사람</ListItem>
-                                <ListItem>피그마 하실 줄은 알아요</ListItem>
-                                <ListItem>
-                                    일러스트 잘하시는 분이면 더욱 좋아요!!!
-                                </ListItem>
+                                <ListItem>{postData.memo2}</ListItem>
+                               
+                                
                             </UnorderedList>
                         </Description>
                     </Section>
@@ -442,6 +441,7 @@ const InfoSection = styled.div `
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 1rem;
+  
 
   @media (max-width: 768px) {
     grid-template-columns: repeat(2, 1fr);
@@ -470,6 +470,7 @@ const InfoValue = styled.span `
   font-weight: 500;
   align-items: center;
   gap: 0.5rem; /* 역할 태그와 텍스트 간 간격 */
+  margin-top: 8px;
 `;
 
 const RoleTag = styled.span `
@@ -481,21 +482,37 @@ const RoleTag = styled.span `
   display: inline-block;
 `;
 
-const Section = styled.div ``;
+const Section = styled.div `
+  
+  
+  
+padding-bottom: 10px;
 
-const Text = styled.p `
+gap: 10px;
+
+`;
+
+const Text = styled.div `
   line-height: 140%;
   font-size: 22px;
   color: #4E5968;
+  /* border: 1px solid  #DBDBDB; */
+  height: 150px;
+  width: 851px;
+  border-radius: 16px;
+  /* padding: 20px; */
+  padding-top: 20px;
 `;
 
 const Description = styled.div `
-  background: #f0f3fa;
-  padding: 1rem;
+  
   border-radius: 8px;
   line-height: 1.6;
   font-weight: 400;
   color: #4E5968;
+  /* border: 1px solid  #DBDBDB; */
+  height: 170px;
+
 `;
 
 const ActionButtons = styled.div `
@@ -533,25 +550,15 @@ const ApplyButton = styled(LinkButton)`
   }
 `;
 
-const UnorderedList = styled.ul `
+const UnorderedList = styled.div `
   list-style-type: none;
   line-height: 160%; 
-  padding: 0;
+  /* padding: 20px; */
+  padding-top: 20px;
   font-size: 22px;
 `;
 
-const ListItem = styled.li `
-  margin-bottom: 0.8rem;
-  position: relative;
-  padding-left: 1.5rem;
-
-  &:before {
-    content: "•";
-    color: #6c6c6c;
-    position: absolute;
-    left: 0;
-    top: 0;
-  }
+const ListItem = styled.div `
 `;
 
 const ModalOverlay = styled.div `
