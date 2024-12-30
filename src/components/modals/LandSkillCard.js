@@ -105,10 +105,10 @@ const ModalContent = styled.div`
   left: 30px;
 
   background: white;
-  width:500px;
+  width:520px;
   height: 90vh;
   border-radius: 16px;
-  padding: 35px;
+  padding: 33px;
   padding-top: 20px;
   overflow-y: auto;
   display: flex;
@@ -198,7 +198,7 @@ const CardGrid = styled.div`
   display: grid;
   grid-template-columns: 225px 225px;
   grid-auto-rows: minmax(120px, auto);
-  gap: 16px;
+  gap: 14px;
   grid-template-areas:
     "communication work"
     "communication work"

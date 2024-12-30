@@ -1,11 +1,46 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { postMemberAPI, useForm } from "../context/FormContext";
 import "../styles/CommonStyles.css"; // CSS 파일 연결
 import SurveyIcon from "../assets/register.svg";
+import { Container, LeftPanel, LeftPanelImage, LeftPanelText, LeftPanelTextBox, LeftPanelTitle, NextButton, ProgressBar, ProgressStepOff, ProgressStepOn, QuestionBox, QuestionInput, QuestionLabel, QuestionRow, RightPanel, RightPanelTitle } from "../components/RegisterComponents";
+import styled from "styled-components";
+
+
+const QuestionBox3 = styled(QuestionBox)`
+  gap: 15px;
+`;
+const AnswerAddButton = styled.button`
+  background: none;
+  border: none;
+  color: #4e5968;
+  font-size: 17px;;
+
+  cursor: pointer;
+`;
+
+const AddInput = styled.input`
+  width: 100%;
+  height: 50px; /* 입력 필드 높이 조정 */
+  border: 1px solid #ddd;
+  padding: 0 12px; /* 내부 패딩 줄임 */
+  border-radius: 5px;
+  font-size: 17px; /* 입력 텍스트 크기 조정 */
+  box-sizing: border-box;
+`;
 
 const RegisterPage3 = () => {
   const { formData, setFormData } = useForm();
+  useEffect(() => {
+    setFormData((prevData) => ({
+      ...prevData,
+      certificates: prevData.certificates?.length > 0 ? prevData.certificates : [""],
+      tools: prevData.tools?.length > 0 ? prevData.tools : [""],
+      awards: prevData.awards?.length > 0 ? prevData.awards : [""],
+      url: prevData.url?.length > 0 ? prevData.url : [""],
+    }));
+  }, []);
+
   const navigate = useNavigate();
 
   /**
@@ -25,8 +60,7 @@ const RegisterPage3 = () => {
   const handleAddItem = (fieldName) => {
     setFormData((prevData) => ({
       ...prevData,
-      [fieldName]: [...prevData[fieldName], ""], // 빈 문자열 하나 추가
-    }));
+      [fieldName]: Array.isArray(prevData[fieldName]) ? [...prevData[fieldName], ""] : [""],    }));
   };
 
   /**
@@ -67,21 +101,15 @@ const RegisterPage3 = () => {
     }
 
     try {
-      const response = postMemberAPI(formData);
-      console.log("RegisterPage3 POST response:", response.data);
+      // const response = postMemberAPI(formData);
+      // console.log("RegisterPage3 POST response:", response.data);
     } catch (error) {
-      console.error("RegisterPage3 POST error:", error);
+      // console.error("RegisterPage3 POST error:", error);
     }
 
     navigate("/register/4");
   };
 
-  /**
-   * '이전' 버튼 클릭 시
-   */
-  const handlePrevious = () => {
-    navigate("/register/2");
-  };
 
   // 인풋+X버튼 묶음을 간단히 재사용하기 위한 함수
   const renderArrayField = (
@@ -89,39 +117,36 @@ const RegisterPage3 = () => {
     fieldName,       // formData에서 사용할 키 (ex: "certificates")
     placeholderText  // placeholder (ex: "자격증을 입력해주세요")
   ) => {
+    const fieldData = Array.isArray(formData[fieldName]) ? formData[fieldName] : []; // 배열이 아니면 빈 배열로 설정
+
     return (
-      <div className="question" style={{ flexDirection: "column" }}>
-        <div name="label%button" style={{ flexDirection: "column" }}>
-            <label>{label}</label>
-          {/* 추가 버튼 */}
-          <button type="button" onClick={() => handleAddItem(fieldName)}>
-            추가
-          </button>
-        </div>
+      <QuestionBox3>
+
+        <QuestionRow>
+          <QuestionLabel>{label}</QuestionLabel>
+          
+          <AnswerAddButton type="button" onClick={() => handleAddItem(fieldName)}>
+            추가하기
+          </AnswerAddButton>
+        </QuestionRow>
         
-        {formData[fieldName]?.map((value, index) => (
+        {fieldData.map((value, index) => (
           <div
             key={index}
             style={{
               position: "relative",
               width: "100%",
-              maxWidth: "400px", // 적절히 수정
               marginBottom: "8px",
             }}
           >
-            <input
+            <AddInput
               type="text"
               value={value}
               onChange={(e) => handleArrayChange(fieldName, index, e.target.value)}
               placeholder={placeholderText}
-              style={{
-                width: "100%",
-                boxSizing: "border-box",
-                paddingRight: "30px", // 오른쪽 공간 확보
-              }}
             />
             {/* 삭제 버튼: 배열이 1개 이상일 때만 표시할지 여부 결정 */}
-            {formData[fieldName].length > 1 && (
+            {fieldData.length > 1 && (
               <button
                 type="button"
                 onClick={() => handleRemoveItem(fieldName, index)}
@@ -142,48 +167,56 @@ const RegisterPage3 = () => {
             )}
           </div>
         ))}
-      </div>
+      </QuestionBox3>
     );
   };
 
   return (
-    <div className="container">
-      {/* 왼쪽 레이아웃 */}
-      <div className="left">
-      <div className="title-wrapper">
-          <img src={SurveyIcon} alt="Survey Icon" className="survey-icon" />
-          <h1 className="label1">경험/경력이 궁금해요</h1>
-        </div>
-        {/* 진행 바 */}
-        <div className="progress-bar">
-        <div className="progress-step active"></div>
-          <div className="progress-step active"></div>
-          <div className="progress-step active"></div>
-        </div>
-        <p className="label2">
-          나의 강점을 알려주세요!
-          <br />
-          협업에 도움이 될 만한 경력과 경험을 공유하면
-          <br />
-          나의 역할이 더 돋보일 거예요
-        </p>
-        <div className="image-placeholder"></div>
-      </div>
+    <Container>
+
+      <LeftPanel>
+        <LeftPanelTextBox>
+          <LeftPanelImage src={SurveyIcon} alt="Survey Icon" />
+          <LeftPanelTitle>경험/경력이 궁금해요</LeftPanelTitle>
+
+          <ProgressBar>
+            <ProgressStepOn />
+            <ProgressStepOn />
+            <ProgressStepOn />
+          </ProgressBar>
+
+          <LeftPanelText>
+            나의 강점을 알려주세요!
+            <br />
+            협업에 도움이 될 만한 경력과 경험을 공유하면
+            <br />
+            나의 역할이 더 돋보일 거에요
+          </LeftPanelText>
+        </LeftPanelTextBox>
+      </LeftPanel>
 
       {/* 오른쪽 레이아웃 */}
-      <div className="right">
-
+      <RightPanel>
+        <RightPanelTitle>경험/경력을 입력해 주세요</RightPanelTitle>
         {/* 자격증 (배열) */}
-        {renderArrayField("자격증:", "certificates", "자격증을 입력해주세요")}
+
 
         {/* 사용 가능한 툴 (배열) */}
-        {renderArrayField("사용 가능한 툴:", "tools", "사용 가능한 툴을 입력해주세요")}
+        {renderArrayField("사용 가능한 툴을 입력해 주세요", "tools", "사용 가능한 툴을 입력해주세요")}
 
+        {renderArrayField("소지하신 자격증을 입력해 주세요", "certificates", "자격증을 입력해주세요")}
         {/* 수상 경력 (배열) */}
-        {renderArrayField("수상 경력:", "awards", "수상 경력을 입력해주세요")}
+        {renderArrayField("수상 경력을 입력해 주세요", "awards", "수상 경력을 입력해주세요")}
 
         {/* 개인 작업물 URL (배열) */}
-        {renderArrayField("개인 작업물 URL:", "url", "개인 작업물 URL을 입력해주세요")}
+        {renderArrayField("개인 작업물 링크를 첨부해 주세요 (URL)", "url", "개인 작업물 URL을 입력해주세요")}
+
+
+        {/* 파일 첨부 */}
+        <div className="question">
+          <label>파일 첨부:</label>
+          <input type="file" name="file" onChange={handleFileChange} />
+        </div>
 
         {/* 추가 작성란 (단일 textArea) */}
         <div className="question">
@@ -197,23 +230,10 @@ const RegisterPage3 = () => {
           />
         </div>
 
-        {/* 파일 첨부 */}
-        <div className="question">
-          <label>파일 첨부:</label>
-          <input type="file" name="file" onChange={handleFileChange} />
-        </div>
 
-        {/* 이전/다음 버튼 */}
-        <div className="footer-buttons">
-          <button className="btn-prev" onClick={handlePrevious}>
-            이전
-          </button>
-          <button className="btn-next" onClick={handleNext}>
-            다음
-          </button>
-        </div>
-      </div>
-    </div>
+        <NextButton onClick={handleNext}>저장</NextButton>
+      </RightPanel>
+    </Container>
   );
 };
 
