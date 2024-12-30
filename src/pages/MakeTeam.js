@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 
-const server = "http://172.30.1.44:8080/post/2";
+const server = "http://172.30.1.44:8080/post/3";
 
 export const postMemberAPI = async (data) => {
   try {
@@ -26,6 +26,7 @@ const MakeTeam = () => {
   });
 
   const [imagePreview, setImagePreview] = useState(null);
+  const [errors, setErrors] = useState({});
 
   const categories = [
     "디자인",
@@ -43,6 +44,7 @@ const MakeTeam = () => {
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
+    setErrors({ ...errors, [name]: false }); // 입력 시 에러 제거
   };
 
   const handleImageChange = (e) => {
@@ -53,9 +55,19 @@ const MakeTeam = () => {
     }
   };
 
+  const validateForm = () => {
+    const newErrors = {};
+    ["title", "category", "date", "member", "url", "memo", "memo2"].forEach((field) => {
+      if (!formData[field] || (field === "member" && formData[field] <= 0)) {
+        newErrors[field] = true;
+      }
+    });
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleSubmit = async () => {
-    if (!formData.title || !formData.category || !formData.date) {
-      alert("필수 항목을 모두 입력해주세요.");
+    if (!validateForm()) {
       return;
     }
 
@@ -66,7 +78,7 @@ const MakeTeam = () => {
 
     try {
       const response = await postMemberAPI(payload);
-      alert("작성 완료! MockAPI에 성공적으로 업로드되었습니다.");
+      alert("작성 완료! 성공적으로 업로드되었습니다.");
       console.log("Uploaded Data:", response.data);
 
       setFormData({
@@ -80,6 +92,7 @@ const MakeTeam = () => {
         img: null,
       });
       setImagePreview(null);
+      setErrors({});
     } catch (error) {
       console.error("Error submitting form:", error);
       alert("데이터 업로드에 실패했습니다. 다시 시도해주세요.");
@@ -112,24 +125,32 @@ const MakeTeam = () => {
 
         <div style={styles.rightPanel}>
           <div style={styles.inputGroup}>
-            <label style={styles.label}>제목</label>
+          <div name="labelerror">
+        <label style={styles.label}>제목</label>
+        {errors.title && <span style={styles.errorMessage}>정보를 입력해 주세요</span>}
+        </div>
             <input
               type="text"
               name="title"
               placeholder="공모전 이름을 입력해주세요."
               value={formData.title}
               onChange={handleInputChange}
-              style={styles.input}
+              style={errors.title ? { ...styles.input, ...styles.inputError } : styles.input}
             />
           </div>
           <div style={styles.inputRow}>
             <div style={styles.inputGroup}>
-              <label style={styles.label}>카테고리</label>
+            <div name="labelerror">
+            <label style={styles.label}>카테고리</label>
+            {errors.category && <span style={styles.errorMessage}>정보를 입력해 주세요</span>}
+            </div>
               <select
                 name="category"
                 value={formData.category}
                 onChange={handleInputChange}
-                style={styles.select}
+                style={
+                  errors.category ? { ...styles.select, ...styles.inputError } : styles.select
+                }
               >
                 <option value="">카테고리를 선택해주세요</option>
                 {categories.map((cat) => (
@@ -141,58 +162,73 @@ const MakeTeam = () => {
             </div>
 
             <div style={styles.inputGroup}>
-              <label style={styles.label}>모집 마감 날짜</label>
+            <div name="labelerror">
+            <label style={styles.label}>모집 마감 날짜</label>
+            {errors.date && <span style={styles.errorMessage}>정보를 입력해 주세요</span>}
+            </div>
               <input
                 type="date"
                 name="date"
                 value={formData.date}
                 onChange={handleInputChange}
-                style={styles.input}
+                style={errors.date ? { ...styles.input, ...styles.inputError } : styles.input}
               />
             </div>
 
             <div style={styles.inputGroup}>
-              <label style={styles.label}>모집 인원</label>
+              <div name="labelerror">
+                <label style={styles.label}>모집 인원</label>
+                {errors.member && <span style={styles.errorMessage}>정보를 입력해 주세요</span>}
+              </div>
               <input
                 type="number"
                 name="member"
                 placeholder="모집 인원을 입력해주세요."
                 value={formData.member}
                 onChange={handleInputChange}
-                style={styles.input}
+                style={errors.member ? { ...styles.input, ...styles.inputError } : styles.input}
               />
             </div>
           </div>
           <div style={styles.inputGroup}>
-            <label style={styles.label}>URL 링크</label>
+          <div name="labelerror">
+          <label style={styles.label}>URL 링크</label>
+          {errors.url && <span style={styles.errorMessage}>정보를 입력해 주세요</span>}
+          </div>
             <input
               type="text"
               name="url"
               placeholder="공모전 링크를 첨부해주세요."
               value={formData.url}
               onChange={handleInputChange}
-              style={styles.input}
+              style={errors.url ? { ...styles.input, ...styles.inputError } : styles.input}
             />
           </div>
 
           <div style={styles.inputGroup}>
-            <label style={styles.label}>모집글</label>
+          <div name="labelerror">
+          <label style={styles.label}>모집글</label>
+          {errors.memo && <span style={styles.errorMessage}>정보를 입력해 주세요</span>}
+          </div>
             <textarea
               name="memo"
               placeholder="자유롭게 작성해주세요."
               value={formData.memo}
               onChange={handleInputChange}
-              style={styles.textarea}
+              style={errors.memo ? { ...styles.textarea, ...styles.inputError } : styles.textarea}
             />
           </div>
           <div style={styles.inputGroup}>
-            <label style={styles.label}>자격요건</label>
+          <div name="labelerror">
+          <label style={styles.label}>자격요건</label>
+          {errors.memo2 && <span style={styles.errorMessage}>정보를 입력해 주세요</span>}
+          </div>
             <textarea
               name="memo2"
               placeholder="자유롭게 작성해주세요."
               value={formData.memo2}
               onChange={handleInputChange}
-              style={styles.textarea}
+              style={errors.memo2 ? { ...styles.textarea, ...styles.inputError } : styles.textarea}
             />
           </div>
           <button onClick={handleSubmit} style={styles.submitButton}>
@@ -219,7 +255,6 @@ const styles = {
     display: "flex",
     flexDirection: "row",
     gap: "2rem",
-    // justifyContent: "center",
   },
   leftPanel: {
     marginLeft: "150px",
@@ -227,7 +262,6 @@ const styles = {
     flexDirection: "column",
     alignItems: "center",
     width: "30%",
-    // padding: "1rem",
   },
   imageUpload: {
     width: "480px",
@@ -245,7 +279,7 @@ const styles = {
     width: "auto",
     height: "100%",
     maxWidth: "100%",
-    objectFit: "contain", // 잘리지 않게 조정
+    objectFit: "contain",
   },
   plusSign: {
     fontSize: "2rem",
@@ -255,7 +289,7 @@ const styles = {
     display: "none",
   },
   rightPanel: {
-    paddingRight : "300px",
+    paddingRight: "300px",
     flex: 1,
     justifyContent: "left",
     display: "flex",
@@ -268,8 +302,21 @@ const styles = {
     gap: "1.2rem",
     width: "100%",
   },
+  inputRow: {
+    display: "flex",
+    justifyContent: "space-between",
+    width: "100%",
+    gap: "1rem",
+  },
   label: {
     fontWeight: "bold",
+  },
+  errorMessage: {
+    fontSize: "0.65rem",
+    color: "#D74F8B",
+    padding: "2px 8px",
+    borderRadius: "4px",
+    marginLeft: "10px",
   },
   input: {
     padding: "0.5rem",
@@ -290,6 +337,9 @@ const styles = {
     resize: "none",
     height: "80px",
   },
+  inputError: {
+    borderColor: "#D74F8B",
+  },
   submitButton: {
     padding: "0.8rem 2rem",
     color: "#fff",
@@ -300,12 +350,9 @@ const styles = {
     alignSelf: "flex-end",
     marginTop: "2rem",
   },
-  inputRow: {
-    display: "flex",
-    justifyContent: "space-between",
-    width: "100%",
-    gap: "1rem",
-  },
+  labelerror : {
+    flexDirection: "column",
+  }
 };
 
 export default MakeTeam;
