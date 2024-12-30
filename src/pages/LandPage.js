@@ -460,33 +460,33 @@ const RightBottomButton = styled.button`
 
 const LandPage = () => {
 
-  const [teamMembers, setTeamMembers] = useState([]); // 초기값은 빈 배열
+  // const [teamMembers, setTeamMembers] = useState([]); // 초기값은 빈 배열
 
-  useEffect(() => {
-    const fetchTeamMembers = async () => {
-      try {
-        console.log("쏩니다");
-        const response = await axios.get("http://172.30.1.79:8080/land/2/members");
-        setTeamMembers(response.data); // 서버로부터 데이터 설정
-        console.log(response.data);
-      } catch (error) {
-        console.error("API 호출 에러(GET)", error);
-      }
-    };
+  // useEffect(() => {
+  //   const fetchTeamMembers = async () => {
+  //     try {
+  //       console.log("쏩니다");
+  //       const response = await axios.get("http://172.30.1.79:8080/land/2/members");
+  //       setTeamMembers(response.data); // 서버로부터 데이터 설정
+  //       console.log(response.data);
+  //     } catch (error) {
+  //       console.error("API 호출 에러(GET)", error);
+  //     }
+  //   };
 
-    fetchTeamMembers(); // 데이터 가져오기
-  }, []); // 컴포넌트 마운트 시 1회 실행
+  //   fetchTeamMembers(); // 데이터 가져오기
+  // }, []); // 컴포넌트 마운트 시 1회 실행
 
-  if (!Array.isArray(teamMembers)) {
-    alert("에러 발생");
-  }
+  // if (!Array.isArray(teamMembers)) {
+  //   alert("에러 발생");
+  // }
 
-  const teamMembers2 = [
-    { id: 1, profile: "profile.png", name: "강신엽" },
-    { id: 2, profile: "profile.png", name: "강신엽" },
-    { id: 3, profile: "profile.png", name: "지석영" },
-    { id: 4, profile: "profile.png", name: "지석영" },
-    { id: 5, profile: "profile.png", name: "정민찬" },
+  const teamMembers = [
+    { memberId: 1, profile: "profile.png", name: "강신엽" },
+    { memberId: 2, profile: "profile.png", name: "강신엽" },
+    { memberId: 3, profile: "profile.png", name: "지석영" },
+    { memberId: 4, profile: "profile.png", name: "지석영" },
+    { memberId: 5, profile: "profile.png", name: "정민찬" },
     // { id: 6, profile: "profile.png", name: "정민찬" },
   ];
 
