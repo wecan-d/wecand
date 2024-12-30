@@ -164,7 +164,6 @@
 
 /* 질문 영역 */
 .question2 {
-  margin-left: 250px;
   display: flex;
   flex-direction: column; /* 레이블과 버튼을 세로로 배치 */
   align-items: flex-start; /* 왼쪽 정렬 */

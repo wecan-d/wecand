@@ -3,9 +3,16 @@ import { useNavigate } from "react-router-dom";
 import { postMemberAPI, useForm } from "../context/FormContext";
 import "../styles/CommonStyles.css";
 import SurveyIcon from "../assets/register.svg";
+import { Container, LeftPanel, LeftPanelImage, LeftPanelText, LeftPanelTextBox, LeftPanelTitle, NextButton, ProgressBar, ProgressStepOff, ProgressStepOn, PurpleText, QuestionBox, QuestionInput, QuestionLabel, QuestionRadioDiv, QuestionRadioInput, QuestionRadioLabel, QuestionRow, RightPanel, RightPanelText, RightPanelTitle } from "../components/RegisterComponents";
+import styled from "styled-components";
+
+const RightPanel1 = styled(RightPanel)`
+  margin-right: 50px;
+`;
 
 const validatePhoneNumber = (phone) => /^\d{3}-\d{4}-\d{4}$/.test(phone);
 const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+
 
 const RegisterPage1 = () => {
   const { formData, setFormData } = useForm();
@@ -47,134 +54,137 @@ const RegisterPage1 = () => {
     }
 
     try {
-      const response = postMemberAPI(formData);
-      console.log("RegisterPage1 POST response:", response.data);
+      // const response = postMemberAPI(formData);
+      // console.log("RegisterPage1 POST response:", response.data);
     } catch (error) {
-      console.error("RegisterPage1 POST error:", error);
+      // console.error("RegisterPage1 POST error:", error);
     }
 
     navigate("/register/2");
   };
 
   return (
-    <div className="container">
-      <div className="left">
-        <div className="title-wrapper">
-          <img src={SurveyIcon} alt="Survey Icon" className="survey-icon" />
-          <h1 className="label1">설문이 필요해요</h1>
-        </div>
-        <div className="progress-bar">
-          <div className="progress-step active"></div>
-          <div className="progress-step"></div>
-          <div className="progress-step"></div>
-        </div>
-        <p className="label2">
-          자신의 작업스타일과 경력/경험을 입력하면
-          <br />
-          자신의 역량 카드를 만들어 드려요!
-          <br />
-          <br />
-          해당 역량카드로 사람들과 보다 나은
-          <br />
-          팀활동을 할 수 있어요
-        </p>
-      </div>
-      <div className="r1">
-        <h2>기본 정보를 입력해주세요</h2>
-        <p>*표시는 필수로 입력해 주세요</p>
-        <br />
-        <div className="question">
-          <label>성별 <span className="required">*</span></label>
-          <div className="checkbox-group">
-            <label>
-              <input
-                type="radio"
-                name="gender"
-                value="남자"
-                checked={formData.gender === "남자"}
-                onChange={handleInputChange}
-              />
-              남자
-            </label>
-            <label>
-              <input
-                type="radio"
-                name="gender"
-                value="여자"
-                checked={formData.gender === "여자"}
-                onChange={handleInputChange}
-              />
-              여자
-            </label>
-          </div>
-        </div>
-        <div className="question">
-          <label>이름 <span className="required">*</span></label>
-          <input
-            type="text"
-            name="name"
-            value={formData.name}
-            onChange={handleInputChange}
-            placeholder="이름을 입력해주세요"
-          />
-        </div>
-        <div className="question">
-          <label>나이</label>
-          <input
-            type="number"
-            name="age"
-            value={formData.age}
-            onChange={handleInputChange}
-            placeholder="나이를 입력해주세요"
-          />
-        </div>
-        <div className="question">
-          <label>신분 <span className="required">*</span></label>
-          <input
-            type="text"
-            name="identity"
-            value={formData.identity}
-            onChange={handleInputChange}
-            placeholder="신분을 입력해주세요"
-          />
-        </div>
-        <div className="question">
-          <label>직종/학과 <span className="required">*</span></label>
-          <input
-            type="text"
-            name="major"
-            value={formData.major}
-            onChange={handleInputChange}
-            placeholder="직종/학과를 입력해주세요"
-          />
-        </div>
-        <div className="question">
-          <label>이메일 <span className="required">*</span></label>
-          <input
-            type="email"
-            name="email"
-            value={formData.email}
-            onChange={handleInputChange}
-            placeholder="이메일을 입력해주세요"
-          />
-        </div>
-        <div className="question">
-          <label>전화번호</label>
-          <input
-            type="text"
-            name="phone"
-            value={formData.phone}
-            onChange={handleInputChange}
-            placeholder="전화번호를 입력해주세요 (예: 010-1234-5678)"
-          />
-        </div>
-        <div className="footer-buttons">
-          <button className="btn-next" onClick={handleNext}>
-            다음
-          </button>
-        </div>
-      </div>
-    </div>
+    <Container>
+      <LeftPanel>
+        <LeftPanelTextBox>
+          <LeftPanelImage src={SurveyIcon} alt="Survey Icon" />
+          <LeftPanelTitle>정보가 필요해요</LeftPanelTitle>
+
+          <ProgressBar>
+            <ProgressStepOn />
+            <ProgressStepOff />
+            <ProgressStepOff />
+          </ProgressBar>
+
+          <LeftPanelText>
+            자신의 작업스타일과 경력/경험을 입력하면
+            <br />
+            자신의 역량 카드를 만들어 드려요!
+            <br />
+            <br />
+            해당 역량카드로 사람들과 보다 적합한
+            <br />
+            팀 활동을 할 수 있어요
+          </LeftPanelText>
+        </LeftPanelTextBox>
+      </LeftPanel>
+
+      
+      <RightPanel1>
+        <RightPanelTitle>기본 정보를 입력해주세요</RightPanelTitle>
+        <RightPanelText style={{"marginBottom": "28px"}}><PurpleText>*</PurpleText> 표시는 필수로 입력해 주세요</RightPanelText>
+        
+        <QuestionBox>
+          <QuestionRow>
+            <QuestionLabel>성별 <PurpleText>*</PurpleText></QuestionLabel>
+            <QuestionRadioDiv>
+              <QuestionRadioLabel>
+                <QuestionRadioInput 
+                  type="radio"
+                  name="gender"
+                  value="남자"
+                  checked={formData.gender === "남자"}
+                  onChange={handleInputChange}
+                />
+                남자
+              </QuestionRadioLabel>
+              <QuestionRadioLabel>
+                <QuestionRadioInput 
+                  type="radio"
+                  name="gender"
+                  value="여자"
+                  checked={formData.gender === "여자"}
+                  onChange={handleInputChange}
+                />
+                여자
+              </QuestionRadioLabel>
+            </QuestionRadioDiv>
+          </QuestionRow>
+          <QuestionRow>
+            <QuestionLabel>이름 <PurpleText>*</PurpleText></QuestionLabel>
+            <QuestionInput
+              type="text"
+              name="name"
+              value={formData.name}
+              onChange={handleInputChange}
+              placeholder="이름을 입력해주세요"
+            />
+          </QuestionRow>
+          <QuestionRow>
+            <QuestionLabel>나이</QuestionLabel>
+            <QuestionInput
+              type="number"
+              name="age"
+              value={formData.age}
+              onChange={handleInputChange}
+              placeholder="나이를 입력해주세요"
+            />
+          </QuestionRow>
+          <QuestionRow>
+            <QuestionLabel>신분 <PurpleText>*</PurpleText></QuestionLabel>
+            <QuestionInput
+              type="text"
+              name="identity"
+              value={formData.identity}
+              onChange={handleInputChange}
+              placeholder="신분을 입력해주세요"
+            />
+          </QuestionRow>
+          <QuestionRow>
+            <QuestionLabel>직종/학과 <PurpleText>*</PurpleText></QuestionLabel>
+            <QuestionInput
+              type="text"
+              name="major"
+              value={formData.major}
+              onChange={handleInputChange}
+              placeholder="직종/학과를 입력해주세요"
+            />
+          </QuestionRow>
+          <QuestionRow>
+            <QuestionLabel>이메일 <PurpleText>*</PurpleText></QuestionLabel>
+            <QuestionInput
+              type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleInputChange}
+              placeholder="이메일을 입력해주세요"
+            />
+          </QuestionRow>
+          <QuestionRow>
+            <QuestionLabel>전화번호</QuestionLabel>
+            <QuestionInput
+              type="text"
+              name="phone"
+              value={formData.phone}
+              onChange={handleInputChange}
+              placeholder="전화번호를 입력해주세요 (예: 010-1234-5678)"
+            />
+          </QuestionRow>
+        </QuestionBox>
+        
+        <NextButton onClick={handleNext}>다음</NextButton>
+      </RightPanel1>
+    </Container>
   );
 };
 
