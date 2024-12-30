@@ -16,6 +16,27 @@ const RecruitmentPage = () => {
     const [selectedCategory, setSelectedCategory] = useState(category || "");
     const [sortCriteria, setSortCriteria] = useState(sort);
 
+
+    const [selectedCategoryText, setSelectedCategoryText] = useState(""); 
+    const handle = (categoryName) => {
+        setSelectedCategoryText(categoryName);
+    };
+
+
+
+    const [isOpen, setIsOpen] = useState(false); // 드롭다운 열림 상태
+    const [selectedOption, setSelectedOption] = useState("최신순"); // 선택된 옵션
+
+    const toggleDropdown = () => {
+        setIsOpen((prev) => !prev);
+    };
+
+    const handleOptionClick = (option) => {
+        setSelectedOption(option); // 선택된 옵션 설정
+        setIsOpen(false); // 드롭다운 닫기
+    };
+    
+
     // !!!!데이터 가져옴
     useEffect(() => {
         const fetchUsers = async () => {
@@ -106,35 +127,50 @@ const RecruitmentPage = () => {
                 <CategoryWrapper>
                     {categories.map((category) => (
                         <CategoryItem key={category.id}>
-                            <CategoryCard onClick={() => handleCategoryClick(category.id)} />
+                            <CategoryCard onClick={() => {
+                              handleCategoryClick(category.id);
+                              handle(category.name);
+                            }
+                            } />
                             <CategoryText>{category.name}</CategoryText>
                         </CategoryItem>
                     ))}
                 </CategoryWrapper>
             </CategoryContainer>
+            
 
             <SortAndWriteSection>
-                <SortButtons>
-                    <SortButton
-                        onClick={() => handleSortChange("latest")}
-                        active={sortCriteria === "latest"}
-                    >
+                <>
+                <CategoryText1>
+                공모전 모집글 ㅣ</CategoryText1>
+                <CategoryText1>{selectedCategoryText && `${selectedCategoryText}`}</CategoryText1>
+                  
+                    <DropdownContainer>
+                      <DropdownButton onClick={toggleDropdown}>
+                        {selectedOption}<Arrow>▼</Arrow>
+                      </DropdownButton>
+                      
+            {isOpen && (
+              <DropdownMenu>
+                    <DropdownItem onClick={() => handleSortChange("latest")}>
                         최신순
-                    </SortButton>
-                    <SortButton
-                        onClick={() => handleSortChange("deadline")}
-                        active={sortCriteria === "deadline"}
-                    >
+                    </DropdownItem>
+                    <DropdownItem onClick={() => handleSortChange("deadline")}>
                         마감임박순
-                    </SortButton>
-                </SortButtons>
-                <WriteButton>글 작성하기 +</WriteButton>
+                    </DropdownItem>
+                </DropdownMenu>
+            )}
+        </DropdownContainer>
+              </>
+        
+                <WriteButton>글 작성하기</WriteButton>
+            
             </SortAndWriteSection>
               <Divide/>
             <PostListSection >
 
-            
-
+                
+      
                 {filteredAndSorted.length > 0 ? (
                     filteredAndSorted.map((user, index) => (
                           <>
@@ -199,9 +235,7 @@ const PageContainer = styled.div `
 `;
 
 const CategoryContainer = styled.div `
-  padding: 64px 2rem 8rem;
-  
-  margin-bottom: 5%;
+  padding: 64px 2.6rem 6rem;
 `;
 
 
@@ -213,15 +247,28 @@ const CategoryWrapper = styled.div `
 `;
 
 const CategoryText = styled.span `
-  
   color: #333;
   font-weight: 600;
-  margin-top: 16px;
+  margin-top: 10px;
   font-size: 24px;
   color: #7D7D7D;
   font-weight: 400;
   font-size: 22px;
+  white-space : nowrap;
 `;
+
+const CategoryText1 = styled.div `
+  color: black;
+  font-weight: 600;
+  margin-top: 10px;
+  font-size: 24px;
+  font-weight: 400;
+  font-size: 32px;
+  white-space : nowrap;
+  font-weight: 600;
+  padding-bottom: 10px;
+`;
+
 
 const Divide = styled.div`
   width: 1487px;
@@ -257,48 +304,25 @@ const CategoryCard = styled.div `
 
 const SortAndWriteSection = styled.div `
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  margin-bottom: 27px;
+  
 `;
 
-const SortButtons = styled.div `
-  display: flex;
-  flex-direction: row;
-  
-  gap: 1rem;
-`;
-
-const SortButton = styled.button `
-  
-  text-align: center;
-  width: 163px;
-  height: 56px;
-  font-size: 20px;
-  font-weight: 500;
-  background: ${ (props) => (
-    props.active
-        ? "#F5F5F5"
-        : " #BFBFBF"
-)};
-  color: ${ (props) => (
-    props.active
-        ? "#000"
-        : "#000"
-)};
-  border: none;
-  padding: 0 24px 0 24px;
-`;
 
 const WriteButton = styled.button `
-  width: 224px;
-  height: 60px;
-  color: black;
+  width: 120px;
+  height: 52px;
   border: none;
-  padding: 0.5rem 1rem;
-  color: #000;
-  background: #F5F5F5;
+  padding: 10px 15px;
+  font-size: 20px;
+  background: #6C54F7;
   font-weight: 500;
+  color: white;
+  border-radius: 8px;
+  display: flex;
+justify-content: center;
+white-space: nowrap;
+gap: 10px;
 
 font-family: Pretendard;
 font-size: 24px;
@@ -395,4 +419,56 @@ font-size: 32px;
 font-style: normal;
 font-weight: 500;
 line-height: 140%; /* 44.8px */
+`;
+
+
+const DropdownContainer = styled.div`
+    position: relative;
+    display: inline-block;
+    width: 150px;
+`;
+
+const DropdownButton = styled.button`
+    width: 100%;
+    background-color: #ffffff;
+    border:none;
+    border-radius: 8px;
+    padding: 10px 15px;
+    font-size: 20px;
+    font-weight: 500;
+    text-align: left;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    
+
+    &:hover {
+        background-color: #f9f9f9;
+    }
+`;
+
+const Arrow = styled.span`
+    font-size: 12px;
+    color: #000;
+`;
+
+const DropdownMenu = styled.div`
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background-color: #ffffff;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    width: 100%;
+    z-index: 1000;
+`;
+
+const DropdownItem = styled.div`
+    padding: 10px 15px;
+    font-size: 16px;
+    cursor: pointer;
+    &:hover {
+        background-color: #f0f0f0;
+    }
 `;
