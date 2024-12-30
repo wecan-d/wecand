@@ -15,6 +15,7 @@ import EditPage from './pages/EditPage'
 
 import Layout from './components/Layout'
 import { FormProvider } from './context/FormContext'
+import MakeTeam from './pages/MakeTeam'
 
 const Routers = () => {
   return (
@@ -25,11 +26,13 @@ const Routers = () => {
           element={
             <FormProvider>
               <Routes>
+              <Route element={<Layout />}>
                 <Route path="1" element={<RegisterPage1 />} />
                 <Route path="2" element={<RegisterPage2 />} />
                 <Route path="3" element={<RegisterPage3 />} />
                 <Route path="4" element={<RegisterPage4 />} />
                 <Route path="edit/:id" element={<EditPage />} />
+              </Route>
               </Routes>
             </FormProvider>
           }
@@ -39,9 +42,9 @@ const Routers = () => {
           <Route path="/home" element={<HomePage />} />
           <Route path="/recruiting" element={<RecruitingsPage />}/>
           <Route path="/recruiting/:category" element={<RecruitingsPage />}/>
+          <Route path="/maketeam" element={<MakeTeam />} />
           <Route path="/detail/:postId" element={<DetailPage />}/>
           <Route path="/mypage" element={<MyPage/>}/>
-          <Route path="/edit" element={<EditPage />} />
         </Route>
         <Route path="/land/:landId" element={<LandPage/>}/>
       </Routes>
