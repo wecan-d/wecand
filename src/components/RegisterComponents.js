@@ -1,7 +1,7 @@
 import styled from "styled-components";
 
-const mainColorPurple = "#6C54F7";
-const mainColorGrey = "#F0F3FA";
+export const mainColorPurple = "#6C54F7";
+export const mainColorGrey = "#F0F3FA";
 export const PurpleText = styled.span`
   color: ${mainColorPurple};
 `;
@@ -26,7 +26,7 @@ export const LeftPanel = styled.div`
   width: 45%;
 
   position: sticky; /* 고정 위치 설정 */
-  top: 0px; /* 화면의 최상단에 더 가깝게 이동 */
+  top: 50px; /* 화면의 최상단에 더 가깝게 이동 */
   display: flex;
   flex-direction: column;
 
@@ -175,4 +175,14 @@ export const NextButton = styled.button`
     color: #fff;
     background-color: ${mainColorPurple};
   }
+`;
+
+export const TextArea = styled.textarea`
+  width: 100%;
+  height: 100px; /* 입력 필드 높이 조정 */
+  border: 1px solid #ddd;
+  padding: 12px; /* 내부 패딩 줄임 */
+  border-radius: 8px;
+  font-size: 17px; /* 입력 텍스트 크기 조정 */
+  margin-bottom: 50px;
 `;

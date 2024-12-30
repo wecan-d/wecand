@@ -1,9 +1,9 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { postMemberAPI, useForm } from "../context/FormContext";
 import "../styles/CommonStyles.css";
 import SurveyIcon from "../assets/register.svg";
-import { Container, LeftPanel, LeftPanelImage, LeftPanelText, LeftPanelTextBox, LeftPanelTitle, NextButton, ProgressBar, ProgressStepOff, ProgressStepOn, RightPanel, RightPanelTitle } from "../components/RegisterComponents";
+import { Container, LeftPanel, LeftPanelImage, LeftPanelText, LeftPanelTextBox, LeftPanelTitle, NextButton, ProgressBar, ProgressStepOff, ProgressStepOn, RightPanel, RightPanelTitle, TextArea } from "../components/RegisterComponents";
 import styled from "styled-components";
 
 
@@ -45,16 +45,6 @@ const QuestionButton = styled.button`
     color: white;
     font-weight: 600;
   };
-`;
-
-const TextArea = styled.textarea`
-  width: 100%;
-  height: 100px; /* 입력 필드 높이 조정 */
-  border: 1px solid #ddd;
-  padding: 12px; /* 내부 패딩 줄임 */
-  border-radius: 8px;
-  font-size: 17px; /* 입력 텍스트 크기 조정 */
-  margin-bottom: 50px;
 `;
 
 
@@ -143,6 +133,9 @@ const RegisterPage2 = () => {
     { label: "작업 동안 스타일은 어떤 편인가요? (1개 선택)", category: "friendship", options: ["친목시간도 가지고 싶어요", "작업에만 집중하고 싶어요"] },
   ];
 
+  useEffect(() => {
+    window.scrollTo(0, 0); // 페이지 가장 상단으로 이동
+  }, []);
 
   return (
     <Container>

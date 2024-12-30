@@ -1,9 +1,8 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { postMemberAPI, useForm } from "../context/FormContext";
-import "../styles/CommonStyles.css"; // CSS 파일 연결
 import SurveyIcon from "../assets/register.svg";
-import { Container, LeftPanel, LeftPanelImage, LeftPanelText, LeftPanelTextBox, LeftPanelTitle, NextButton, ProgressBar, ProgressStepOff, ProgressStepOn, QuestionBox, QuestionInput, QuestionLabel, QuestionRow, RightPanel, RightPanelTitle } from "../components/RegisterComponents";
+import { Container, LeftPanel, LeftPanelImage, LeftPanelText, LeftPanelTextBox, LeftPanelTitle, mainColorPurple, NextButton, ProgressBar, ProgressStepOn, QuestionBox, QuestionLabel, QuestionRow, RightPanel, RightPanelTitle, TextArea } from "../components/RegisterComponents";
 import styled from "styled-components";
 
 
@@ -27,6 +26,56 @@ const AddInput = styled.input`
   border-radius: 5px;
   font-size: 17px; /* 입력 텍스트 크기 조정 */
   box-sizing: border-box;
+`;
+
+const FileInputWrapper = styled.div`
+  display: flex;
+`;
+
+const HiddenInput = styled.input`
+  display: block;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+`;
+
+const Label = styled.label`
+  width: 120px;
+  height: 50px;
+  line-height: 30px;
+  background-color: grey;
+  /* background: ${mainColorPurple}; */
+  border-radius: 3px;
+
+  color: white;
+  font-weight: 600;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  margin-right: 10px;
+  cursor: pointer;
+`;
+
+const FileNameSpan = styled.span`
+  padding-left: 15px;
+
+  display: flex;
+  align-items: center;
+
+  width: 100%;
+  border: 1px solid #e7e7e7;
+  border-radius: 3px;
+
+  font-weight: 400;
+  font-size: 17px;
+  color: grey;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  box-sizing: border-box;
+  
 `;
 
 const RegisterPage3 = () => {
@@ -85,9 +134,11 @@ const RegisterPage3 = () => {
   /**
    * 파일 선택 시
    */
+  const [ fileName, setFileName ] = useState('선택된 파일이 없습니다');
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     setFormData((prevData) => ({ ...prevData, file }));
+    setFileName((file ? file.name: "선택된 파일이 없습니다."));
   };
 
   /**
@@ -110,6 +161,9 @@ const RegisterPage3 = () => {
     navigate("/register/4");
   };
 
+  useEffect(() => {
+    window.scrollTo(0, 0); // 페이지 가장 상단으로 이동
+  }, []);
 
   // 인풋+X버튼 묶음을 간단히 재사용하기 위한 함수
   const renderArrayField = (
@@ -162,7 +216,7 @@ const RegisterPage3 = () => {
                   lineHeight: 1,
                 }}
               >
-                &times;  {/* '×' 아이콘 */}
+                &times;
               </button>
             )}
           </div>
@@ -198,37 +252,36 @@ const RegisterPage3 = () => {
       {/* 오른쪽 레이아웃 */}
       <RightPanel>
         <RightPanelTitle>경험/경력을 입력해 주세요</RightPanelTitle>
-        {/* 자격증 (배열) */}
-
-
-        {/* 사용 가능한 툴 (배열) */}
         {renderArrayField("사용 가능한 툴을 입력해 주세요", "tools", "사용 가능한 툴을 입력해주세요")}
-
         {renderArrayField("소지하신 자격증을 입력해 주세요", "certificates", "자격증을 입력해주세요")}
-        {/* 수상 경력 (배열) */}
         {renderArrayField("수상 경력을 입력해 주세요", "awards", "수상 경력을 입력해주세요")}
-
-        {/* 개인 작업물 URL (배열) */}
         {renderArrayField("개인 작업물 링크를 첨부해 주세요 (URL)", "url", "개인 작업물 URL을 입력해주세요")}
 
+        <QuestionBox3>
+          <QuestionLabel>개인 작업물 파일을 첨부해주세요 (PDF)</QuestionLabel>
+          <FileInputWrapper>
+            <HiddenInput 
+              id="file" 
+              type="file" 
+              onChange={handleFileChange} 
+            />
+            <Label htmlFor="file">파일선택</Label>
+            <FileNameSpan>{fileName}</FileNameSpan>
+          </FileInputWrapper>
 
-        {/* 파일 첨부 */}
-        <div className="question">
-          <label>파일 첨부:</label>
-          <input type="file" name="file" onChange={handleFileChange} />
-        </div>
+          {/* <FileInput type="file" name="file" onChange={handleFileChange} /> */}
+        </QuestionBox3>
 
-        {/* 추가 작성란 (단일 textArea) */}
-        <div className="question">
-          <label>추가 작성란:</label>
-          <textarea
+        <QuestionBox3>
+          <QuestionLabel>경험/ 경력관련 추가 설명글이 있다면 작성해 주세요. (최대 200자)</QuestionLabel>
+          <TextArea
             name="additionalInfo"
             value={formData.additionalInfo || ""}
             onChange={handleInputChange}
             maxLength={200}
-            placeholder="추가적으로 입력할 내용을 적어주세요 (200자 이내)"
+            placeholder="자유롭게 작성해주세요"
           />
-        </div>
+        </QuestionBox3>
 
 
         <NextButton onClick={handleNext}>저장</NextButton>

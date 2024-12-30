@@ -16,13 +16,13 @@ const RecruitmentPage = () => {
     const [selectedCategory, setSelectedCategory] = useState(category || "");
     const [sortCriteria, setSortCriteria] = useState(sort);
 
-    // !!!!데이터 가져옴 
+    // !!!!데이터 가져옴
     useEffect(() => {
         const fetchUsers = async () => {
             try {
                 const response = await axios.get(
                     // "https://676e83a3df5d7dac1ccae100.mockapi.io/post"
-                    "http://172.30.1.44:8080/post"
+                    "http://192.168.0.29:8080/post"
                 );
                 setUsers(response.data);
             } catch (err) {
@@ -82,34 +82,27 @@ const RecruitmentPage = () => {
             return 0;
         });
         
-        //!!!!마감일 로직
-        const RemainingDays = (deadline) => {
-          const currentDate = new Date();
-          const deadlineDate = new Date(deadline);
-          const differenceInTime = deadlineDate - currentDate;
-          const differenceInDays = Math.ceil(differenceInTime / (1000 * 60 * 60 * 24)); // 밀리초를 일로 변환
-          return differenceInDays > 0 ? `D-${differenceInDays}` : "마감 완료";
-      };
+     
 
       // !!!! 카테고리 sorting
     const categories = [
-        { id: "art", name: "미술,디자인" },
-        { id: "기술", name: "기술" },
-        { id: "마케팅", name: "마케팅" },
-        { id: "photography", name: "사진" },
-        { id: "literature", name: "문학" },
-        { id: "music", name: "음악" },
-        { id: "volunteering", name: "봉사" },
-        { id: "idea", name: "아이디어" },
-        { id: "media", name: "미디어" },
-        { id: "design", name: "디자인" },
+        { id: "디자인", name: "디자인" },
+        { id: "영상미디어", name: "영상 미디어" },
+        { id: "기획아이디어", name: "기획/아이디어" },
+        { id: "IT프로그래밍", name: "IT/프로그래밍" },
+        { id: "문학에세이", name: "문학/에세이" },
+        { id: "창업비즈니스", name: "창업/비즈니스" },
+        { id: "학술논문", name: "학술/논문" },
+        { id: "사진", name: "사진" },
+        { id: "음악공연", name: "음악/공연" },
+        { id: "사회공헌봉사", name: "사회공헌/봉사" },
     ];
 
     return (
         <PageContainer>
-            <div style={({fontSize:'36px',fontWeight:'600', marginBottom:'26px'})}>공모전 모집글</div>
+            
             <CategoryContainer>
-                <CategoryTitle>카테고리</CategoryTitle>
+                
                 <CategoryWrapper>
                     {categories.map((category) => (
                         <CategoryItem key={category.id}>
@@ -137,32 +130,45 @@ const RecruitmentPage = () => {
                 </SortButtons>
                 <WriteButton>글 작성하기 +</WriteButton>
             </SortAndWriteSection>
-
+              <Divide/>
             <PostListSection >
+
+            
+
                 {filteredAndSorted.length > 0 ? (
                     filteredAndSorted.map((user, index) => (
-
-
-                      //!!!!이거 겁나 중요
+                          <>
+                      {/* !!!!이거 겁나 중요 */}
                         <PostCard key={index}
                                   onClick={() => handlePostClick(user.postId)}
                         >
                             <PostLeft />
                             <PostCenter>
+                              <div style={({width:'450px', height:'255px'})}>
                               <div style={({display:'flex', justifyContent: 'flex-start'})}>
                                 <Tag>{user.category}</Tag>
                               </div>
                                 <PostTitle>{user.title}</PostTitle>
                                 <PostDescription>{user.memo}</PostDescription>
                                 <Author>{user.author}</Author>
+                                </div>
                             </PostCenter>
+                            <div style={({display:'flex', justifyContent: 'flex-end'})}>
                             <PostRight>
                                 <Deadline>{user.deadline}</Deadline>
-                                <PostInfo>{RemainingDays(user.date)}</PostInfo>
-                                <PostInfo2>모집인원</PostInfo2>
-                                <PostInfo2>지원자 {user.applicants}명</PostInfo2>
+                                <PostCardText>
+                                마감날짜
+                                </PostCardText>
+                                <PostInfo>{user.date}</PostInfo>
+                                <PostCardText>
+                                현재 모집 현황
+                                <PostInfo>2/3</PostInfo>
+                                </PostCardText>
                             </PostRight>
+                            </div>
                         </PostCard>
+                        <Divide/>
+                        </>
                     ))
                 ) : (
                     <p>해당 카테고리에 대한 공모전이 없습니다.</p>
@@ -175,6 +181,16 @@ const RecruitmentPage = () => {
 
 export default RecruitmentPage;
 
+const PostCardText = styled.div`
+color: #4E5968;
+text-align: right;
+font-family: Pretendard;
+font-size: 18px;
+font-style: normal;
+font-weight: 500;
+line-height: 140%; /* 25.2px */
+`
+
 // Styled Components
 const PageContainer = styled.div `
   padding: 0 8rem; 
@@ -183,15 +199,11 @@ const PageContainer = styled.div `
 `;
 
 const CategoryContainer = styled.div `
-  padding: 1rem 2rem 8rem;
-  background-color: #f5f5f5;
+  padding: 64px 2rem 8rem;
+  
   margin-bottom: 5%;
 `;
 
-const CategoryTitle = styled.h2 `
-  font-weight: bold;
-  margin-bottom: 1rem;
-`;
 
 const CategoryWrapper = styled.div `
   display: grid;
@@ -201,13 +213,23 @@ const CategoryWrapper = styled.div `
 `;
 
 const CategoryText = styled.span `
-  font-size: 0.9rem;
+  
   color: #333;
   font-weight: 600;
   margin-top: 16px;
   font-size: 24px;
   color: #7D7D7D;
+  font-weight: 400;
+  font-size: 22px;
 `;
+
+const Divide = styled.div`
+  width: 1487px;
+  height: 0px;
+  border: 1px solid #DBDBDB;
+  margin: 30px 0;
+`;
+
 
 const CategoryItem = styled.div `
   display: flex;
@@ -215,7 +237,7 @@ const CategoryItem = styled.div `
   align-items: center;
   
   &:hover ${CategoryText}{
-    color: black;
+   color: #6C54F7;
   }
 `;
 
@@ -228,12 +250,9 @@ const CategoryCard = styled.div `
   gap: 1rem;
   background: #e0e0e0;
   padding: 1rem;
-  height: 100px;
-  width: 100px;
-
-  &:hover {
-    border: 1px solid black;
-  }
+  height: 56px;
+  width: 56px;
+  border-radius: 8px;
 `;
 
 const SortAndWriteSection = styled.div `
@@ -288,63 +307,74 @@ font-size: 24px;
 const PostListSection = styled.section `
   display: flex;
   flex-direction: column;
-  gap: 2rem;
   
 `;
 
 const PostCard = styled.div `
   display: flex;
   justify-content: space-between;
-  background: #f5f5f5;
   
   height: 350px;
+  max-width: 1487px;
 `;
 
 const PostLeft = styled.div `
-  flex: 1; /* 1 */
+  flex: 0.8; /* 1 */
   display: flex;
   flex-direction: column;
-  background: #D9D9D9;
+  border-radius: 16px;
+background: #F0F3FA;
   padding: 3rem;
 `;
 
 const PostCenter = styled.div `
-  flex: 2; /* 2 */
+  flex: 4; /* 2 */
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  padding-left: 19px;
   
-  padding: 3rem;
+  
+  
 `;
 
 const PostRight = styled.div `
   flex: 1; /* 1 */
   display: flex;
   flex-direction: column;
-  background: #c4c4c4;
-  padding: 23px 24px;
+  align-items: flex-end;
+  
   gap: 10px;
 `;
 
 const Tag = styled.div `
   display: inline-block;
   text-align: center;
-  background: #c4c4c4;
-  padding: 8px 12px;
+  
+  padding-bottom: 12px;
   margin-bottom: 0.5rem;
    white-space: nowrap;
    font-size: 18px;
+   color: #6C54F7;
+font-family: Pretendard;
+font-size: 18px;
+font-style: normal;
+font-weight: 500;
+line-height: 140%;
 `;
 
 const PostTitle = styled.h3 `
+padding-bottom: 12px;
   margin: 0.5rem 0;
-  font-size: 32px;
+  font-size: 22px;
   font-weight: 500;
 `;
 
 const PostDescription = styled.p `
+padding-bottom: 12px;
   margin: 0.5rem 0;
   font-size: 20px;
+  color: #4E5968;
+  line-height: 140%; /* 25.2px */
 `;
 
 const Author = styled.span `
@@ -359,17 +389,10 @@ const Deadline = styled.div `
 `;
 
 const PostInfo = styled.div `
-  font-size: 32px;
-  font-weight: 500;
-  color: black;
-`;
-
-const PostInfo2 = styled.div `
-  color: #000;
-
+  color: #6C54F7;
 font-family: Pretendard;
-font-size: 24px;
+font-size: 32px;
 font-style: normal;
 font-weight: 500;
-line-height: normal;
+line-height: 140%; /* 44.8px */
 `;

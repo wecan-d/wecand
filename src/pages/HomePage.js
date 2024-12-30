@@ -7,6 +7,10 @@ import whitelogo from "../assets/homepage/whitelogo.svg";
 import userProfile from "../assets/homepage/useprofileicon.svg";
 import landsec from "../assets/homepage/landsec.svg";
 import { useSearchParams } from "react-router-dom";
+import landcard1 from "../assets/homepage/landcard1.svg";
+import landcard2 from "../assets/homepage/landcard2.svg";
+import landcard3 from "../assets/homepage/landcard3.svg";
+import landcard4 from "../assets/homepage/landcard4.svg";
 
 const HomePage = () => {
   // 단어 로테이션 로직
@@ -108,6 +112,49 @@ const HomePage = () => {
             <Item>수락 상황 더보기</Item>
           </ScrollContent>
         </ScrollWrapper>
+
+        <CardsWrapper>
+        <ItemCard>
+          <ImageWrapper>
+            <Img src={landcard1} alt="Card Image" />
+          </ImageWrapper>
+          <TextWrapper>
+            <CardTitle>카드 제목</CardTitle>
+            <CardDescription>이곳에 카드 설명이 들어갑니다. 간단한 설명을 넣어주세요.</CardDescription>
+          </TextWrapper>
+        </ItemCard>
+        <ItemCard>
+          <ImageWrapper>
+            <Img src={landcard2} alt="Card Image" />
+          </ImageWrapper>
+          <TextWrapper>
+            <CardTitle>카드 제목</CardTitle>
+            <CardDescription>이곳에 카드 설명이 들어갑니다. 간단한 설명을 넣어주세요.</CardDescription>
+          </TextWrapper>
+        </ItemCard>
+        <ItemCard>
+          <ImageWrapper>
+            <Img src={landcard3} alt="Card Image" />
+          </ImageWrapper>
+          <TextWrapper>
+          </TextWrapper>
+        </ItemCard>
+        <ItemCard>
+          <ImageWrapper>
+            <Img src={landcard4} alt="Card Image" />
+          </ImageWrapper>
+          <TextOverlay>
+          <div>진행 중</div>
+          <div>나는야 파드 공모전</div>
+          <div>박경민 팀장</div>
+        </TextOverlay>
+          <TextWrapper>
+            <CardTitle>카드 제목</CardTitle>
+            <CardDescription>이곳에 카드 설명이 들어갑니다. 간단한 설명을 넣어주세요.</CardDescription>
+          </TextWrapper>
+        </ItemCard>
+        
+      </CardsWrapper>
 
         <BoxWrapper>
       <LeftSection>
@@ -393,6 +440,7 @@ const BoxWrapper = styled.div`
   height: 413px;
   display: flex;
   border: 1px solid #ddd;
+  background:#F0F3FA;
 `;
 
 const LeftSection = styled.div`
@@ -408,12 +456,13 @@ const RightSection = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  background:#F0F3FA;
 `;
 
 const ImageContainer = styled.img`
   width: 100%;  /* 이미지 크기를 조정할 수 있는 공간 */
   height: 100%;
-  background-color: #fff;
+  background-color: #F0F3FA;
   object-fit: cover;
 `;
 
@@ -427,6 +476,84 @@ const SectionTitle2 = styled.h2`
 const Description2 = styled.p`
   font-size: 18px;
   color: #333;
+`;
+
+
+const TextOverlay = styled.div`
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  color: white;
+  font-size: 18px;
+  font-weight: bold;
+`;
+
+// const Container2 = styled.div`
+//   width: 100%;
+//   display: flex;
+//   justify-content: center;
+//   padding: 20px 0;
+// `;
+
+const CardsWrapper = styled.div`
+  display: flex;
+  gap: 16px;
+  overflow-x: auto; /* 가로 스크롤 활성화 */
+  padding-bottom: 10px;
+  ::-webkit-scrollbar {
+    display: none; /* 스크롤바 숨기기 */
+  }
+`;
+
+const ItemCard = styled.div`
+  width: 360px;
+  height: 457px;
+  background-color: #f0f3fa;
+  border-radius: 10px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  position: relative;
+`;
+
+const ImageWrapper = styled.div`
+  width: 100%;
+  height: 100%;
+  background-color: #ddd; /* 이미지가 삽입될 부분 */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+`;
+
+const Img = styled.img`
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+`;
+
+const TextWrapper = styled.div`
+  width: 100%;
+  height: 30%;
+  padding: 10px;
+  background-color: #fff;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+`;
+
+const CardTitle = styled.h3`
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 10px;
+`;
+
+const CardDescription = styled.p`
+  font-size: 14px;
+  color: #777;
 `;
 
 
