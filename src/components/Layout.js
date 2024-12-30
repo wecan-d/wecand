@@ -10,7 +10,7 @@ const Layout = () => {
   const location = useLocation();
   
   const isHomePage = location.pathname === '/' || location.pathname === '/home';
-  
+  const isRegisterPage = location.pathname === '/register/4';
 
   return (
     <LayoutContainer>
@@ -20,7 +20,7 @@ const Layout = () => {
         <Outlet />
       </MainContent>
 
-     <Footer />
+     {!isRegisterPage && <Footer />}
     </LayoutContainer>
   );
 };
