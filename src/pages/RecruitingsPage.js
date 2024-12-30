@@ -1,3 +1,6 @@
+//!!!!서버 연결 성공
+//!!!!카테고리, 최신순, 마감 임박순 필터링 성공
+
 import React, { useState, useEffect } from "react";
 import { useParams, useSearchParams, useNavigate } from "react-router-dom";
 import styled from "styled-components";
@@ -13,12 +16,13 @@ const RecruitmentPage = () => {
     const [selectedCategory, setSelectedCategory] = useState(category || "");
     const [sortCriteria, setSortCriteria] = useState(sort);
 
-    // 데이터를 가져오는 useEffect
+    // !!!!데이터 가져옴 
     useEffect(() => {
         const fetchUsers = async () => {
             try {
                 const response = await axios.get(
-                    "https://676e83a3df5d7dac1ccae100.mockapi.io/post"
+                    // "https://676e83a3df5d7dac1ccae100.mockapi.io/post"
+                    "http://172.30.1.44:8080/post"
                 );
                 setUsers(response.data);
             } catch (err) {
@@ -27,6 +31,17 @@ const RecruitmentPage = () => {
         };
         fetchUsers();
     }, []);
+
+    // 게시물 클릭시 데이터 값을 넘겨주는 핸들러
+    const handlePostClick = (postId) => {
+      console.log("Navigating to postId:", postId); // 디버깅 로그
+      if (postId) {
+          navigate(`/detail/${postId}`);
+      } else {
+          console.error("Invalid postId:", postId);
+      }
+  };
+
 
     // URL에서 category 및 sort가 변경될 때 상태를 업데이트
     useEffect(() => {
@@ -59,7 +74,6 @@ const RecruitmentPage = () => {
             const dateB = new Date(b.date);
             const createTimeA = new Date(a.createTime);
             const createTimeB = new Date(b.createTime);
-
             if (sortCriteria === "latest") {
                 return createTimeB - createTimeA;
             } else if (sortCriteria === "deadline") {
@@ -67,11 +81,21 @@ const RecruitmentPage = () => {
             }
             return 0;
         });
+        
+        //!!!!마감일 로직
+        const RemainingDays = (deadline) => {
+          const currentDate = new Date();
+          const deadlineDate = new Date(deadline);
+          const differenceInTime = deadlineDate - currentDate;
+          const differenceInDays = Math.ceil(differenceInTime / (1000 * 60 * 60 * 24)); // 밀리초를 일로 변환
+          return differenceInDays > 0 ? `D-${differenceInDays}` : "마감 완료";
+      };
 
+      // !!!! 카테고리 sorting
     const categories = [
         { id: "art", name: "미술,디자인" },
-        { id: "programming", name: "프로그래밍" },
-        { id: "business", name: "비즈니스" },
+        { id: "기술", name: "기술" },
+        { id: "마케팅", name: "마케팅" },
         { id: "photography", name: "사진" },
         { id: "literature", name: "문학" },
         { id: "music", name: "음악" },
@@ -83,6 +107,7 @@ const RecruitmentPage = () => {
 
     return (
         <PageContainer>
+            <div style={({fontSize:'36px',fontWeight:'600', marginBottom:'26px'})}>공모전 모집글</div>
             <CategoryContainer>
                 <CategoryTitle>카테고리</CategoryTitle>
                 <CategoryWrapper>
@@ -113,22 +138,29 @@ const RecruitmentPage = () => {
                 <WriteButton>글 작성하기 +</WriteButton>
             </SortAndWriteSection>
 
-            <PostListSection>
+            <PostListSection >
                 {filteredAndSorted.length > 0 ? (
                     filteredAndSorted.map((user, index) => (
-                        <PostCard key={index}>
+
+
+                      //!!!!이거 겁나 중요
+                        <PostCard key={index}
+                                  onClick={() => handlePostClick(user.postId)}
+                        >
                             <PostLeft />
                             <PostCenter>
+                              <div style={({display:'flex', justifyContent: 'flex-start'})}>
                                 <Tag>{user.category}</Tag>
+                              </div>
                                 <PostTitle>{user.title}</PostTitle>
-                                <PostDescription>{user.description}</PostDescription>
+                                <PostDescription>{user.memo}</PostDescription>
                                 <Author>{user.author}</Author>
                             </PostCenter>
                             <PostRight>
                                 <Deadline>{user.deadline}</Deadline>
-                                <PostInfo>모집 마감 {user.date}</PostInfo>
-                                <div>생성일 {user.createTime}</div>
-                                <PostInfo>지원자 {user.applicants}명</PostInfo>
+                                <PostInfo>{RemainingDays(user.date)}</PostInfo>
+                                <PostInfo2>모집인원</PostInfo2>
+                                <PostInfo2>지원자 {user.applicants}명</PostInfo2>
                             </PostRight>
                         </PostCard>
                     ))
@@ -136,6 +168,7 @@ const RecruitmentPage = () => {
                     <p>해당 카테고리에 대한 공모전이 없습니다.</p>
                 )}
             </PostListSection>
+
         </PageContainer>
     );
 };
@@ -167,11 +200,23 @@ const CategoryWrapper = styled.div `
   gap: 2rem;
 `;
 
+const CategoryText = styled.span `
+  font-size: 0.9rem;
+  color: #333;
+  font-weight: 600;
+  margin-top: 16px;
+  font-size: 24px;
+  color: #7D7D7D;
+`;
+
 const CategoryItem = styled.div `
   display: flex;
   flex-direction: column;
   align-items: center;
   
+  &:hover ${CategoryText}{
+    color: black;
+  }
 `;
 
 
@@ -183,7 +228,6 @@ const CategoryCard = styled.div `
   gap: 1rem;
   background: #e0e0e0;
   padding: 1rem;
-  border-radius: 8px;
   height: 100px;
   width: 100px;
 
@@ -196,41 +240,49 @@ const SortAndWriteSection = styled.div `
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1rem;
-`;
-
-const CategoryText = styled.span `
-  font-size: 0.9rem;
-  color: #333;
-  font-weight: bold;
+  margin-bottom: 27px;
 `;
 
 const SortButtons = styled.div `
   display: flex;
+  flex-direction: row;
+  
   gap: 1rem;
 `;
 
 const SortButton = styled.button `
+  
+  text-align: center;
+  width: 163px;
+  height: 56px;
+  font-size: 20px;
+  font-weight: 500;
   background: ${ (props) => (
     props.active
-        ? "#000"
-        : "#e0e0e0"
+        ? "#F5F5F5"
+        : " #BFBFBF"
 )};
   color: ${ (props) => (
     props.active
-        ? "#fff"
+        ? "#000"
         : "#000"
 )};
   border: none;
-  width: 100px;
-  padding: 0.5rem 1rem;
+  padding: 0 24px 0 24px;
 `;
 
 const WriteButton = styled.button `
-  background: #000;
-  color: #fff;
+  width: 224px;
+  height: 60px;
+  color: black;
   border: none;
   padding: 0.5rem 1rem;
+  color: #000;
+  background: #F5F5F5;
+  font-weight: 500;
+
+font-family: Pretendard;
+font-size: 24px;
 `;
 
 const PostListSection = styled.section `
@@ -261,6 +313,7 @@ const PostCenter = styled.div `
   display: flex;
   flex-direction: column;
   justify-content: center;
+  
   padding: 3rem;
 `;
 
@@ -269,22 +322,29 @@ const PostRight = styled.div `
   display: flex;
   flex-direction: column;
   background: #c4c4c4;
-  padding: 3rem;
+  padding: 23px 24px;
+  gap: 10px;
 `;
 
 const Tag = styled.div `
+  display: inline-block;
+  text-align: center;
   background: #c4c4c4;
-  width: 5rem;
-  padding: 0.3rem 0.5rem;
+  padding: 8px 12px;
   margin-bottom: 0.5rem;
+   white-space: nowrap;
+   font-size: 18px;
 `;
 
 const PostTitle = styled.h3 `
   margin: 0.5rem 0;
+  font-size: 32px;
+  font-weight: 500;
 `;
 
 const PostDescription = styled.p `
   margin: 0.5rem 0;
+  font-size: 20px;
 `;
 
 const Author = styled.span `
@@ -299,6 +359,17 @@ const Deadline = styled.div `
 `;
 
 const PostInfo = styled.div `
-  margin-top: 0.5rem;
-  color: #666;
+  font-size: 32px;
+  font-weight: 500;
+  color: black;
+`;
+
+const PostInfo2 = styled.div `
+  color: #000;
+
+font-family: Pretendard;
+font-size: 24px;
+font-style: normal;
+font-weight: 500;
+line-height: normal;
 `;

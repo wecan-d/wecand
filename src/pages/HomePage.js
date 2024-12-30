@@ -2,48 +2,21 @@ import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import styled, { createGlobalStyle } from "styled-components";
 import { SearchContext } from '../context/SearchContext';
-import bgsvg from "../assets/homepage/homeLand.svg";
-import whitelogo from "../assets/homepage/whitelogo.svg"; 
+import bgsvg from "../assets/homepage/home2.svg";
+import whitelogo from "../assets/homepage/whitelogo.svg";
+import userProfile from "../assets/homepage/useprofileicon.svg";
+import landsec from "../assets/homepage/landsec.svg";
 import { useSearchParams } from "react-router-dom";
 
 const HomePage = () => {
-  // 단어 로테이션 로직 및 기존 코드 유지
-
-  const [newTitle, setNewTitle] = useState("");
-  const [newCategory, setNewCategory] = useState("");
-
-  const handlePostSubmit = async () => {
-    try {
-      const response = await axios.post("http://172.30.1.79:8080/post", {
-        title: newTitle,
-        category: newCategory,
-      });
-      console.log("Post success:", response.data);
-
-      // 새 데이터 추가 후 목록 갱신
-      setUsers((prevUsers) => [...prevUsers, response.data]);
-      setFilteredUsers((prevUsers) => [...prevUsers, response.data]);
-    } catch (err) {
-      console.error("Error posting data:", err);
-    }
-  };
-
-
-
-
-
-
-
-
-
-  //단어 로테이션 로직
-  const words = ['etermine','ream', 'iscover', 'evelop', 'iscuss', 'esign']; 
+  // 단어 로테이션 로직
+  const words = ['iscuss','etermine', 'evelop'];
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
 
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentWordIndex((prevIndex) => (prevIndex + 1) % words.length);
-    }, 1000); 
+    }, 1000);
     return () => clearInterval(interval);
   }, [words.length]);
 
@@ -51,58 +24,50 @@ const HomePage = () => {
   const [users, setUsers] = useState([]);
   const [filteredUsers, setFilteredUsers] = useState([]); // 필터링된 데이터
   const { searchTerm, setSearchTerm } = useContext(SearchContext); // 전역 검색 상태 가져오기
-
   const [, setSearchParams] = useSearchParams(); 
 
   const handleSearchChange = (e) => {
     const newSearchTerm = e.target.value;
     setSearchTerm(newSearchTerm);
     setSearchParams({ search: newSearchTerm }); // URL 파라미터 업데이트
-};
+  };
 
   useEffect(() => {
     const fetchUsers = async () => {
-        try {
-            // const response = await axios.get(
-            //     "https://676e83a3df5d7dac1ccae100.mockapi.io/post"
-            // );
-            const response = await axios.get("http://172.30.1.79:8080/post");
-            console.log(response.data);
-            setUsers(response.data);
-            setFilteredUsers(response.data); // 초기 데이터 설정
-        } catch (err) {
-            console.error(err);
-        }
+      try {
+        const response = await axios.get("http://172.30.1.44:8080/post");
+        console.log(response.data);
+        setUsers(response.data);
+        setFilteredUsers(response.data); // 초기 데이터 설정
+      } catch (err) {
+        console.error(err);
+      }
     };
     fetchUsers();
-}, []);
+  }, []);
 
-useEffect(() => {
-  if (searchTerm === "") {
-    // setFilteredUsers(users); // 검색어가 없으면 전체 데이터 표시
-  } else {
-    const filtered = users.filter((user) =>
-      user.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    user.category.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-    setFilteredUsers(filtered);
-  }
-}, [searchTerm, users]);
-
-
-
-
+  useEffect(() => {
+    if (searchTerm === "") {
+      // setFilteredUsers(users); // 검색어가 없으면 전체 데이터 표시
+    } else {
+      const filtered = users.filter((user) =>
+        user.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        user.category.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+      setFilteredUsers(filtered);
+    }
+  }, [searchTerm, users]);
 
   return (
-
-    
     <Container>
-     
-       <GlobalStyle />
+      <GlobalStyle />
       {/* 헤더 */}
       <Header>
-        <Logo src={whitelogo} alt="Wecand Logo"/>
-        <LoginButton>로그인</LoginButton>
+        <Logo src={whitelogo} alt="Wecand Logo" />
+        <LoginWrapper>
+          <LoginButton>로그인</LoginButton>
+          <UserProfile src={userProfile} alt="userIcon" />
+        </LoginWrapper>
       </Header>
 
       {/* 메인 배너 */}
@@ -115,87 +80,77 @@ useEffect(() => {
               <RotatingText>{words[currentWordIndex]}</RotatingText>
             </HighlightBox>
           </RotatingTextContainer>
-          <CTAButton href="/create">내 아일랜드 생성하기 {'>'}</CTAButton>
         </MainText>
       </MainBanner>
       <HighlightBox><RotatingText>{words[currentWordIndex]}</RotatingText></HighlightBox>
 
       {/* 콘텐츠 섹션 */}
       <ContentSection>
-        <SectionTitle>환상의 팀워크는 서로를 아는 데서 시작됩니다!</SectionTitle>
+        <SectionTitle2>환상의 팀워크는 서로를 아는 데서 시작됩니다!</SectionTitle2>
         <Description>
-          팀원들의 역할, 작업 스타일, 커뮤니케이션 방식을 한눈에 파악 후 최적의 팀을 찾아보세요.
-          
+          팀원들의 역할, 
+          <span style={{color: '#6C54F7'}}>
+            작업 스타일, 커뮤니케이션 방식을 한눈에 파악 후 최적의 팀
+          </span>
+          을 찾아보세요.
         </Description>
-        <SearchBar 
-        type="text" 
-        placeholder="찾고자 하는 공모전을 입력해 주세요" 
-        onChange={handleSearchChange}/>
 
+        <CTAButtonWrapper>
+          <CTAButton href="/recruiting">공모전을 찾아보세요</CTAButton>
+          <CTAButton href="/create">팀 모집을 위한 글 작성하기</CTAButton>
+        </CTAButtonWrapper>
 
-      {searchTerm && (
-    <ResultContainer>
-      {filteredUsers.length > 0 ? (
-        filteredUsers.slice(0, 6).map((user) => (
-          <ResultCard key={user.id}>
-            <ResultBox>
-              <PostTitle>{user.title}</PostTitle>
-            </ResultBox>
-          </ResultCard>
-        ))
-      ) : (
-        <></>
-      )}
-    </ResultContainer>
-  )}
-</ContentSection>
+        <ScrollWrapper>
+          <ScrollContent>
+            <Item>신청 공모전 팀 모임</Item>
+            <Item>신청 한 팀의 수락, 대기 중 위주로 보여요</Item>
+            <Item>새로운 공모전을 신청해 보세요</Item>
+            <Item>수락 상황 더보기</Item>
+          </ScrollContent>
+        </ScrollWrapper>
 
-      {/* 공모전 및 아일랜드 섹션 */}
-      <CompetitionSection>
-        <SectionTitle>신청 공모전 팀 모임 현황</SectionTitle>
-        <CardContainer>
-          <Card>카드 1</Card>
-          <Card>카드 2</Card>
-          <Card>카드 3</Card>
-          <Card>카드 4</Card>
-           {/* 데이터 입력 폼 */}
-      <FormContainer>
-        <Input
-          type="text"
-          placeholder="Enter title"
-          value={newTitle}
-          onChange={(e) => setNewTitle(e.target.value)}
-        />
-        <Input
-          type="text"
-          placeholder="Enter category"
-          value={newCategory}
-          onChange={(e) => setNewCategory(e.target.value)}
-        />
-        <SubmitButton onClick={handlePostSubmit}>Submit</SubmitButton>
-      </FormContainer>
-        </CardContainer>
-      </CompetitionSection>
+        <BoxWrapper>
+      <LeftSection>
+        <SectionTitle>새로운 공모전 모집 글</SectionTitle>
+        <Description2>
+          다양한 분야에서 공모전 참가자를 모집합니다. 원하는 분야를 찾아보세요.
+        </Description2>
+      </LeftSection>
+
+      <RightSection>
+        <ImageContainer src={landsec}/>
+    
+      </RightSection>
+    </BoxWrapper>
+
+        {/* 검색 결과 표시 */}
+        {searchTerm && (
+          <ResultContainer>
+            {filteredUsers.length > 0 ? (
+              filteredUsers.slice(0, 6).map((user) => (
+                <ResultCard key={user.id}>
+                  <ResultBox>
+                    <PostTitle>{user.title}</PostTitle>
+                  </ResultBox>
+                </ResultCard>
+              ))
+            ) : (
+              <NoResults>검색 결과가 없습니다.</NoResults>
+            )}
+          </ResultContainer>
+        )}
+      </ContentSection>
     </Container>
   );
 };
 
 export default HomePage;
 
-const ResultBox = styled.div`
-
-  display: flex;
-  justify-content:flex-start;
-
+const NoResults = styled.div`
+  text-align: center;
+  color: #999;
 `;
 
-const ResultContainer = styled.div`
-  border: 1px solid #DBDBDB;
-  overflow: hidden; 
-  padding: 10px;
-`;
-
-// 전역 스타일
 const GlobalStyle = createGlobalStyle`
   * {
     margin: 0;
@@ -216,7 +171,6 @@ const StaticText = styled.span`
   margin-right: 10px;
 `;
 
-
 const HighlightBox = styled.div`
   position: absolute;
   display: inline-flex;
@@ -225,13 +179,8 @@ const HighlightBox = styled.div`
   border-radius: 16px;
   padding: 0 20px;
   height: 60px;
-  /* display: flex;
-  align-items: center;
-  justify-content: center; */
-  top: 370px;
+  top: 448px;
   right: 245px;
-   
-  
 `;
 
 const RotatingTextContainer = styled.div`
@@ -242,8 +191,7 @@ const RotatingTextContainer = styled.div`
 `;
 
 const RotatingText = styled.span`
-
-font-family: Roboto;
+  font-family: Roboto;
   font-size: 60px;
   font-weight: 800;
   color: #6c54f7;
@@ -253,14 +201,12 @@ font-family: Roboto;
   height: 100%;
 `;
 
-// 공통 스타일 변수
 const flexCenter = `
   display: flex;
   justify-content: center;
   align-items: center;
 `;
 
-// Styled Components
 const Container = styled.div`
   width: 100%;
   position: relative;
@@ -296,24 +242,29 @@ const LoginButton = styled.div`
   letter-spacing: -0.32px;
 `;
 
+const LoginWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+`;
+
+const UserProfile = styled.img`
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+`;
+
 const MainBanner = styled.section`
-  position: relative;
   width: 100%;
   height: 1005px;
   background-color: #e0e7ff;
   overflow: hidden;
 `;
 
-
-
 const SVGImage = styled.img`
-  position: absolute;
-  top: 0;
-  left: 0;
   width: 100%;
-  height: 100%;
-  object-fit: cover;
-  z-index: 6;
 `;
 
 const MainText = styled.div`
@@ -323,29 +274,42 @@ const MainText = styled.div`
   padding-right: 120px;
 `;
 
+const CTAButtonWrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 22px;
+`;
+
 const CTAButton = styled.a`
   display: inline-block;
+  width: 219px;
+  height: 54px;
   margin-top: 20px;
-  padding: 10px 20px;
-  font-size: 20px;
-  font-weight: 500;
-  color: white;
-  background: #6c54f7;
+  padding: 14px 10px 0 10px;
+  justify-content: center;
+  align-items: center;
+  font-size: 18px;
+  font-weight: 700;
+  background: white;
+  color: #6c54f7;
   text-decoration: none;
-  border-radius: 4px;
   letter-spacing: -0.4px;
-  position: absolute;
-  top: 550px;
-  right: 110px;
+  border: 1px solid #6C54F7;
+  text-align: center;
+  border-radius: 8px;
+  font-weight: 600;
 `;
 
 const ContentSection = styled.section`
    display: flex;
   flex-direction: column;
-  align-items: center; /* 수평 가운데 정렬 */
-  justify-content: center; /* 수직 가운데 정렬 */
-  padding: 40px 20px;
+  align-items: center;
+  justify-content: center;
+  padding: 0px 20px;
   text-align: center;
+  line-height: 1.4;
+  letter-spacing: -0.56px;
 `;
 
 const SectionTitle = styled.h2`
@@ -355,8 +319,8 @@ font-family: Pretendard;
 font-size: 28px;
 font-style: normal;
 font-weight: 600;
-line-height: 140%; /* 39.2px */
-letter-spacing: -0.56px;
+line-height: 140%;
+margin-top: 130px;
 `;
 
 const Description = styled.p`
@@ -365,90 +329,105 @@ const Description = styled.p`
   color: #555;
 `;
 
-const SearchBar = styled.input`
-  margin-top: 20px;
+const ResultContainer = styled.div`
+  border: 1px solid #DBDBDB;
+  overflow: hidden; 
   padding: 10px;
-  width: 559px;
-  height: 54px;
-  padding: 15px 22px;
-  border-radius: 16px;
-  background: #F0F3FA;
-  font-size: 1rem;
-  border: none;
 `;
 
 const ResultCard = styled.div`
   width: 537px;
-
   background: #fff;
-  
   border-radius: 8px;
   padding: 10px;
   position: relative;
-  
+`;
+
+const ResultBox = styled.div`
+  display: flex;
+  justify-content: flex-start;
 `;
 
 const PostTitle = styled.h3 `
   font-size: 18;
   color: #111;
-  font-weight:500;
+  font-weight: 500;
 `;
 
+const ScrollWrapper = styled.div`
+  width: 100%; /* 화면 너비에 맞춰 크기 지정 */
+  overflow-x: auto; /* 가로 스크롤 활성화 */
+  padding: 10px 0; /* 적당한 간격 추가 */
+  box-sizing: border-box; /* padding을 포함하여 width 설정 */
 
+  -ms-overflow-style: none;
 
-const CompetitionSection = styled.section`
-  padding: 40px 20px;
-`;
-
-const CardContainer = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 20px;
-`;
-
-const Card = styled.div`
-  padding: 20px;
-  background-color: #f0f0f0;
-  border-radius: 8px;
-  text-align: center;
-`;
-
-//임시 post용
-// 스타일 컴포넌트
-const FormContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  margin: 20px auto;
-  max-width: 400px;
-  padding: 20px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  background: #f9f9f9;
-`;
-
-const Input = styled.input`
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  font-size: 1rem;
-`;
-
-const SubmitButton = styled.button`
-  padding: 10px 20px;
-  font-size: 1rem;
-  color: white;
-  background-color: #6c54f7;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-
-  &:hover {
-    background-color: #5543c5;
+  ::-webkit-scrollbar {
+    display: none; /* 스크롤바를 숨깁니다 */
   }
 `;
 
+const ScrollContent = styled.div`
+  display: flex; /* 가로로 배치하기 위해 flexbox 사용 */
+  min-width: 1726px; /* 화면 기준 1726px로 설정 */
+  gap: 10px; /* 항목 간 간격 설정 */
+  margin: 120px;
+`;
 
+const Item = styled.div`
+  padding: 10px 20px;
+  background: #f0f3fa;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 150px; /* 각 항목의 최소 너비 설정 */
+  height: 50px;
+  color: #333;
+  font-size: 16px;
+`;
+
+
+const BoxWrapper = styled.div`
+  width: 1488px;
+  height: 413px;
+  display: flex;
+  border: 1px solid #ddd;
+`;
+
+const LeftSection = styled.div`
+  width: 627px;
+  height: 100%;
+  padding: 20px;
+  background-color: #f0f3fa; /* 좌측 섹션 배경 색상 */
+`;
+
+const RightSection = styled.div`
+  width: 861px;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+const ImageContainer = styled.img`
+  width: 100%;  /* 이미지 크기를 조정할 수 있는 공간 */
+  height: 100%;
+  background-color: #fff;
+  object-fit: cover;
+`;
+
+const SectionTitle2 = styled.h2`
+  font-size: 28px;
+  font-weight: 600;
+  color: #111;
+  margin-bottom: 20px;
+`;
+
+const Description2 = styled.p`
+  font-size: 18px;
+  color: #333;
+`;
 
 
 

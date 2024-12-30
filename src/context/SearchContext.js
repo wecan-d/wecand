@@ -9,12 +9,14 @@ export const SearchProvider = ({ children }) => {
   const [data, setData] = useState([]); // 서버에서 받아온 데이터
   const [filteredData, setFilteredData] = useState([]); // 검색어에 따른 필터링된 데이터
 
+  
+
   useEffect(() => {
     // 서버 데이터 가져오기
     const fetchData = async () => {
       try {
         // const response = await axios.get("https://676e83a3df5d7dac1ccae100.mockapi.io/post");
-        const response = await axios.get("http://172.30.1.79:8080/post/{postId}");
+        const response = await axios.get("http://172.30.1.44:8080/post");
         
         setData(response.data); // 원본 데이터 저장
         setFilteredData(response.data); // 초기 데이터 설정

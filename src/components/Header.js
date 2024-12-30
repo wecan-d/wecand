@@ -3,6 +3,8 @@ import styled from "styled-components";
 import { Link } from "react-router-dom";
 import { SearchContext } from "../context/SearchContext";
 import { useSearchParams } from "react-router-dom";
+import logo from "../assets/homepage/HeaderLogo.svg"
+import searchicon from "../assets/homepage/search.svg"
 
 const Header = () => {
   const { searchTerm, setSearchTerm } = useContext(SearchContext);
@@ -18,7 +20,7 @@ const Header = () => {
       {/* 로고 섹션 */}
       <LogoWrapper>
         <Link to="/">
-          <Logo src="/logo/logosymbol.svg" alt="Logo" />
+          <Logo src={logo} alt="Logo" />
         </Link>
         
       </LogoWrapper>
@@ -28,11 +30,11 @@ const Header = () => {
         <SearchWrapper>
           <SearchInput
           type="text"
-          placeholder="검색어를 입력하세요..."
+          placeholder="원하는 검색어를 입력하세요"
           value={searchTerm}
           onChange={handleSearchChange}// 검색 상태 업데이트
         />
-          <SearchIcon>🔍</SearchIcon>
+          <SearchIcon ><SearchIcon2 src={searchicon} alt="Profile" /></SearchIcon>
         </SearchWrapper>
 
         <UserWrapper>
@@ -50,7 +52,7 @@ const HeaderContainer = styled.header`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1rem 11%;
+  padding: 29px 120px 30px 114px;
   background-color: white;
   
 `;
@@ -62,7 +64,7 @@ const LogoWrapper = styled.div`
 `;
 
 const Logo = styled.img`
-  width: 150px;
+  width: 116px;
 `;
 
 const IconsWrapper = styled.div`
@@ -76,7 +78,7 @@ const SearchWrapper = styled.div`
   align-items: center;
   width: 360px;
   height: 54px;
-  background-color: #f0f3fa;
+  border: 1px solid #DBDBDB;
   border-radius: 8px;
   justify-content: space-between;
   padding: 15px;
@@ -91,7 +93,7 @@ const SearchInput = styled.input`
   color: #6c6c6c;
 
   &::placeholder {
-    color: #b0b0b0;
+    color:#767676;
   }
 `;
 
@@ -110,6 +112,7 @@ const UserWrapper = styled.div`
 const UserName = styled.span`
   font-size: 1rem;
   color: #6c6c6c;
+  margin-right: 12px;
 `;
 
 const ProfileImage = styled.img`
@@ -117,4 +120,10 @@ const ProfileImage = styled.img`
   height: 40px;
   border-radius: 50%;
   object-fit: cover;
+`;
+
+const SearchIcon2 = styled.img`
+  width: 21.028px;
+height: 21.026px;
+flex-shrink: 0;
 `;

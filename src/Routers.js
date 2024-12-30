@@ -40,6 +40,7 @@ const Routers = () => {
         <Route element={<Layout />}>
           <Route index element={<HomePage />} />
           <Route path="/home" element={<HomePage />} />
+          <Route path="/recruiting" element={<RecruitingsPage />}/>
           <Route path="/recruiting/:category" element={<RecruitingsPage />}/>
           <Route path="/maketeam" element={<MakeTeam />} />
           <Route path="/detail/:postId" element={<DetailPage />}/>

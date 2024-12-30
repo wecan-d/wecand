@@ -8,8 +8,8 @@ import Footer from "./Footer";
 
 const Layout = () => {
   const location = useLocation();
-  const hideFooter = location.pathname.includes("/detail");
-  const isHomePage = location.pathname === '/';
+  
+  const isHomePage = location.pathname === '/' || location.pathname === '/home';
   
 
   return (
@@ -20,7 +20,7 @@ const Layout = () => {
         <Outlet />
       </MainContent>
 
-      {!hideFooter && <Footer />}
+     <Footer />
     </LayoutContainer>
   );
 };
