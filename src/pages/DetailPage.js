@@ -1,232 +1,348 @@
+//!!!!RecruitingPage랑 데이터 연결 성공
+
 import React from "react";
 import styled from "styled-components";
-import { useState,useEffect } from "react";
-
+import {useState, useEffect} from "react";
+import {useParams} from "react-router-dom";
+import axios from "axios";
 export default function DetailPage() {
+    const [extraData, setExtraData] = useState([]);
+    const [postData, setPostData] = useState(null);
+    const [error, setError] = useState(null);
 
-  const [isModalOpen, setIsModalOpen] = useState(false);
+    const { postId } = useParams();
 
-  const openModal = () => {
-    setIsModalOpen(true);
-    document.body.style.overflow = "hidden";
-  };
-  
-  const closeModal = () => {
-    setIsModalOpen(false);
-    document.body.style.overflow = "auto";
-  };
+    useEffect(() => {
+        const fetchExtraData = async () => {
+            try {
+                const response = await axios.get(
+                    `https://672819eb270bd0b975546065.mockapi.io/api/v1/register?page=1&limit=25`
+                );
+                setExtraData(Array.isArray(response.data) ? response.data : []);
+                console.log(response.data);
+                console.log("HTTP Status Code:", response.status);
+            } catch (err) {
+                console.error("Error fetching post data with status:", err.response?.status);
+                setError(err);
+            }
+        };
+        fetchExtraData();
+    }, []);
 
-  useEffect(() => {
-    return () => {
-      // 컴포넌트 언마운트 시 body 스타일 초기화
-      document.body.style.overflow = "auto";
-    };
-  }, []);
+    useEffect(() => {
+        const fetchPostData = async () => {
+            try {
+                const response = await axios.get(`http://172.30.1.44:8080/post/${postId}`);
+                setPostData(response.data);
+                console.log("HTTP Status Code:", response.status);
+            } catch (err) {
+                console.error("Error fetching post data:", err.message);
+                console.error("Error fetching post data with status:", err.response?.status);
+                setError(err);
+            }
+        };
+        fetchPostData();
+    }, [postId]);
 
-  return (
-    <PageWrapper>
-      {/* 페이지 헤더 */}
-      <Header>
-        <CategoryAndTitle>
-          <Category>미술,디자인</Category>
-          <Title>2024 어도비 디자인 공모전</Title>
-        </CategoryAndTitle>
-      </Header>
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const openModal = () => setIsModalOpen(true);
+    const closeModal = () => setIsModalOpen(false);
 
+    useEffect(() => {
+        return () => {
+            document.body.style.overflow = "auto";
+        };
+    }, []);
 
-      <MainContent>
-        {/* 좌측 이미지 박스 */}
-        <MainBox>
-          <Image src="/logo/image.svg" />
-        </MainBox>
+    if (error) 
+        return <div>에러가 발생했습니다: {error.message}</div>;
+    return (
+      
+        <PageWrapper>
+          {postData ? (
+            <>
+            {/* 페이지 헤더 */}
+            <Header>
 
-        {/* 우측 정보 섹션 */}
-        <SideBox>
-          {/* 작성자 및 모집 정보 */}
-          <InfoSection>
-            <InfoRow>
-              <InfoLabel>작성자</InfoLabel>
-              <InfoValue>
-                박경민 <RoleTag>역량카드</RoleTag>
-              </InfoValue>
-            </InfoRow>
-            <InfoRow>
-              <InfoLabel>모집 날짜</InfoLabel>
-              <InfoValue>2025.02.01</InfoValue>
-            </InfoRow>
-            <InfoRow>
-              <InfoLabel>현재 모집 인원</InfoLabel>
-              <InfoValue>2/3</InfoValue>
-            </InfoRow>
-            <InfoRow>
-              <InfoLabel>총 지원자</InfoLabel>
-              <InfoValue>1,200</InfoValue>
-            </InfoRow>
-          </InfoSection>
+                <CategoryAndTitle>
 
-          {/* 모집글 */}
-          <Section>
-            <SectionTitle>모집글</SectionTitle>
-            <Text>
-              총 상금 2400만원 같이 따실 분 구합니다.
+                    {/*!ERD category! */}
+                    <Category>
+                      {postData.category}
+                    </Category>
+                    {/* !ERD title! */}
+                    <Title>{postData.title}
+                    </Title>
+                </CategoryAndTitle>
+            </Header>
+
+            <MainContent>
+                {/* 좌측 이미지 박스 */}
+                <MainBox>
+
+                    {/* !ERD img */}
+                    <Image src="/logo/image.svg"/>
+                </MainBox>
+
+                {/* 우측 정보 섹션 */}
+                <SideBox>
+                    {/* 작성자 및 모집 정보 */}
+                    <InfoSection>
+                        <InfoRow>
+                            <InfoLabel>작성자</InfoLabel>
+                            <InfoValue>
+                                박경민 {/* 작성자의 역량카드 열람 모달 열기 */}
+                                <RoleTag>역량카드</RoleTag>
+
+                            </InfoValue>
+                        </InfoRow>
+                        <InfoRow>
+                            <InfoLabel>모집 날짜</InfoLabel>
+
+                            {/* !ERD date = 모집 마감일! */}
+                            <InfoValue>{postData.date}</InfoValue>
+                        </InfoRow>
+                        <InfoRow>
+                            <InfoLabel>현재 모집 인원</InfoLabel>
+                            {/* !ERD member = 현재원 */}
+                            <InfoValue>{postData.member}
+                            </InfoValue>
+                        </InfoRow>
+                        <InfoRow>
+                            <InfoLabel>총 지원자 {postData.applicants}</InfoLabel>
+
+                            {/* !ERD applicants = 모집 지원자! */}
+                            {/* <InfoValue>1,200 {postData.applicants}</InfoValue> */}
+                        </InfoRow>
+                    </InfoSection>
+
+                    {/* 모집글 */}
+                    <Section>
+                        <SectionTitle>모집글</SectionTitle>
+                        <Text>
+                            {/* !ERD memo = 메모 */}
+                            {postData.memo}
+                            {/* 총 상금 2400만원 같이 따실 분 구합니다.
               <br />
               <br />
               많이 지원해주세요! 열정 넘치는 분이라면 플러스 요인이 됩니다!
               <br />
-              저는 열정만 있다면 잘할 수 있다고 생각합니다 ㅎㅎ
-            </Text>
-          </Section>
+              저는 열정만 있다면 잘할 수 있다고 생각합니다 ㅎㅎ */
+                            }
+                        </Text>
+                    </Section>
 
-          {/* 자격 요건 */}
-          <Section>
-            <SectionTitle>자격 요건</SectionTitle>
-            <Description>
-              <UnorderedList>
-                <ListItem>밝은 성격을 가지신 분</ListItem>
-                <ListItem>열정 넘치시는 분</ListItem>
-                <ListItem>협업을 좋아하는 사람</ListItem>
-                <ListItem>피그마 하실 줄은 알아요</ListItem>
-                <ListItem>
-                  일러스트 잘하시는 분이면 더욱 좋아요!!!
-                </ListItem>
-              </UnorderedList>
-            </Description>
-          </Section>
+                    {/* 자격 요건 */}
+                    <Section>
+                        <SectionTitle>자격 요건</SectionTitle>
+                        <Description>
+                            <UnorderedList>
+                                <ListItem>밝은 성격을 가지신 분</ListItem>
+                                <ListItem>열정 넘치시는 분</ListItem>
+                                <ListItem>협업을 좋아하는 사람</ListItem>
+                                <ListItem>피그마 하실 줄은 알아요</ListItem>
+                                <ListItem>
+                                    일러스트 잘하시는 분이면 더욱 좋아요!!!
+                                </ListItem>
+                            </UnorderedList>
+                        </Description>
+                    </Section>
 
-          {/* 버튼 */}
-          <ActionButtons>
-            <LinkButton>공모전 확인하기</LinkButton>
-            <ApplyButton onClick={openModal}>지원하기</ApplyButton>
-          </ActionButtons>
-        </SideBox>
-      </MainContent>
+                    {/* 버튼 */}
+                    <ActionButtons>
+                        <LinkButton>공모전 확인하기</LinkButton>
+                        <ApplyButton onClick={openModal}>지원하기</ApplyButton>
+                    </ActionButtons>
+                </SideBox>
 
+            </MainContent>
 
+            {/* 모달 */}
+            {
+                isModalOpen && (
+                    <ModalOverlay onClick={closeModal}>
+                        <ModalContent onClick={(e) => e.stopPropagation()}>
 
+                            <ModalHeader>
+                                <ModalTitle>해당 역량카드로 지원 하시겠습니까?</ModalTitle>
+                                <div style={({display: 'flex', textAlign: 'right'})}>
+                                    <div>
+                                        <CloseButton onClick={closeModal}>×</CloseButton>
+                                        <HeaderButtons>
 
+                                            <SubmitButton>지원하기</SubmitButton>
+                                        </HeaderButtons>
+                                    </div>
+                                </div>
+                            </ModalHeader>
+                            <Divider/>
+                            <ModalBody>
+                                <SectionStyle>작업 스타일</SectionStyle>
 
+                                {/* 카드 그리드 카드 그리드 카드 그리드 */}
+                                {/* extraData[userId] */}
+                                <CardGrid>
+                                    <Card style={{ gridArea: "communication" }}>
+                                        <CardTitle>소통</CardTitle>
+                                        <CardContent>
+                                          {Array.isArray(extraData[18]?.communication) ? ( extraData[18].communication.map((contentItem, index) => (
+                                            <p key={index}>{contentItem}</p> // 각 요소를 p 태그로 감쌈
+                                          ))
+                                          ) : (
+                                            <p>{extraData[18]?.communication || "내용 없음"}</p> // 배열이 아닌 경우 처리
+                                )}
+                                </CardContent>
+                                    </Card>
+                                    <Card
+                                        style={{
+                                            gridArea: "work"
+                                        }}>
+                                        <CardTitle>작업</CardTitle>
+                                        <CardContent>
+                                          {Array.isArray(extraData[18]?.teamwork) ? ( extraData[18].teamwork.map((contentItem, index) => (
+                                            <p key={index}>{contentItem}</p> // 각 요소를 p 태그로 감쌈
+                                          ))
+                                          ) : (
+                                            <p>{extraData[18]?.teamwork || "내용 없음"}</p> // 배열이 아닌 경우 처리
+                                )}
+                                </CardContent>
+                                    </Card>
+                                    <Card
+                                        style={{
+                                            gridArea: "thinking"
+                                        }}>
+                                        <CardTitle>사고</CardTitle>
+                                        <CardContent>
+                                          {Array.isArray(extraData[18]?.thinking) ? ( extraData[18].thinking.map((contentItem, index) => (
+                                            <p key={index}>{contentItem}</p> // 각 요소를 p 태그로 감쌈
+                                          ))
+                                          ) : (
+                                            <p>{extraData[18]?.thinking || "내용 없음"}</p> // 배열이 아닌 경우 처리
+                                )}
+                                </CardContent>
+                                    </Card>
+                                    <Card
+                                        style={{
+                                            gridArea: "role"
+                                        }}>
+                                        <CardTitle>역할</CardTitle>
+                                        <CardContent>
+                                          {Array.isArray(extraData[18]?.role) ? ( extraData[18].role.map((contentItem, index) => (
+                                            <p key={index}>{contentItem}</p> // 각 요소를 p 태그로 감쌈
+                                          ))
+                                          ) : (
+                                            <p>{extraData[18]?.role || "내용 없음"}</p> // 배열이 아닌 경우 처리
+                                )}
+                                </CardContent>
+                                    </Card>
+                                    <Card
+                                        style={{
+                                            gridArea: "conflict"
+                                        }}>
+                                        <CardTitle>갈등 해결</CardTitle>
+                                        <CardContent>
+                                          {Array.isArray(extraData[18]?.conflictResolution) ? ( extraData[18].conflictResolution.map((contentItem, index) => (
+                                            <p key={index}>{contentItem}</p> // 각 요소를 p 태그로 감쌈
+                                          ))
+                                          ) : (
+                                            <p>{extraData[18]?.conflictResolution || "내용 없음"}</p> // 배열이 아닌 경우 처리
+                                )}
+                                </CardContent>
+                                    </Card>
+                                    <Card
+                                        style={{
+                                            gridArea: "time"
+                                        }}>
+                                        <CardTitle>시간</CardTitle>
+                                        <CardContent>
+                                          {Array.isArray(extraData[18]?.timePreference) ? ( extraData[18].timePreference.map((contentItem, index) => (
+                                            <p key={index}>{contentItem}</p> // 각 요소를 p 태그로 감쌈
+                                          ))
+                                          ) : (
+                                            <p>{extraData[18]?.timePreference || "내용 없음"}</p> // 배열이 아닌 경우 처리
+                                )}
+                                </CardContent>
+                                    </Card>
+                                    <Card
+                                        style={{
+                                            gridArea: "rest"
+                                        }}>
+                                        <CardTitle>휴식</CardTitle>
+                                        <CardContent>
+                                          {Array.isArray(extraData[18]?.restPreference) ? ( extraData[18].restPreference.map((contentItem, index) => (
+                                            <p key={index}>{contentItem}</p> // 각 요소를 p 태그로 감쌈
+                                          ))
+                                          ) : (
+                                            <p>{extraData[18]?.restPreference || "내용 없음"}</p> // 배열이 아닌 경우 처리
+                                )}
+                                </CardContent>
+                                    </Card>
+                                    <Card
+                                        style={{
+                                            gridArea: "friendship"
+                                        }}>
+                                        <CardTitle>친목</CardTitle>
+                                        <CardContent>
+                                          {Array.isArray(extraData[18]?.goal) ? ( extraData[18].goal.map((contentItem, index) => (
+                                            <p key={index}>{contentItem}</p> // 각 요소를 p 태그로 감쌈
+                                          ))
+                                          ) : (
+                                            <p>{extraData[18]?.goal || "내용 없음"}</p> // 배열이 아닌 경우 처리
+                                )}
+                                </CardContent>
+                                    </Card>
+                                    <Card
+                                        style={{
+                                            gridArea: "important"
+                                        }}>
+                                        <CardTitle>중요하게 생각해요</CardTitle>
+                                        <CardContent>
+                                          {Array.isArray(extraData[18]?.important) ? ( extraData[18].important.map((contentItem, index) => (
+                                            <p key={index}>{contentItem}</p> // 각 요소를 p 태그로 감쌈
+                                          ))
+                                          ) : (
+                                            <p>{extraData[18]?.important || "내용 없음"}</p> // 배열이 아닌 경우 처리
+                                )}
+                                </CardContent>
+                                    </Card>
+                                </CardGrid>
 
+                                <div style={({marginTop: '30px'})}/>
+                                <Divider/>
 
-    {/* 모달 */}
-{isModalOpen && (
-  <ModalOverlay onClick={closeModal}>
-  <ModalContent onClick={(e) => e.stopPropagation()}>
-
-    <ModalHeader>
-      <ModalTitle>해당 공모전 팀에 지원하시겠어요?</ModalTitle>
-      <div style={({display:'flex', textAlign: 'right'})}>
-        <div>
-      <CloseButton onClick={closeModal}>×</CloseButton>
-      <HeaderButtons>
-        <EditButton>역량 카드 수정</EditButton>
-        <SubmitButton>제출하기</SubmitButton>
-      </HeaderButtons>
-      </div>
-    </div>
-    </ModalHeader>
-    <Divider />
-    <ModalBody>
-      <SectionTitle>저장된 내 역량카드</SectionTitle>
-      <SectionStyle>작업 스타일</SectionStyle>
-
-
-
-      {/* 카드 그리드 카드 그리드 카드 그리드 */}
-      <CardGrid>
-  <Card style={{ gridArea: "communication" }}>
-    <CardTitle>소통</CardTitle>
-    <CardContent>
-      <p>비대면 소통을 선호해요</p>
-      <p>새벽연락도 가능해요</p>
-      <p>새벽연락도 가능해요</p>
-    </CardContent>
-  </Card>
-  <Card style={{ gridArea: "work" }}>
-    <CardTitle>작업</CardTitle>
-    <CardContent>
-      <p>다같이 작업하고 싶어요</p>
-      <p>평일에 하고 싶어요</p>
-    </CardContent>
-  </Card>
-  <Card style={{ gridArea: "thinking" }}>
-    <CardTitle>사고</CardTitle>
-    <CardContent>
-      <p>논리적이에요</p>
-      <p>창의적이에요</p>
-    </CardContent>
-  </Card>
-  <Card style={{ gridArea: "role" }}>
-    <CardTitle>역할</CardTitle>
-    <CardContent>
-      <p>리더십이 있어요</p>
-      <p>기록을 잘 남겨요</p>
-    </CardContent>
-  </Card>
-  <Card style={{ gridArea: "conflict" }}>
-    <CardTitle>갈등 해결</CardTitle>
-    <CardContent>
-      <p>바로 해결해요</p>
-      <p>솔직하게 표현해요</p>
-    </CardContent>
-  </Card>
-  <Card style={{ gridArea: "time" }}>
-    <CardTitle>시간</CardTitle>
-    <CardContent>
-      <p>오전(06-12)</p>
-      <p>저녁(18-00)</p>
-    </CardContent>
-  </Card>
-  <Card style={{ gridArea: "rest" }}>
-    <CardTitle>휴식</CardTitle>
-    <CardContent>
-      <p>짧게 자주 쉬고 싶어요</p>
-    </CardContent>
-  </Card>
-  <Card style={{ gridArea: "friendship" }}>
-    <CardTitle>친목</CardTitle>
-    <CardContent>
-      <p>작업에만 집중하고 싶어요</p>
-      <p>새벽연락도 가능해요</p>
-      <p>새벽연락도 가능해요</p>
-    </CardContent>
-  </Card>
-  <Card style={{ gridArea: "important" }}>
-    <CardTitle>중요하게 생각해요</CardTitle>
-    <CardContent>
-      <p>팀플 시간을 꼭 지켜주기</p>
-      <p>새벽연락도 가능해요</p>
-    </CardContent>
-  </Card>
-</CardGrid>
-<div style={({marginTop:'30px'})}/>
-<Divider />
-
-  
-      <AdditionalSection>
-        <SectionColumn>
-          <SectionTitle>경력 / 경험</SectionTitle>
-            <SectionText>삼성 디자인 멤버십 수료</SectionText>
-            <SectionText>2020 해커톤 대상</SectionText>
-            <SectionText>피그마, 어도비 사용 가능</SectionText>
-        </SectionColumn>
-        <SectionColumn>
-          <SectionTitle>기타사항</SectionTitle>
-            <SectionArea>작성된 글이 없습니다.</SectionArea>
-        </SectionColumn>
-      </AdditionalSection>
-    </ModalBody>
-  </ModalContent>
-</ModalOverlay>
-)}
-
-
-    </PageWrapper>
-  );
+                                <AdditionalSection>
+                                    <SectionColumn>
+                                        <SectionTitle>경력 / 경험</SectionTitle>
+                                        <SectionText>{extraData[18]?.awards}</SectionText>
+                                        <SectionText>{extraData[18]?.tools}</SectionText>
+                                        <SectionText>{extraData[18]?.certificates}</SectionText>
+                                        <SectionText>{extraData[18]?.url}</SectionText>
+                                        <SectionArea>PDF 자리</SectionArea>
+                                    </SectionColumn>
+                                    <SectionColumn>
+                                        <SectionTitle>기타사항</SectionTitle>
+                                        <SectionArea>{extraData[18]?.additionalInfo}</SectionArea>
+                                        
+                                        {/* <SectionArea>{extraData[18]?.file}</SectionArea> */}
+                                        
+                                    </SectionColumn>
+                                </AdditionalSection>
+                            </ModalBody>
+                        </ModalContent>
+                    </ModalOverlay>
+                )
+            }
+             </>
+        ) : (
+            <div>다시해</div>
+        )}
+        </PageWrapper>
+    );
 }
 
 // Styled Components
 
-const SectionArea = styled.div`
+const SectionArea = styled.div `
   color: #767676;
 font-family: Pretendard;
 font-size: 18px;
@@ -235,7 +351,7 @@ font-weight: 400;
 line-height: normal;
 `;
 
-const SectionText = styled.p`
+const SectionText = styled.p `
   color: #111;
 font-family: Pretendard;
 font-size: 18px;
@@ -244,7 +360,7 @@ font-weight: 400;
 line-height: normal;
 `;
 
-const SectionStyle = styled.div`
+const SectionStyle = styled.div `
   color: #111;
 font-family: Pretendard;
 font-size: 22px;
@@ -252,10 +368,10 @@ font-style: normal;
 font-weight: 600;
 line-height: normal;
 margin-bottom: 20px;
+margin-top: 30px;
 `;
-const PageWrapper = styled.div`
+const PageWrapper = styled.div `
   display: flex;
-  /* height: 100vh; */
   padding: 0 10%;
   display: flex;
   flex-direction: column;
@@ -270,32 +386,30 @@ const PageWrapper = styled.div`
   }
 `;
 
-const Header = styled.header`
-  
-
+const Header = styled.header `
   @media (max-width: 768px) {
     flex-direction: column;
     gap: 1rem;
   }
 `;
 
-const CategoryAndTitle = styled.div`
+const CategoryAndTitle = styled.div `
   display: flex;
   flex-direction: column;
 `;
 
-const Category = styled.span`
+const Category = styled.span `
   font-weight: 500;
   color: #6c54f7;
   font-size: 18px;
 `;
 
-const Title = styled.h1`
+const Title = styled.h1 `
   font-weight: 600;
   font-size: 32px;
 `;
 
-const MainContent = styled.div`
+const MainContent = styled.div `
   display: flex;
 
   @media (max-width: 768px) {
@@ -303,27 +417,28 @@ const MainContent = styled.div`
   }
 `;
 
-const MainBox = styled.div`
+const MainBox = styled.div `
   display: flex;
   @media (max-width: 768px) {
     flex: 1;
   }
 `;
 
-const Image = styled.img`
-  width: 100%;
+const Image = styled.img `
+  /* width: 100%; */
   max-width: 84%; /* 너비를 90%로 줄임 */
   border-radius: 8px;
+  object-fit: contain;
 `;
 
-const SideBox = styled.div`
+const SideBox = styled.div `
   flex: 1;
   display: flex;
   flex-direction: column;
   gap: 0.2rem;
 `;
 
-const InfoSection = styled.div`
+const InfoSection = styled.div `
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 1rem;
@@ -333,25 +448,23 @@ const InfoSection = styled.div`
   }
 `;
 
-
-const InfoRow = styled.div`
+const InfoRow = styled.div `
   display: flex;
   flex-direction: column;
   flex: 1;
 
   &:not(:last-child) {
-    margin-right: 1.5rem; /* 행 사이 간격 */
+    margin-right: 1.5rem; 
   }
 `;
 
-
-const InfoLabel = styled.span`
+const InfoLabel = styled.span `
   font-size: 22px;
   color: #767676;
   font-weight: 400;
 `;
 
-const InfoValue = styled.span`
+const InfoValue = styled.span `
   font-size: 26px;
   display: flex;
   font-weight: 500;
@@ -359,8 +472,7 @@ const InfoValue = styled.span`
   gap: 0.5rem; /* 역할 태그와 텍스트 간 간격 */
 `;
 
-
-const RoleTag = styled.span`
+const RoleTag = styled.span `
   background-color: #6c54f7;
   color: white;
   font-size: 18px;
@@ -369,17 +481,15 @@ const RoleTag = styled.span`
   display: inline-block;
 `;
 
-const Section = styled.div``;
+const Section = styled.div ``;
 
-
-
-const Text = styled.p`
+const Text = styled.p `
   line-height: 140%;
   font-size: 22px;
   color: #4E5968;
 `;
 
-const Description = styled.div`
+const Description = styled.div `
   background: #f0f3fa;
   padding: 1rem;
   border-radius: 8px;
@@ -388,14 +498,14 @@ const Description = styled.div`
   color: #4E5968;
 `;
 
-const ActionButtons = styled.div`
+const ActionButtons = styled.div `
   display: flex;
   justify-content: flex-end;
   gap: 1rem;
   margin-top: 1rem;
 `;
 
-const LinkButton = styled.button`
+const LinkButton = styled.button `
 width: 187px;
 height: 64px;
 font-size: 22px;
@@ -423,14 +533,14 @@ const ApplyButton = styled(LinkButton)`
   }
 `;
 
-const UnorderedList = styled.ul`
+const UnorderedList = styled.ul `
   list-style-type: none;
   line-height: 160%; 
   padding: 0;
   font-size: 22px;
 `;
 
-const ListItem = styled.li`
+const ListItem = styled.li `
   margin-bottom: 0.8rem;
   position: relative;
   padding-left: 1.5rem;
@@ -444,7 +554,7 @@ const ListItem = styled.li`
   }
 `;
 
-const ModalOverlay = styled.div`
+const ModalOverlay = styled.div `
   position: fixed;
   top: 0;
   left: 0;
@@ -456,18 +566,19 @@ const ModalOverlay = styled.div`
   align-items: center;
 `;
 
-const ModalContent = styled.div`
+const ModalContent = styled.div `
   width: 1058px;
   height: 941px;
   
   max-height: 90vh;
   background: #fff;
-  padding: 60px;
+  padding: 40px 60px;
   border-radius: 10px;
   overflow-y: auto;
+  
 `;
 
-const ModalHeader = styled.div`
+const ModalHeader = styled.div `
   position: relative; /* 자식 요소가 부모를 기준으로 위치하도록 설정 */
   display: flex;
   justify-content: space-between;
@@ -475,7 +586,7 @@ const ModalHeader = styled.div`
 
 `;
 
-const ModalTitle = styled.h2`
+const ModalTitle = styled.h2 `
   font-size: 32px;
   font-weight: 600;
   color: #6C54F7;
@@ -483,23 +594,25 @@ const ModalTitle = styled.h2`
   
 `;
 
-const HeaderButtons = styled.div`
+const HeaderButtons = styled.div `
   display: flex;
   gap: 1rem;
   
 `;
 
-const EditButton = styled.button`
-  background-color: #f3f3f3;
+const EditButton = styled.button `
   padding: 0.7rem 1rem;
   border-radius: 8px;
   cursor: pointer;
-  border: 1px solid black;
+  
   width: 164px;
 height: 64px;
 font-size: 22px;
 font-style: normal;
 font-weight: 500;
+border: 1px solid #DBDBDB;
+background-color: white;
+
 `;
 
 const SubmitButton = styled(EditButton)`
@@ -508,7 +621,7 @@ const SubmitButton = styled(EditButton)`
   border: none;
 `;
 
-const CloseButton = styled.button`
+const CloseButton = styled.button `
   position: relative; /* 고정을 위해 absolute 사용 */
   top: 0; /* 기본 상단 위치 */
   right: 0; /* 기본 오른쪽 위치 */
@@ -536,30 +649,29 @@ const CloseButton = styled.button`
   }
 `;
 
-const Divider = styled.hr`
+const Divider = styled.hr `
   margin: 1rem 0;
   border: none;
   border-top: 1px solid #6C54F7;;
 `;
 
-const ModalBody = styled.div`
+const ModalBody = styled.div `
   
 `;
 
-
-const AdditionalSection = styled.div`
+const AdditionalSection = styled.div `
   display: flex;
   justify-content: space-between;
 `;
 
-const SectionColumn = styled.div`
+const SectionColumn = styled.div `
   flex: 1;
   &:not(:last-child) {
     margin-right: 2rem;
   }
 `;
 
-const SectionTitle = styled.h4`
+const SectionTitle = styled.h4 `
   color: #111;
 font-family: Pretendard;
 font-size: 22px;
@@ -568,10 +680,10 @@ font-weight: 600;
 line-height: normal;
 `;
 
-const CardGrid = styled.div`
+const CardGrid = styled.div `
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  grid-template-rows: repeat(4, 4fr);
+  grid-template-rows: repeat(200px, 4fr);
   gap: 1rem;
   grid-template-areas:
   "communication work thinking role"
@@ -580,13 +692,13 @@ const CardGrid = styled.div`
   "conflict time important important";
 `;
 
-const Card = styled.div`
+const Card = styled.div `
   background: #f0f3fa;
   border-radius: 8px;
   padding: 16px;
 `;
 
-const CardTitle = styled.div`
+const CardTitle = styled.div `
   background: #6c54f7;
   color: white;
   padding: 0.2rem 0.5rem;
@@ -599,11 +711,9 @@ const CardTitle = styled.div`
   font-weight: 500;
 `;
 
-const CardContent = styled.div`
+const CardContent = styled.div `
   font-size: 18px;
   font-weight: 400;
   color: #111111;
   
 `;
-
-
