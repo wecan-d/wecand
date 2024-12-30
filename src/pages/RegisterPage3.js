@@ -2,6 +2,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { postMemberAPI, useForm } from "../context/FormContext";
 import "../styles/CommonStyles.css"; // CSS 파일 연결
+import SurveyIcon from "../assets/register.svg";
 
 const RegisterPage3 = () => {
   const { formData, setFormData } = useForm();
@@ -89,8 +90,15 @@ const RegisterPage3 = () => {
     placeholderText  // placeholder (ex: "자격증을 입력해주세요")
   ) => {
     return (
-      <div className="question">
-        <label>{label}</label>
+      <div className="question" style={{ flexDirection: "column" }}>
+        <div name="label%button" style={{ flexDirection: "column" }}>
+            <label>{label}</label>
+          {/* 추가 버튼 */}
+          <button type="button" onClick={() => handleAddItem(fieldName)}>
+            추가
+          </button>
+        </div>
+        
         {formData[fieldName]?.map((value, index) => (
           <div
             key={index}
@@ -134,10 +142,6 @@ const RegisterPage3 = () => {
             )}
           </div>
         ))}
-        {/* 추가 버튼 */}
-        <button type="button" onClick={() => handleAddItem(fieldName)}>
-          추가
-        </button>
       </div>
     );
   };
@@ -146,8 +150,16 @@ const RegisterPage3 = () => {
     <div className="container">
       {/* 왼쪽 레이아웃 */}
       <div className="left">
-        <div className="circle">3</div>
-        <h1 className="label1">경력/경험</h1>
+      <div className="title-wrapper">
+          <img src={SurveyIcon} alt="Survey Icon" className="survey-icon" />
+          <h1 className="label1">경험/경력이 궁금해요</h1>
+        </div>
+        {/* 진행 바 */}
+        <div className="progress-bar">
+        <div className="progress-step active"></div>
+          <div className="progress-step active"></div>
+          <div className="progress-step active"></div>
+        </div>
         <p className="label2">
           나의 강점을 알려주세요!
           <br />
@@ -160,12 +172,6 @@ const RegisterPage3 = () => {
 
       {/* 오른쪽 레이아웃 */}
       <div className="right">
-        {/* 진행 바 */}
-        <div className="progress-bar">
-          <div className="progress-step"></div>
-          <div className="progress-step"></div>
-          <div className="progress-step active"></div>
-        </div>
 
         {/* 자격증 (배열) */}
         {renderArrayField("자격증:", "certificates", "자격증을 입력해주세요")}
