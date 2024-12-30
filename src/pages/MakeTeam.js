@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
-const server = "https://67625e5846efb373237455b0.mockapi.io/gemlense/post";
+const server = "http://172.30.1.3:8080/post/4";
 
 export const postMemberAPI = async (data) => {
   try {
@@ -82,7 +82,9 @@ const MakeTeam = () => {
       const response = await postMemberAPI(payload);
       alert("작성 완료! 성공적으로 업로드되었습니다.");
       console.log("Uploaded Data:", response.data);
-      navigate("/detail");
+
+      // response.data를 state로 넘기기
+      navigate(`/detail/${encodeURIComponent(response.data)}`);
 
       setFormData({
         title: "",
@@ -128,10 +130,10 @@ const MakeTeam = () => {
 
         <div style={styles.rightPanel}>
           <div style={styles.inputGroup}>
-          <div name="labelerror">
-        <label style={styles.label}>제목</label>
-        {errors.title && <span style={styles.errorMessage}>정보를 입력해 주세요</span>}
-        </div>
+            <div name="labelerror">
+              <label style={styles.label}>제목</label>
+              {errors.title && <span style={styles.errorMessage}>정보를 입력해 주세요</span>}
+            </div>
             <input
               type="text"
               name="title"
@@ -141,19 +143,18 @@ const MakeTeam = () => {
               style={errors.title ? { ...styles.input, ...styles.inputError } : styles.input}
             />
           </div>
+
           <div style={styles.inputRow}>
             <div style={styles.inputGroup}>
-            <div name="labelerror">
-            <label style={styles.label}>카테고리</label>
-            {errors.category && <span style={styles.errorMessage}>정보를 입력해 주세요</span>}
-            </div>
+              <div name="labelerror">
+                <label style={styles.label}>카테고리</label>
+                {errors.category && <span style={styles.errorMessage}>정보를 입력해 주세요</span>}
+              </div>
               <select
                 name="category"
                 value={formData.category}
                 onChange={handleInputChange}
-                style={
-                  errors.category ? { ...styles.select, ...styles.inputError } : styles.select
-                }
+                style={errors.category ? { ...styles.select, ...styles.inputError } : styles.select}
               >
                 <option value="">카테고리를 선택해주세요</option>
                 {categories.map((cat) => (
@@ -165,10 +166,10 @@ const MakeTeam = () => {
             </div>
 
             <div style={styles.inputGroup}>
-            <div name="labelerror">
-            <label style={styles.label}>모집 마감 날짜</label>
-            {errors.date && <span style={styles.errorMessage}>정보를 입력해 주세요</span>}
-            </div>
+              <div name="labelerror">
+                <label style={styles.label}>모집 마감 날짜</label>
+                {errors.date && <span style={styles.errorMessage}>정보를 입력해 주세요</span>}
+              </div>
               <input
                 type="date"
                 name="date"
@@ -193,11 +194,12 @@ const MakeTeam = () => {
               />
             </div>
           </div>
+
           <div style={styles.inputGroup}>
-          <div name="labelerror">
-          <label style={styles.label}>URL 링크</label>
-          {errors.url && <span style={styles.errorMessage}>정보를 입력해 주세요</span>}
-          </div>
+            <div name="labelerror">
+              <label style={styles.label}>URL 링크</label>
+              {errors.url && <span style={styles.errorMessage}>정보를 입력해 주세요</span>}
+            </div>
             <input
               type="text"
               name="url"
@@ -209,10 +211,10 @@ const MakeTeam = () => {
           </div>
 
           <div style={styles.inputGroup}>
-          <div name="labelerror">
-          <label style={styles.label}>모집글</label>
-          {errors.memo && <span style={styles.errorMessage}>정보를 입력해 주세요</span>}
-          </div>
+            <div name="labelerror">
+              <label style={styles.label}>모집글</label>
+              {errors.memo && <span style={styles.errorMessage}>정보를 입력해 주세요</span>}
+            </div>
             <textarea
               name="memo"
               placeholder="자유롭게 작성해주세요."
@@ -221,11 +223,12 @@ const MakeTeam = () => {
               style={errors.memo ? { ...styles.textarea, ...styles.inputError } : styles.textarea}
             />
           </div>
+
           <div style={styles.inputGroup}>
-          <div name="labelerror">
-          <label style={styles.label}>자격요건</label>
-          {errors.memo2 && <span style={styles.errorMessage}>정보를 입력해 주세요</span>}
-          </div>
+            <div name="labelerror">
+              <label style={styles.label}>자격요건</label>
+              {errors.memo2 && <span style={styles.errorMessage}>정보를 입력해 주세요</span>}
+            </div>
             <textarea
               name="memo2"
               placeholder="자유롭게 작성해주세요."
@@ -234,6 +237,7 @@ const MakeTeam = () => {
               style={errors.memo2 ? { ...styles.textarea, ...styles.inputError } : styles.textarea}
             />
           </div>
+
           <button onClick={handleSubmit} style={styles.submitButton}>
             작성 완료
           </button>
