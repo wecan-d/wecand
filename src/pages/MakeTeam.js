@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
-const server = "http://172.30.1.44:8080/post/3";
+const server = "https://67625e5846efb373237455b0.mockapi.io/gemlense/post";
 
 export const postMemberAPI = async (data) => {
   try {
@@ -14,6 +15,7 @@ export const postMemberAPI = async (data) => {
 };
 
 const MakeTeam = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     title: "",
     category: "",
@@ -80,6 +82,7 @@ const MakeTeam = () => {
       const response = await postMemberAPI(payload);
       alert("작성 완료! 성공적으로 업로드되었습니다.");
       console.log("Uploaded Data:", response.data);
+      navigate("/detail");
 
       setFormData({
         title: "",
