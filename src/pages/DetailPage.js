@@ -16,7 +16,9 @@ export default function DetailPage() {
         const fetchExtraData = async () => {
             try {
                 const response = await axios.get(
-                    `https://672819eb270bd0b975546065.mockapi.io/api/v1/register?page=1&limit=25`
+                    // `https://672819eb270bd0b975546065.mockapi.io/api/v1/register?page=1&limit=25`
+                    // `http://172.17.217.97:8080/card/${userId}`
+                    `http://172.17.217.97:8080/card/1`
                 );
                 setExtraData(Array.isArray(response.data) ? response.data : []);
                 console.log(response.data);
@@ -181,6 +183,10 @@ export default function DetailPage() {
                                 {/* 카드 그리드 카드 그리드 카드 그리드 */}
                                 {/* extraData[userId] */}
                                 <CardGrid>
+                                  
+                                    
+
+
                                     <Card style={{ gridArea: "communication" }}>
                                         <CardTitle>소통</CardTitle>
                                         <CardContent>
