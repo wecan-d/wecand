@@ -16,7 +16,7 @@ export default function DetailPage() {
         const fetchExtraData = async () => {
             try {
                 const response = await axios.get(
-                    `https://672819eb270bd0b975546065.mockapi.io/api/v1/register?page=1&limit=25`
+                    process.env.REACT_APP_API_CARD
                 );
                 setExtraData(Array.isArray(response.data) ? response.data : []);
                 console.log(response.data);
@@ -32,8 +32,8 @@ export default function DetailPage() {
     useEffect(() => {
         const fetchPostData = async () => {
             try {
-                const response = await axios.get(`http://172.17.217.97:8080/post/${postId}`);
-                // const response = await axios.get(`https://676e83a3df5d7dac1ccae100.mockapi.io/post/1`);
+                // const response = await axios.get(`http://172.17.217.97:8080/post/${postId}`);
+                const response = await axios.get(`https://676e83a3df5d7dac1ccae100.mockapi.io/post/1`);
                 setPostData(response.data);
                 console.log("HTTP Status Code:", response.status);
             } catch (err) {
