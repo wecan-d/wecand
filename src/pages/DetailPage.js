@@ -3,14 +3,24 @@
 import React from "react";
 import styled from "styled-components";
 import {useState, useEffect} from "react";
-import {useParams} from "react-router-dom";
+import {useParams, useNavigate} from "react-router-dom";
 import axios from "axios";
+import DetailSVG from "../assets/detail.svg";
+
 export default function DetailPage() {
     const [extraData, setExtraData] = useState([]);
     const [postData, setPostData] = useState(null);
     const [error, setError] = useState(null);
 
+    const [isModalOpen, setIsModalOpen] = useState(false); // 모달 표시 여부
+    const [isConfirmationVisible, setIsConfirmationVisible] = useState(false); // 두 번째 이미지 모달 표시 여부
+    const [modalTimer, setModalTimer] = useState(null); // 타이머 상태
+    const [isPostSubmitted, setIsPostSubmitted] = useState(false);
+
+    
+
     const { postId } = useParams();
+    const navigate = useNavigate(); // Initialize useNavigate hook
 
     useEffect(() => {
         const fetchExtraData = async () => {
@@ -47,9 +57,41 @@ export default function DetailPage() {
         fetchPostData();
     }, [postId]);
 
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const openModal = () => setIsModalOpen(true);
-    const closeModal = () => setIsModalOpen(false);
+    const handleFirstSubmit = () => {
+      setIsModalOpen(true); // Open the first modal
+  };
+
+  const handleSecondSubmit = async () => {
+      const userId = "2"; // Assuming you retrieve the user ID from authentication
+      try {
+          // Sending POST request to the server
+          await axios.post(
+              `http://172.30.1.28:8080/applications/${userId}/${postId}`
+          );
+          setIsPostSubmitted(true);
+          setIsModalOpen(false); // Close first modal
+
+          // Show second confirmation modal after 2 seconds
+          setModalTimer(setTimeout(() => {
+              setIsConfirmationVisible(true); // Show success confirmation modal
+
+              // Hide success modal after another 2 seconds
+              setTimeout(() => {
+                  setIsConfirmationVisible(false);
+                  navigate(`/detail/${postId}`); // Optionally navigate to another page after 2 seconds
+              }, 2000);
+          }));
+      } catch (err) {
+          alert("지원에 실패했습니다.");
+      }
+  };
+
+  const closeModal = () => {
+      clearTimeout(modalTimer);
+      setIsModalOpen(false);
+      setIsConfirmationVisible(false);
+  };
+
 
     useEffect(() => {
         return () => {
@@ -112,7 +154,8 @@ export default function DetailPage() {
                             </InfoValue>
                         </InfoRow>
                         <InfoRow>
-                            <InfoLabel>총 지원자 {postData.applicants}</InfoLabel>
+                            <InfoLabel>총 지원자</InfoLabel>
+                            <InfoValue>{postData.applicants.length}</InfoValue>
 
                             {/* !ERD applicants = 모집 지원자! */}
                             {/* <InfoValue>1,200 {postData.applicants}</InfoValue> */}
@@ -152,7 +195,7 @@ export default function DetailPage() {
                     {/* 버튼 */}
                     <ActionButtons>
                         <LinkButton>공모전 확인하기</LinkButton>
-                        <ApplyButton onClick={openModal}>지원하기</ApplyButton>
+                        <ApplyButton onClick={handleFirstSubmit}>지원하기</ApplyButton>
                     </ActionButtons>
                 </SideBox>
 
@@ -171,7 +214,7 @@ export default function DetailPage() {
                                         <CloseButton onClick={closeModal}>×</CloseButton>
                                         <HeaderButtons>
 
-                                            <SubmitButton>지원하기</SubmitButton>
+                                            <SubmitButton onClick={handleSecondSubmit}>지원하기</SubmitButton>
                                         </HeaderButtons>
                                     </div>
                                 </div>
@@ -337,6 +380,14 @@ export default function DetailPage() {
                     </ModalOverlay>
                 )
             }
+            {/* Second Confirmation Modal */}
+            {isConfirmationVisible && (
+                        <ModalOverlay color="rgba(0, 0, 0, 0.7)">
+                            <SuccessMessage>
+                                  <img src={DetailSVG} alt="Success" width="500px" height="500px" />
+                            </SuccessMessage>
+                        </ModalOverlay>
+                    )}
              </>
         ) : (
             <div>다시해</div>
@@ -565,6 +616,9 @@ const UnorderedList = styled.div `
 `;
 
 const ListItem = styled.div `
+`;
+
+const SuccessMessage = styled.div`
 `;
 
 const ModalOverlay = styled.div `
