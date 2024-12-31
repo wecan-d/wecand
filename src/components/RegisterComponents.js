@@ -177,6 +177,25 @@ export const NextButton = styled.button`
   }
 `;
 
+export const PreviousButton = styled.button`
+  align-self: flex-end;
+  background-color: ${mainColorGrey};
+  color: #111;
+
+  padding: 15px 40px; /* 버튼 크기 조정 */
+  border: none;
+  border-radius: 5px;
+  font-size: 18px;
+  font-weight: 500;
+  cursor: pointer;
+  text-align: center;
+
+  &:hover {
+    color: #fff;
+    background-color: ${mainColorPurple};
+  }
+`;
+
 export const TextArea = styled.textarea`
   width: 100%;
   height: 100px; /* 입력 필드 높이 조정 */

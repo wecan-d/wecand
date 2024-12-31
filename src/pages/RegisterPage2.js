@@ -1,14 +1,22 @@
-import React, { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { postMemberAPI, useForm } from "../context/FormContext";
+import { updateMemberAPI, useForm } from "../context/FormContext";
 import "../styles/CommonStyles.css";
 import SurveyIcon from "../assets/register.svg";
-import { Container, LeftPanel, LeftPanelImage, LeftPanelText, LeftPanelTextBox, LeftPanelTitle, NextButton, ProgressBar, ProgressStepOff, ProgressStepOn, RightPanel, RightPanelTitle, TextArea } from "../components/RegisterComponents";
+import { Container, LeftPanel, LeftPanelImage, LeftPanelText, LeftPanelTextBox, LeftPanelTitle, NextButton, ProgressBar, ProgressStepOff, ProgressStepOn, RightPanel, RightPanelTitle, TextArea, PreviousButton} from "../components/RegisterComponents";
 import styled from "styled-components";
 
 
 const RightPanel2 = styled(RightPanel)`
   width: 800px;
+`;
+
+
+const ButtonWrapper = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+  gap: 20px;
 `;
 
 const QuestionRow2 = styled.div`
@@ -51,6 +59,7 @@ const QuestionButton = styled.button`
 const RegisterPage2 = () => {
   const { formData, setFormData } = useForm();
   const navigate = useNavigate();
+  const [isUpdated, setIsUpdated] = useState(false); // 상태 변수와 상태 업데이트 함수 정의
 
   const handleInputChange = (category, value) => {
     const singleSelectCategories = ["restPreference", "friendship"];
@@ -76,7 +85,7 @@ const RegisterPage2 = () => {
     setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
 
-  const handleNext =  () => {
+  const handleNext = async () => {
     const {
       communication = "",
       teamwork = "",
@@ -87,36 +96,34 @@ const RegisterPage2 = () => {
       restPreference = "",
       friendship = "",
     } = formData;
-
-    // 비어 있는 필수 항목 확인
+  
     const missingFields = [];
-    if (communication !== "") missingFields.push("소통");
-    if (teamwork !== "") missingFields.push("작업 스타일");
-    if (thinking !== "") missingFields.push("사고 방식");
-    if (role !== "") missingFields.push("역할");
-    if (conflictResolution !== "") missingFields.push("갈등 해결");
-    if (timePreference !== "") missingFields.push("시간 선호");
-    if (restPreference !== "") missingFields.push("휴식 선호");
-    if (friendship !== "") missingFields.push("친목");
-
-    // 누락된 항목이 있으면 알림 표시 후 종료
-    if (!missingFields.length) {
-      alert(`다음 항목을 입력해주세요: ${missingFields.join(", ")}`);
+  
+    if (communication.length === 0) missingFields.push("소통");
+    if (teamwork.length === 0) missingFields.push("작업 스타일");
+    if (thinking.length === 0) missingFields.push("사고 방식");
+    if (role.length === 0) missingFields.push("역할");
+    if (conflictResolution.length === 0) missingFields.push("갈등 해결");
+    if (timePreference.length === 0) missingFields.push("시간 선호");
+    if (restPreference.length === 0) missingFields.push("휴식 선호");
+    if (friendship.length === 0) missingFields.push("친목");
+  
+    if (missingFields.length) {
+      alert(`다음 항목을 입력해 주세요: ${missingFields.join(", ")}`);
       return;
     }
-
-    // 모든 필드가 입력된 경우에만 API 호출
+  
     try {
-      // const response =  postMemberAPI(formData);
-      // console.log("RegisterPage2 POST response:", response.data); // 콘솔에 응답 데이터 출력
-      // POST 성공 시 다음 단계로 이동
+      const response = await updateMemberAPI(formData.id, formData);  // userId와 업데이트할 formData를 전달
+      console.log("Update response:", response.data);
+      setIsUpdated(true);  // 업데이트 상태를 true로 변경
       navigate("/register/3");
     } catch (error) {
-      // console.error("RegisterPage2 POST error:", error);
-      // 필요한 경우, 에러가 나도 넘어가도록 하려면 여기서 navigate("/register/3")를 호출하거나
-      // 사용자에게 메시지를 띄운 뒤 별도 처리를 해주면 됩니다.
+      console.error("Error during update:", error);
+      setIsUpdated(false);  // 오류 발생 시 상태를 false로 변경
     }
   };
+  
 
   const handlePrevious = () => {
     navigate("/register/1");
@@ -184,7 +191,10 @@ const RegisterPage2 = () => {
           value={formData.important}
           onChange={handleTextChange}
         />
-        <NextButton onClick={handleNext}>다음</NextButton>
+        <ButtonWrapper>
+          <PreviousButton onClick={handlePrevious}>이전</PreviousButton>
+          <NextButton onClick={handleNext}>다음</NextButton>
+        </ButtonWrapper>
       </RightPanel2>
     </Container>
   );
