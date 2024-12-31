@@ -43,7 +43,7 @@ const RecruitmentPage = () => {
             try {
                 const response = await axios.get(
                     // "https://676e83a3df5d7dac1ccae100.mockapi.io/post"
-                    "http://172.17.217.97:8080/post"
+                    "http://192.168.1.24:8080/post"
                 );
                 setUsers(response.data);
             } catch (err) {

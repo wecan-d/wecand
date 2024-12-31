@@ -4,12 +4,17 @@ import axios from "axios";
 import file from "../assets/mypage/File.svg";
 import link from "../assets/mypage/Link.svg";
 
-export default function DetailPage() {
+// 리코일 변수 받아오기
+// import { useRecoilValue } from 'recoil';
+// import { atom에서 받아오는 변수 } from '';
 
-    // 클백 연결 관련 상태관리 역량카드
+
+export default function MyPage() {
+
+    // 클백 역량카드 상태관리
     const [extraData, setExtraData] = useState([]);
     const [error, setError] = useState(null);
-
+    
 
     // user/{userId}/lands
     // const [data2, setData] = useState([]);
@@ -34,7 +39,7 @@ export default function DetailPage() {
 // useEffect(() => {
 //   const fetchData = async () => {
 //     try {
-//       const response = await axios.get("http://172.30.1.28:8080/user/3/lands");
+//       const response = await axios.get("http://172.30.1.28:8080/user/${userId}/lands");
 //       setData(response.data);
 //       setLoading(false);
 //     } catch (err) {
@@ -47,18 +52,20 @@ export default function DetailPage() {
 // }, []);
 
 
-
     // 역량 카드 관련 서버 연결
     useEffect(() => {
         const fetchExtraData = async () => {
             try {
                 const response = await axios.get(
                     `https://672819eb270bd0b975546065.mockapi.io/api/v1/register?page=1&limit=25`
+                    // `http://172.30.1.28:8080/card/${userId}`
                 );
                 setExtraData(Array.isArray(response.data) ? response.data : []);
                 console.log(response.data);
+                
             } catch (err) {
-                console.error("Error fetching data:", err);
+              
+                console.error("Error fetching data:", err.message);
                 setError(err);
             }
         };
@@ -302,7 +309,7 @@ export default function DetailPage() {
               <Card2 key={`left-${idx}`}>
                 <CardInfo>
                   <ProjectTitle>{item.title}</ProjectTitle>
-                  <TeamLeader>{item.author} <span style={({fontSize:'18px',fontWeight:'400'})}>팀장</span></TeamLeader>
+                  <TeamLeader>{item.author} <span style={({fontSize:'userIdpx',fontWeight:'400'})}>팀장</span></TeamLeader>
                 </CardInfo>
                 <TeamMember>
                   <Avatar>👤👤👤👤</Avatar>
@@ -499,14 +506,14 @@ const Name = styled.div`
 `;
 
 const Details = styled.div`
-  font-size: 18px;
+  font-size: userIdpx;
   font-weight: 500;
   
   margin-bottom: 4px;
 `;
 
 const Email = styled.div`
-  font-size: 18px;
+  font-size: userIdpx;
   font-weight: 400;
 `;
 
@@ -573,7 +580,7 @@ const CardTitle = styled.div`
     color: white;
     padding: 0.2rem 0.5rem;
     border-radius: 8px;
-    font-size: 18px;
+    font-size: userIdpx;
     font-weight: bold;
     display: inline-block;
     margin-bottom: 0.5rem;
@@ -583,7 +590,7 @@ const CardTitle = styled.div`
 `;
 
 const CardContent = styled.div`
-    font-size: 18px;
+    font-size: userIdpx;
     font-weight: 400;
     color: #111111;
 `;
@@ -593,7 +600,7 @@ const CardContent = styled.div`
 const DropdownContainer = styled.div`
     width: 465px;
     border-radius: 5px;
-    margin-bottom: 18px;
+    margin-bottom: userIdpx;
     
 `;
 
@@ -603,7 +610,7 @@ const DropdownHeader = styled.div`
     align-items: center;
     padding: 10px 0px;
     color: white;
-    font-size: 18px;
+    font-size: userIdpx;
     font-weight: bold;
     cursor: pointer;
     background: #836EFF;
@@ -612,30 +619,30 @@ const DropdownHeader = styled.div`
 
 const HeaderText = styled.div`
     display: inline-block;
-     font-size: 18px;
+     font-size: userIdpx;
     font-weight: 600;
     
 `;
 
 const HeaderText2 = styled.div`
     display: inline-block;
-     font-size: 18px;
+     font-size: userIdpx;
     font-weight: 600;
     color:white;
     
 `;
 
 const Arrow = styled.div`
-   font-size: 18px;
+   font-size: userIdpx;
     font-weight: 600;
-    transform: ${({ isOpen }) => (isOpen ? "rotate(180deg)" : "rotate(0deg)")};
+    transform: ${({ isOpen }) => (isOpen ? "rotate(userId0deg)" : "rotate(0deg)")};
     transition: transform 0.2s ease-in-out;
 `;
 
 const Arrow2 = styled.div`
-    font-size: 18px;
+    font-size: userIdpx;
     font-weight: 600;
-    transform: ${({ isOpen }) => (isOpen ? "rotate(180deg)" : "rotate(0deg)")};
+    transform: ${({ isOpen }) => (isOpen ? "rotate(userId0deg)" : "rotate(0deg)")};
     transition: transform 0.2s ease-in-out;
 `;
 
@@ -648,7 +655,7 @@ const DropdownContent = styled.div`
 
 const ContentItem = styled.div`
     padding: 5px 0;
-    font-size: 18px;
+    font-size: userIdpx;
     font-weight: 400;
     &:hover {
         cursor: pointer;
@@ -664,7 +671,7 @@ height: 52px;
 border-radius: 8px;
 background-color: white;
 padding: 0 12px;
-margin-bottom: 18px;
+margin-bottom: userIdpx;
 margin-top: 20px;
 
 `;
@@ -678,8 +685,8 @@ height: 20px;
 `;
 
 const ImageStyle = styled.img`
-  width: 18px;
-  height: 18px;
+  width: userIdpx;
+  height: userIdpx;
 `;
 
 const TextWrapper = styled.div`
@@ -692,7 +699,7 @@ margin-left: 10px;
 `;
 
 const FileName = styled.div`
-font-size: 18px;
+font-size: userIdpx;
 font-weight: 400;
 color: #111111;
 white-space: nowrap;
@@ -739,7 +746,7 @@ const Card3 = styled.div`
   justify-content: space-between;
   align-items: center;
   padding: 0px 25px;
-  margin-bottom: 18px;
+  margin-bottom: userIdpx;
   font-size: 22px;
   font-weight: 400;
   border-radius: 8px;
@@ -768,7 +775,7 @@ const TeamMember = styled.div`
 `;
 
 const Avatar = styled.div`
-  font-size: 18px;
+  font-size: userIdpx;
 `;
 
 const MemberCount = styled.div`
