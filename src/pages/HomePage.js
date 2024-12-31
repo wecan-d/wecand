@@ -12,10 +12,12 @@ import landcard2 from "../assets/homepage/landcard2.svg";
 import landcard3 from "../assets/homepage/landcard3.svg";
 import landcard4 from "../assets/homepage/landcard4.svg";
 
+
 const HomePage = () => {
 
-  
-  // 단어 로테이션 로직
+  const handleGoogleLogIn = () => {
+  }
+
   const words = ['iscuss','etermine', 'evelop'];
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
 
@@ -71,7 +73,7 @@ const HomePage = () => {
       <Header>
         <Logo src={whitelogo} alt="Wecand Logo" />
         <LoginWrapper>
-          <LoginButton>로그인</LoginButton>
+          <LoginButton onClick={handleGoogleLogIn}>로그인</LoginButton>
           <UserProfile src={userProfile} alt="userIcon" />
         </LoginWrapper>
       </Header>
@@ -279,7 +281,7 @@ const Logo = styled.img`
   height: 30.311px;
 `;
 
-const LoginButton = styled.div`
+const LoginButton = styled.button`
   color: #FFF;
   text-align: right;
   font-family: Pretendard;
