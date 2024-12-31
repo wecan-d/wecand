@@ -41,9 +41,9 @@ const RecruitmentPage = () => {
     useEffect(() => {
         const fetchUsers = async () => {
             try {
-                const response = await axios.get(
-                    // "https://676e83a3df5d7dac1ccae100.mockapi.io/post"
-                    "http://172.17.217.97:8080/post"
+                const response = await axios.get(process.env.REACT_APP_API_MOCK
+                    
+                    // process.env.REACT_APP_API_URL
                 );
                 setUsers(response.data);
             } catch (err) {
@@ -119,6 +119,48 @@ const RecruitmentPage = () => {
         { id: "사회공헌봉사", name: "사회공헌/봉사" },
     ];
 
+    //!!페이지네이션
+    const [currentPage, setCurrentPage] = useState(1); // 현재 페이지
+    const itemsPerPage = 5; // 페이지당 표시할 항목 수
+
+    // 페이지에 맞는 데이터 계산
+    const indexOfLastItem = currentPage * itemsPerPage;
+    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+    const currentItems = filteredAndSorted.slice(indexOfFirstItem, indexOfLastItem);
+
+    // 총 페이지 수 계산
+    const totalPages = Math.ceil(filteredAndSorted.length / itemsPerPage);
+
+    // 페이지 변경 핸들러
+    const handlePageChange = (pageNumber) => {
+      setCurrentPage(pageNumber);
+  };
+
+
+
+  const maxPageButtons = 5; // 한 번에 표시할 페이지 버튼 수
+  const [startPage, setStartPage] = useState(1); // 현재 페이지 그룹의 
+  const endPage = Math.min(startPage + maxPageButtons - 1, totalPages);
+
+
+  const handlePageChangeBottom = (pageNumber) => {
+    setCurrentPage(pageNumber);
+};
+
+const handleNextGroup = () => {
+    if (endPage < totalPages) {
+        setStartPage((prev) => prev + maxPageButtons);
+    }
+};
+
+const handlePreviousGroup = () => {
+    if (startPage > 1) {
+        setStartPage((prev) => prev - maxPageButtons);
+    }
+};
+
+
+
     return (
         <PageContainer>
             
@@ -166,53 +208,65 @@ const RecruitmentPage = () => {
         </DropdownContainer>
               </>
         
-                <WriteButton>글 작성하기</WriteButton>
+                <WriteButton onClick={() => navigate('/maketeam')}>글 작성하기</WriteButton>
             
             </SortAndWriteSection>
-              <Divide/>
-            <PostListSection >
-
-                
-      
-                {filteredAndSorted.length > 0 ? (
-                    filteredAndSorted.map((user, index) => (
-                          <>
-                      {/* !!!!이거 겁나 중요 */}
-                        <PostCard key={index}
-                                  onClick={() => handlePostClick(user.postId)}
-                        >
-                            <PostLeft />
-                            <PostCenter>
-                              <div style={({width:'450px', height:'255px'})}>
-                              <div style={({display:'flex', justifyContent: 'flex-start'})}>
+              
+              <PostListSection>
+    {currentItems.length > 0 ? (
+        currentItems.map((user, index) => (
+            <React.Fragment key={index}>
+              <Divide />
+                <PostCard onClick={() => handlePostClick(user.postId)}>
+                    <PostLeft />
+                    <PostCenter>
+                        <div style={{ width: '450px', height: '255px' }}>
+                            <div style={{ display: 'flex', justifyContent: 'flex-start' }}>
                                 <Tag>{user.category}</Tag>
-                              </div>
-                                <PostTitle>{user.title}</PostTitle>
-                                <PostDescription>{user.memo}</PostDescription>
-                                <Author>{user.author}</Author>
-                                </div>
-                            </PostCenter>
-                            <div style={({display:'flex', justifyContent: 'flex-end'})}>
-                            <PostRight>
-                                <Deadline>{user.deadline}</Deadline>
-                                <PostCardText>
-                                마감날짜
-                                </PostCardText>
-                                <PostInfo>{user.date}</PostInfo>
-                                <PostCardText>
-                                현재 모집 현황
-                                <PostInfo>2/3</PostInfo>
-                                </PostCardText>
-                            </PostRight>
                             </div>
-                        </PostCard>
-                        <Divide/>
-                        </>
-                    ))
-                ) : (
-                    <p>해당 카테고리에 대한 공모전이 없습니다.</p>
-                )}
-            </PostListSection>
+                            <PostTitle>{user.title}</PostTitle>
+                            <PostDescription>{user.memo}</PostDescription>
+                            <Author>{user.author}</Author>
+                        </div>
+                    </PostCenter>
+                    <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                        <PostRight>
+                            <Deadline>{user.deadline}</Deadline>
+                            <PostCardText>마감날짜</PostCardText>
+                            <PostInfo>{user.date}</PostInfo>
+                            <PostCardText>
+                                현재 모집 현황<PostInfo>2/3</PostInfo>
+                            </PostCardText>
+                        </PostRight>
+                    </div>
+                </PostCard>
+                
+            </React.Fragment>
+        ))
+    ) : (
+        <p>해당 카테고리에 대한 공모전이 없습니다.</p>
+    )}
+</PostListSection>
+             {/* 페이지네이션 UI */}
+             <Pagination>
+             <PageButton disabled={startPage === 1} onClick={handlePreviousGroup}>
+                {"<"}
+            </PageButton>
+            {Array.from({ length: endPage - startPage + 1 }, (_, index) => (
+                <PageButton
+                    key={index + startPage}
+                    active={currentPage === index + startPage}
+                    onClick={() => handlePageChange(index + startPage)}
+                >
+                    {index + startPage}
+                </PageButton>
+            ))}
+            <PageButton disabled={endPage === totalPages} onClick={handleNextGroup}>
+                {">"}
+            </PageButton>
+            </Pagination>
+
+            
 
         </PageContainer>
     );
@@ -238,7 +292,8 @@ const PageContainer = styled.div `
 `;
 
 const CategoryContainer = styled.div `
-  padding: 64px 2.6rem 6rem;
+  padding: 64px 3rem 6rem;
+  margin-right: 30px;
 `;
 
 
@@ -246,7 +301,6 @@ const CategoryWrapper = styled.div `
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(10vh, 1fr));
   height: 10vh;
-  gap: 2rem;
 `;
 
 const CategoryText = styled.span `
@@ -285,7 +339,6 @@ const CategoryItem = styled.div `
   display: flex;
   flex-direction: column;
   align-items: center;
-  
   &:hover ${CategoryText}{
    color: #6C54F7;
   }
@@ -326,7 +379,9 @@ const WriteButton = styled.button `
 justify-content: center;
 white-space: nowrap;
 gap: 10px;
-
+margin-left: 895px;
+position: absolute;
+right: 190px;
 font-family: Pretendard;
 font-size: 24px;
 `;
@@ -472,6 +527,29 @@ const DropdownItem = styled.div`
     font-size: 16px;
     cursor: pointer;
     &:hover {
-        background-color: #f0f0f0;
+      background-color: #f0f0f0;
+    }
+`;
+
+// Styled Components
+const Pagination = styled.div`
+    display: flex;
+    justify-content: center;
+    margin-top: 95px;
+`;
+
+const PageButton = styled.button`
+    color: #4E5968;
+    background-color: white;
+    border:none;
+    margin: 0 5px;
+    font-size: 18px;
+    
+    
+    cursor: pointer;
+
+    &:hover {
+      color: #6C54F7;
+      border-bottom : 2px solid #6C54F7;
     }
 `;
