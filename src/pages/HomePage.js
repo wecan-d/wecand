@@ -39,7 +39,7 @@ const HomePage = () => {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await axios.get("http://172.30.1.44:8080/post");
+        const response = await axios.get("http://172.17.217.97:8080/post");
         console.log(response.data);
         setUsers(response.data);
         setFilteredUsers(response.data); // 초기 데이터 설정

@@ -32,7 +32,7 @@ export default function DetailPage() {
     useEffect(() => {
         const fetchPostData = async () => {
             try {
-                const response = await axios.get(`http://192.168.0.29:8080/post/${postId}`);
+                const response = await axios.get(`http://172.17.217.97:8080/post/${postId}`);
                 // const response = await axios.get(`https://676e83a3df5d7dac1ccae100.mockapi.io/post/1`);
                 setPostData(response.data);
                 console.log("HTTP Status Code:", response.status);

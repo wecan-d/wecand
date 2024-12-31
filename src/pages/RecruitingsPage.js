@@ -43,7 +43,7 @@ const RecruitmentPage = () => {
             try {
                 const response = await axios.get(
                     // "https://676e83a3df5d7dac1ccae100.mockapi.io/post"
-                    "http://192.168.0.29:8080/post"
+                    "http://172.17.217.97:8080/post"
                 );
                 setUsers(response.data);
             } catch (err) {
@@ -143,8 +143,11 @@ const RecruitmentPage = () => {
                 <>
                 <CategoryText1>
                 공모전 모집글 ㅣ</CategoryText1>
-                <CategoryText1>{selectedCategoryText && `${selectedCategoryText}`}</CategoryText1>
+               
                   
+                <CategoryText1>
+  {selectedCategoryText ? `${selectedCategoryText}` : "전체보기"}
+</CategoryText1>
                     <DropdownContainer>
                       <DropdownButton onClick={toggleDropdown}>
                         {selectedOption}<Arrow>▼</Arrow>
