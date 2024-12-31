@@ -13,6 +13,8 @@ import landcard3 from "../assets/homepage/landcard3.svg";
 import landcard4 from "../assets/homepage/landcard4.svg";
 
 const HomePage = () => {
+
+  
   // 단어 로테이션 로직
   const words = ['iscuss','etermine', 'evelop'];
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
@@ -92,11 +94,10 @@ const HomePage = () => {
       <ContentSection>
         <SectionTitle2>환상의 팀워크는 서로를 아는 데서 시작됩니다!</SectionTitle2>
         <Description>
-          팀원들의 역할, 
-          <span style={{color: '#6C54F7'}}>
-            작업 스타일, 커뮤니케이션 방식을 한눈에 파악 후 최적의 팀
+          팀원들의
+           <span style={{color: '#6C54F7'}}> 기본정보, 작업 스타일,  경력/경험을 한눈에 파악 후 최적의 팀  
           </span>
-          을 찾아보세요.
+           을 찾아보세요.
         </Description>
 
         <CTAButtonWrapper>
