@@ -43,7 +43,7 @@ const Routers = () => {
           <Route path="/recruiting/:category" element={<RecruitingsPage />}/>
           <Route path="/maketeam" element={<MakeTeam />} />
           <Route path="/detail/:postId" element={<DetailPage />}/>
-          <Route path="/mypage" element={<MyPage/>}/>
+          <Route path="/mypage/:postId" element={<MyPage/>}/>
         </Route>
         <Route path="/land/:landId" element={<LandPage/>}/>
       </Routes>
