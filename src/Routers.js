@@ -20,7 +20,6 @@ import MakeTeam from './pages/MakeTeam'
 const Routers = () => {
   return (
       <Routes>
-        <Route path="/welcome" element={<WelcomePage />} />
         <Route
           path="/register/*"
           element={
@@ -37,9 +36,9 @@ const Routers = () => {
             </FormProvider>
           }
         />
+        <Route index element={<HomePage />} />
+        <Route path="/home" element={<HomePage />} />
         <Route element={<Layout />}>
-          <Route index element={<HomePage />} />
-          <Route path="/home" element={<HomePage />} />
           <Route path="/recruiting" element={<RecruitingsPage />}/>
           <Route path="/recruiting/:category" element={<RecruitingsPage />}/>
           <Route path="/maketeam" element={<MakeTeam />} />
