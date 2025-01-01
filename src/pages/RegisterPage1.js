@@ -86,14 +86,26 @@ const RegisterPage1 = () => {
   
   try {
     const response = await postMemberAPI(sanitizedData);
-    console.log("RegisterPage1 POST response:", response.data);
+    console.log("POST 응답:", response);
 
-    // 응답 데이터에서 id를 추출하여 formData에 저장
-    const { id } = response.data;
-    setFormData((prevData) => ({
-      ...prevData,
-      id: id,  // POST 응답에서 받은 id를 formData에 저장
-    }));
+    if (response && response.data) {
+      const { id } = response.data;
+
+      if (!id) {
+        alert("서버에서 id를 반환하지 않았습니다.");
+        return; // id가 없으면 네비게이션을 하지 않음
+      }
+
+      setFormData((prevData) => ({
+        ...prevData,
+        id: id,
+      }));
+
+      console.log("네비게이션 실행");
+      navigate("/register/2");
+    } else {
+      alert("응답 데이터가 올바르지 않습니다.");
+    }
   } catch (error) {
     console.error("RegisterPage1 POST error:", error);
     if (error.response) {
@@ -101,8 +113,7 @@ const RegisterPage1 = () => {
       console.error("Error response data:", error.response.data);
     }
   }
-
-    navigate("/register/2");
+  // navigate("/register/2");
   };
 
   return (
