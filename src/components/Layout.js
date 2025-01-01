@@ -14,13 +14,13 @@ const Layout = () => {
 
   return (
     <LayoutContainer>
-      {!isHomePage && <Header/>}
+      <Header/>
 
       <MainContent>
         <Outlet />
       </MainContent>
 
-     {!isRegisterPage && <Footer />}
+     <Footer />
     </LayoutContainer>
   );
 };

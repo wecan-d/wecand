@@ -6,7 +6,7 @@ import bgsvg from "../assets/homepage/home2.svg";
 import whitelogo from "../assets/homepage/whitelogo.svg";
 import userProfile from "../assets/homepage/useprofileicon.svg";
 import landsec from "../assets/homepage/landsec.svg";
-import { useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import landcard1 from "../assets/homepage/landcard1.svg";
 import landcard2 from "../assets/homepage/landcard2.svg";
 import landcard3 from "../assets/homepage/landcard3.svg";
@@ -14,8 +14,9 @@ import landcard4 from "../assets/homepage/landcard4.svg";
 
 
 const HomePage = () => {
-
-  const handleGoogleLogIn = () => {
+  const navigate = useNavigate();
+  const handleLogin = () => {
+    window.location.href = `${process.env.REACT_APP_SERVER}/oauth2/authorization/google`;
   }
 
   const words = ['iscuss','etermine', 'evelop'];
@@ -73,7 +74,7 @@ const HomePage = () => {
       <Header>
         <Logo src={whitelogo} alt="Wecand Logo" />
         <LoginWrapper>
-          <LoginButton onClick={handleGoogleLogIn}>로그인</LoginButton>
+          <LoginButton onClick={handleLogin}>로그인</LoginButton>
           <UserProfile src={userProfile} alt="userIcon" />
         </LoginWrapper>
       </Header>
