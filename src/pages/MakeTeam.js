@@ -2,8 +2,9 @@ import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import MaketeamSVG from "../assets/maketeam.svg";
+import { uploadFileToFirebase } from "../context/UploadFile";
 
-const server = "http://192.168.1.24:8080/post/2";
+const server = process.env.REACT_APP_SERVER;
 
 export const postMemberAPI = async (data) => {
   try {
@@ -15,16 +16,18 @@ export const postMemberAPI = async (data) => {
   }
 };
 
+
+
 const MakeTeam = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    title: "",
-    category: "",
-    date: "",
-    member: 0,
-    url: "",
-    memo: "",
-    memo2: "",
+    title: "", // 공모전 제목
+    category: "", // 카테고리
+    date: "", // 모집 마감 일자
+    member: 0, // 희망 모집 인원
+    url: "", // 공모전 URL
+    memo: "", // 모집글
+    memo2: "", // 자격 요건
     img: null,
   });
 
@@ -76,14 +79,16 @@ const MakeTeam = () => {
       return;
     }
 
-    const payload = {
-      ...formData,
-      img: imagePreview,
-    };
-
     try {
-      const response = await postMemberAPI(payload);
+      const imgURL = await uploadFileToFirebase(formData.img);
+      console.log("Uploaded Image URL:", imgURL);
 
+      const payload = {
+        ...formData,
+        img: imgURL,
+      };
+
+      const response = await postMemberAPI(payload);
       console.log("Uploaded Data:", response.data);
 
       // 모달 띄우기
@@ -93,9 +98,6 @@ const MakeTeam = () => {
       setModalTimer(setTimeout(() => {
         navigate(`/detail/${encodeURIComponent(response.data)}`);  // 2초 후 이동
       }, 2000));
-
-      // response.data를 state로 넘기기
-      // navigate(`/detail/${encodeURIComponent(response.data)}`);
 
       setFormData({
         title: "",
