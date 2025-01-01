@@ -108,7 +108,7 @@ const dummyData = [
 ];
 
 // ---------------------- 서버 주소 & API ----------------------
-const server = "https://dummyapi.com/register";
+const server = "http://192.168.1.24:8080/card/3";
 
 // (1) 생성(POST) - 더미 데이터로 처리
 export const postMemberAPI = async (data) => {

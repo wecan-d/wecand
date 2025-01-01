@@ -27,7 +27,7 @@ export default function DetailPage() {
         const fetchExtraData = async () => {
             try {
                 const response = await axios.get(
-                    `http://192.168.1.24:8080/card/${userId}`
+                    `http://${server}:8080/card/${userId}`
                 );
                 setExtraData(Array.isArray(response.data) ? response.data : []);
                 console.log(response.data);
@@ -38,7 +38,7 @@ export default function DetailPage() {
             }
         };
         fetchExtraData();
-    }, []);
+    }, [userId]);
 
     useEffect(() => {
         const fetchPostData = async () => {

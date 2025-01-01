@@ -1,12 +1,28 @@
 //!!!!서버 연결 성공
 //!!!!카테고리, 최신순, 마감 임박순 필터링 성공
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useParams, useSearchParams, useNavigate } from "react-router-dom";
+import { SearchContext } from '../context/SearchContext';
 import styled from "styled-components";
 import axios from "axios";
+import idea from "../assets/homepage/기획아이디어.svg"
+import munhak from "../assets/homepage/문학에세이.svg"
+import photo1 from "../assets/homepage/사진.svg"
+import social from "../assets/homepage/사회공헌봉사.svg"
+import media from "../assets/homepage/영상미디어.svg"
+import music from "../assets/homepage/음악공연.svg"
+import business from "../assets/homepage/창업비즈니스.svg"
+import nonmun from "../assets/homepage/학술논문.svg"
+import programming from "../assets/homepage/IT프로그래밍.svg"
+import searchicon from "../assets/homepage/search.svg"
+
 
 const RecruitmentPage = () => {
+
+    // SearchContext에서 searchTerm, filteredData 받아오기 검색기능 훅
+    const { searchTerm, setSearchTerm, filteredData } = useContext(SearchContext); 
+
     const [users, setUsers] = useState([]);
     const { category } = useParams(); // URL에서 카테고리 값을 가져오기
     const [searchParams, setSearchParams] = useSearchParams();
@@ -31,10 +47,7 @@ const RecruitmentPage = () => {
         setIsOpen((prev) => !prev);
     };
 
-    const handleOptionClick = (option) => {
-        setSelectedOption(option); // 선택된 옵션 설정
-        setIsOpen(false); // 드롭다운 닫기
-    };
+   
     
 
     // !!!!데이터 가져옴
@@ -83,7 +96,7 @@ const RecruitmentPage = () => {
         setSearchParams({ sort: newSort });
     };
 
-    const filteredAndSorted = users
+    const filteredAndSorted = filteredData
         .filter((item) => {
             if (selectedCategory) {
                 return item.category === selectedCategory;
@@ -108,16 +121,16 @@ const RecruitmentPage = () => {
 
       // !!!! 카테고리 sorting
     const categories = [
-        { id: "디자인", name: "디자인" },
-        { id: "영상미디어", name: "영상 미디어" },
-        { id: "기획아이디어", name: "기획/아이디어" },
-        { id: "IT프로그래밍", name: "IT/프로그래밍" },
-        { id: "문학에세이", name: "문학/에세이" },
-        { id: "창업비즈니스", name: "창업/비즈니스" },
-        { id: "학술논문", name: "학술/논문" },
-        { id: "사진", name: "사진" },
-        { id: "음악공연", name: "음악/공연" },
-        { id: "사회공헌봉사", name: "사회공헌/봉사" },
+        { id: "디자인", name: "디자인", photo: photo1 },
+        { id: "영상미디어", name: "영상 미디어", photo: media },
+        { id: "기획아이디어", name: "기획/아이디어", photo: idea },
+        { id: "IT프로그래밍", name: "IT/프로그래밍", photo: programming },
+        { id: "문학에세이", name: "문학/에세이", photo: munhak },
+        { id: "창업비즈니스", name: "창업/비즈니스", photo: business },
+        { id: "학술논물", name: "학술/논문", photo: nonmun },
+        { id: "사진", name: "사진", photo: photo1 },
+        { id: "음악공연", name: "음악/공연", photo: music },
+        { id: "사회공헌봉사", name: "사회공헌/봉사", photo: social },
     ];
 
     //!!페이지네이션
@@ -158,15 +171,23 @@ const RecruitmentPage = () => {
         }
     };
 
+    const handleSearchChange = (e) => {
+      const newSearchTerm = e.target.value;
+      setSearchTerm(newSearchTerm);
+      
+  };
+
     return (
         <PageContainer>
             
             <CategoryContainer>
-                
+
                 <CategoryWrapper>
                     {categories.map((category) => (
                         <CategoryItem key={category.id}>
-                            <CategoryCard onClick={() => {
+                            <CategoryCard 
+                                src={category.photo} 
+                                onClick={() => {
                               handleCategoryClick(category.id);
                               handle(category.name);
                             }
@@ -180,36 +201,45 @@ const RecruitmentPage = () => {
 
             <SortAndWriteSection>
                 <>
-                <CategoryText1>
-                공모전 모집글 ㅣ</CategoryText1>
-               
-                  
-                <CategoryText1>
-  {selectedCategoryText ? `${selectedCategoryText}` : "전체보기"}
-</CategoryText1>
+                <CategoryText1>공모전 모집글 ㅣ</CategoryText1>
+                <CategoryText1>{selectedCategoryText ? `${selectedCategoryText}` : "전체보기"}</CategoryText1>
+
                     <DropdownContainer>
                       <DropdownButton onClick={toggleDropdown}>
                         {selectedOption}<Arrow>▼</Arrow>
                       </DropdownButton>
-                      
-            {isOpen && (
-              <DropdownMenu>
-                    <DropdownItem onClick={() => handleSortChange("latest")}>
-                        최신순
-                    </DropdownItem>
-                    <DropdownItem onClick={() => handleSortChange("deadline")}>
-                        마감임박순
-                    </DropdownItem>
-                </DropdownMenu>
-            )}
-        </DropdownContainer>
+                        {isOpen && (
+                          <DropdownMenu>
+                                <DropdownItem onClick={() => handleSortChange("latest")}>
+                                    최신순
+                                </DropdownItem>
+                                <DropdownItem onClick={() => handleSortChange("deadline")}>
+                                    마감임박순
+                                </DropdownItem>
+                            </DropdownMenu>
+                        )}
+                    </DropdownContainer>
+
               </>
+
+              <SearchWrapper>
+                <SearchInput
+                  type="text"
+                  placeholder="원하는 검색어를 입력하세요"
+                  onInput={(e) => setSearchTerm(e.target.value)}
+                />
+                <SearchIcon onClick={() => setSearchParams({ search: searchTerm })}><SearchIcon2 src={searchicon} alt="Profile" /></SearchIcon>
+              </SearchWrapper>
         
-                <WriteButton onClick={() => navigate('/maketeam')}>글 작성하기</WriteButton>
+              <WriteButton onClick={() => navigate('/maketeam')}>글 작성하기</WriteButton>
             
             </SortAndWriteSection>
               
-              <PostListSection>
+
+
+
+            <PostListSection>
+
     {currentItems.length > 0 ? (
         currentItems.map((user, index) => (
             <React.Fragment key={index}>
@@ -237,7 +267,6 @@ const RecruitmentPage = () => {
                         </PostRight>
                     </div>
                 </PostCard>
-                
             </React.Fragment>
         ))
     ) : (
@@ -293,6 +322,44 @@ const CategoryContainer = styled.div `
   margin-right: 30px;
 `;
 
+const SearchWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  width: 360px;
+  height: 54px;
+  border: 1px solid #DBDBDB;
+  border-radius: 8px;
+  justify-content: space-between;
+  padding: 15px;
+  position: absolute;
+  top: 354px;
+  right: 335px;
+`;
+
+const SearchInput = styled.input`
+  flex: 1;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 1rem;
+  color: #6c6c6c;
+
+  &::placeholder {
+    color:#767676;
+  }
+`;
+
+const SearchIcon = styled.span`
+  font-size: 1.2rem;
+  color: #6c6c6c;
+  cursor: pointer;
+`;
+
+const SearchIcon2 = styled.img`
+  width: 21.028px;
+height: 21.026px;
+flex-shrink: 0;
+`;
 
 const CategoryWrapper = styled.div `
   display: grid;
@@ -342,18 +409,19 @@ const CategoryItem = styled.div `
 `;
 
 
-const CategoryCard = styled.div `
+const CategoryCard = styled.img `
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 1rem;
-  background: #e0e0e0;
-  padding: 1rem;
+  
   height: 56px;
   width: 56px;
   border-radius: 8px;
 `;
+
+
 
 const SortAndWriteSection = styled.div `
   display: flex;
@@ -397,9 +465,10 @@ const PostCard = styled.div `
   max-width: 1487px;
 `;
 
-const PostLeft = styled.div `
+const PostLeft = styled.img `
   flex: 0.8; /* 1 */
   display: flex;
+  width: 100%;
   flex-direction: column;
   border-radius: 16px;
 background: #F0F3FA;

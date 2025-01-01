@@ -4,6 +4,9 @@ import axios from "axios";
 import file from "../assets/mypage/File.svg";
 import link from "../assets/mypage/Link.svg";
 
+//임시 데이터
+import { owner, applied } from "./MyPageData"
+
 // 리코일 변수 받아오기
 // import { useRecoilValue } from 'recoil';
 // import { atom에서 받아오는 변수 } from '';
@@ -11,7 +14,21 @@ import link from "../assets/mypage/Link.svg";
 
 export default function MyPage() {
 
+
+    // 테스트 용
+    const userId = 2;
+    const [userPosts, setUserPosts] = useState([]);
+
+    useEffect(() => {
+      // 주어진 데이터를 기반으로 userId에 해당하는 게시글 필터링
+      const filteredPosts = owner[0].filter(post => post.ownerId === userId);
+      setUserPosts(filteredPosts);
+    }, [userId]);
+
+
+
     const server = process.env.REACT_APP_SERVER;
+    const mock = process.env.REACT_APP_POST_MOCK;
 
     // 전체 게시물 sorting 할려고 가져옴
     const [users, setUsers] = useState([]);
@@ -57,19 +74,20 @@ useEffect(() => {
       try {
           const response = await axios.get(
             //게시물 데이터 다 받아오기
-              // "https://676e83a3df5d7dac1ccae100.mockapi.io/post"
-              `http://${server}/post`
+              `${mock}`
+              // `http://${server}/post`
           );
           const response2 = await axios.get(
-            // `https://672819eb270bd0b975546065.mockapi.io/api/v1/register?page=1&limit=25`
-            `http://${server}/post/applied/1`
+            `${mock}`
+            // `http://${server}/post/applied/1`
           );
           const response3 = await axios.get(
-            // `https://672819eb270bd0b975546065.mockapi.io/api/v1/register?page=1&limit=25`
-            `http://${server}/post/owner/1`
+            `${mock}`
+            // `http://${server}/post/owner/1`
           );
           const response4 = await axios.get(
-            `http://${server}/card/1`
+            `${mock}`
+            // `http://${server}/card/1`
           );
 
           
@@ -122,33 +140,42 @@ const CreateProjects = create.reduce((acc, create) => {
   return acc;
 }, {});
 
+const OwnerProjects = userPosts.reduce((acc, create) => {
+  const { category } = create;
+  if (!acc[category]) {
+    acc[category] = [];
+  }
+  acc[category].push(create);
+  return acc;
+}, {});
+
 
 
     // 역량 카드 관련 서버 연결
-    useEffect(() => {
-        const fetchExtraData = async () => {
-            try {
-                const response = await axios.get(
-                    `https://672819eb270bd0b975546065.mockapi.io/api/v1/register?page=1&limit=25`
-                    // `http://${server}/card/${userId}`
-                );
-                setExtraData(Array.isArray(response.data) ? response.data : []);
+    // useEffect(() => {
+    //     const fetchExtraData = async () => {
+    //         try {
+    //             const response = await axios.get(
+    //               `${mock}`
+    //                 // `http://${server}/card/1`
+    //             );
+    //             setExtraData(Array.isArray(response.data) ? response.data : []);
                 
-            } catch (err) {
+    //         } catch (err) {
               
-                console.error("Error fetching data:", err.message);
-                setError(err);
-            }
-        };
-        fetchExtraData();
-    }, []);
+    //             console.error("Error fetching data:", err.message);
+    //             setError(err);
+    //         }
+    //     };
+    //     fetchExtraData();
+    // }, []);
 
 
 
 
 
 
-    if (error) return <div>에러가 발생했습니다: {error.message}</div>;
+    // if (error) return <div>에러가 발생했습니다: {error.message}</div>;
 
 
     // 현재 참여중인 공모전 목업 데이터
@@ -164,6 +191,8 @@ const CreateProjects = create.reduce((acc, create) => {
       { title: "나는야 파드 공모전", author: "박경민", members: 2 },
       { title: "나는야 파드 공모전", author: "박경민", members: 2 },
     ];
+
+   
 
     // 좌측과 우측으로 나누기
     const leftColumn = data.slice(0, 5);
@@ -333,6 +362,46 @@ const CreateProjects = create.reduce((acc, create) => {
 
                 <HeaderText2>작업물</HeaderText2>
 
+                {card
+                  .filter(item => item.file || item.url)
+                  .map((item, index) =>(
+                    <React.Fragment key={index}>
+
+                        {/* .file 값이 존재하는 경우 */}
+                      {item.file && (
+                        <BoxWrapper>
+                          <ImagePlaceholder>
+                            <ImageStyle src={item.file}/>
+                          </ImagePlaceholder>
+
+                          <TextWrapper>
+                            {/* 이거 파일 이름이랑 사이즈 어캐 받아오지 파일 데이터 안에 있나? */}
+
+                            {/* <FileName>{item.fileName || "파일 이름 없음"}</FileName>
+                            <FileSize>{item.fileSize || "파일 크기 없음"}</FileSize> */}
+                          </TextWrapper>
+                        </BoxWrapper>
+                      )}
+
+                      {/* .url 값이 존재하는 경우 */}
+                      {item.url && (
+                        <BoxWrapper>
+                          <ImagePlaceholder>
+                            <ImageStyle src={item.url} />
+                          </ImagePlaceholder>
+                          <TextWrapper>
+                            이거 어캐해
+                            {/* <FileName>{item.url || "URL 없음"}</FileName> */}
+                          </TextWrapper>
+                        </BoxWrapper>
+                      )}
+
+                    </React.Fragment>
+                  ))
+                }
+
+                
+
                                 
                                 
                                 
@@ -462,9 +531,9 @@ const CreateProjects = create.reduce((acc, create) => {
                     {/* 우측 그리드 섹션 */}
         <GridRight>
 
-        <GridSection>
+        {/* <GridSection> */}
            {/* 카테고리 정렬 배열 */}
-            {Object.keys(CreateProjects).map((category, index) => (
+            {/* {Object.keys(CreateProjects).map((category, index) => (
               <Card3 key={index}>
 
                 <SectionLeft>
@@ -472,9 +541,9 @@ const CreateProjects = create.reduce((acc, create) => {
                 </SectionLeft>
 
                 <SectionRight>
-                  <Column>
+                  <Column> */}
                   {/* 카테고리 별 포스트 배열 */}
-                {CreateProjects[category].map((category) => (
+                {/* {CreateProjects[category].map((category) => (
                   <Card3 key={category.postId}>
                     <ProjectTitle>{category.title} </ProjectTitle>
                     <div>{category.approvedCount}</div>
@@ -484,7 +553,37 @@ const CreateProjects = create.reduce((acc, create) => {
                 </SectionRight>
               </Card3>
             ))}
+        </GridSection> */}
+
+
+{/* 테스트용 여기 변수만 맞추면 되삼 */}
+        <GridSection>
+           {/* 카테고리 정렬 배열 */}
+            {Object.keys(OwnerProjects).map((category, index) => (
+              <Card3 key={index}>
+
+                <SectionLeft>
+                  <CardTitle>{category}</CardTitle>
+                </SectionLeft>
+
+                <SectionRight>
+                  <Column>
+                  {/* 카테고리 별 포스트 배열 */}
+                {OwnerProjects[category].map((category) => (
+                  
+                  <Card3 key={category.postId}>
+                    <ProjectTitle>{category.title} </ProjectTitle>
+                    <div>{category.approvedCount}</div>
+                  </Card3>
+                 
+                ))}
+                 </Column>
+              </SectionRight>
+              </Card3>
+            ))}
         </GridSection>
+
+           
           
         </GridRight>
       </OuterGrid>
@@ -784,7 +883,7 @@ const Card2 = styled.div`
 const Card3 = styled.div`
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  
   
   margin-bottom: 18px;
   font-size: 22px;
@@ -859,6 +958,7 @@ const GridRight = styled.div`
 
 const GridSection = styled.div`
   display: flex;
+  flex-direction: column;
   margin: 10px 0;
   margin-bottom: 42px;
   border-radius: 5px;
@@ -866,8 +966,6 @@ const GridSection = styled.div`
 
 const SectionLeft = styled.div`
   flex: 1;
-  
-  
   border-radius: 5px;
 `;
 
