@@ -20,13 +20,14 @@ export default function DetailPage() {
     
 
     const { postId } = useParams();
+    const { userId } = useParams();
     const navigate = useNavigate(); // Initialize useNavigate hook
 
     useEffect(() => {
         const fetchExtraData = async () => {
             try {
                 const response = await axios.get(
-                    `https://672819eb270bd0b975546065.mockapi.io/api/v1/register?page=1&limit=25`
+                    `http://192.168.1.24:8080/card/${userId}`
                 );
                 setExtraData(Array.isArray(response.data) ? response.data : []);
                 console.log(response.data);
@@ -42,7 +43,7 @@ export default function DetailPage() {
     useEffect(() => {
         const fetchPostData = async () => {
             try {
-                const response = await axios.get(`http://172.30.1.28:8080/post/${postId}/with-applicants`);
+                const response = await axios.get(`http://192.168.1.24:8080/post/${postId}/with-applicants`);
                 // const response = await axios.get(`https://676e83a3df5d7dac1ccae100.mockapi.io/post/1`);
                 setPostData(response.data);
                 console.log("HTTP Status Code:", response.status);
@@ -60,11 +61,11 @@ export default function DetailPage() {
   };
 
   const handleSecondSubmit = async () => {
-      const userId = "2"; // Assuming you retrieve the user ID from authentication
+      const userId = "4"; // Assuming you retrieve the user ID from authentication
       try {
           // Sending POST request to the server
           await axios.post(
-              `http://172.30.1.28:8080/applications/${userId}/${postId}`
+              `http://192.168.1.24:8080/applications/${userId}/${postId}`
           );
           setIsPostSubmitted(true);
           setIsModalOpen(false); // Close first modal

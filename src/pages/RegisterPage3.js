@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { postMemberAPI, useForm } from "../context/FormContext";
+import { updateMemberAPI, useForm } from "../context/FormContext";
 import SurveyIcon from "../assets/register.svg";
-import { Container, LeftPanel, LeftPanelImage, LeftPanelText, LeftPanelTextBox, LeftPanelTitle, mainColorPurple, NextButton, ProgressBar, ProgressStepOn, QuestionBox, QuestionLabel, QuestionRow, RightPanel, RightPanelTitle, TextArea } from "../components/RegisterComponents";
+import { Container, LeftPanel, LeftPanelImage, LeftPanelText, LeftPanelTextBox, LeftPanelTitle, mainColorPurple, NextButton, ProgressBar, ProgressStepOn, QuestionBox, QuestionLabel, QuestionRow, RightPanel, RightPanelTitle, TextArea, PreviousButton } from "../components/RegisterComponents";
 import styled from "styled-components";
 
 
@@ -16,6 +16,13 @@ const AnswerAddButton = styled.button`
   font-size: 17px;;
 
   cursor: pointer;
+`;
+
+const ButtonWrapper = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+  gap: 20px;
 `;
 
 const AddInput = styled.input`
@@ -88,7 +95,7 @@ const RegisterPage3 = () => {
       awards: prevData.awards?.length > 0 ? prevData.awards : [""],
       url: prevData.url?.length > 0 ? prevData.url : [""],
     }));
-  }, []);
+  }, [setFormData]);
 
   const navigate = useNavigate();
 
@@ -144,7 +151,7 @@ const RegisterPage3 = () => {
   /**
    * '다음' 버튼 클릭 시 로직
    */
-  const handleNext = () => {
+  const handleNext = async () => {
     // 200자 제한 체크
     if (formData.additionalInfo?.length > 200) {
       alert("추가 작성란은 200자 이내로 작성해 주세요.");
@@ -152,13 +159,18 @@ const RegisterPage3 = () => {
     }
 
     try {
-      // const response = postMemberAPI(formData);
-      // console.log("RegisterPage3 POST response:", response.data);
+      // PATCH 요청으로 수정 (기존 데이터를 업데이트)
+      const response = await updateMemberAPI(formData.id, formData);  // formData.id와 업데이트할 formData 전달
+      console.log("RegisterPage3 PATCH response:", response.data);
     } catch (error) {
-      // console.error("RegisterPage3 POST error:", error);
+      console.error("RegisterPage3 PATCH error:", error);
     }
 
     navigate("/register/4");
+  };
+
+  const handlePrevious = () => {
+    navigate("/register/2");
   };
 
   useEffect(() => {
@@ -283,8 +295,10 @@ const RegisterPage3 = () => {
           />
         </QuestionBox3>
 
-
-        <NextButton onClick={handleNext}>저장</NextButton>
+        <ButtonWrapper>
+          <PreviousButton onClick={handlePrevious}>이전</PreviousButton>
+          <NextButton onClick={handleNext}>다음</NextButton>
+        </ButtonWrapper>
       </RightPanel>
     </Container>
   );

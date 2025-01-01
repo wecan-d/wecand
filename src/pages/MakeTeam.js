@@ -3,7 +3,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import MaketeamSVG from "../assets/maketeam.svg";
 
-const server = "http://172.30.1.28:8080/post/4";
+const server = "http://192.168.1.24:8080/post/2";
 
 export const postMemberAPI = async (data) => {
   try {

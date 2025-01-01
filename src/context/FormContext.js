@@ -2,7 +2,7 @@ import React, { createContext, useContext, useState, useEffect } from "react";
 import axios from "axios";
 
 // ---------------------- 서버 주소 & API ----------------------
-const server = "https://672819eb270bd0b975546065.mockapi.io/api/v1/register";
+const server = "http://192.168.1.24:8080/card/3";
 
 // (1) 생성(POST)
 export const postMemberAPI = async (data) => {
@@ -12,7 +12,7 @@ export const postMemberAPI = async (data) => {
     });
     return response;
   } catch (error) {
-    console.error("API 호출 에러(POST):", error);
+    console.error("API 호출 에러(POST):", error.response?.data || error.message);
     throw error;
   }
 };
@@ -28,15 +28,15 @@ export const getMembersAPI = async () => {
   }
 };
 
-// (3) 수정(UPDATE)
+// (3) 수정(PATCH)
 export const updateMemberAPI = async (id, data) => {
   try {
-    const response = await axios.put(`${server}/${id}`, data, {
+    const response = await axios.patch(`${server}`, id, data, {
       headers: { "Content-Type": "application/json" },
     });
     return response;
   } catch (error) {
-    console.error("API 호출 에러(PUT):", error);
+    console.error("API 호출 에러(PATCH):", error);
     throw error;
   }
 };
@@ -64,7 +64,7 @@ export const FormProvider = ({ children }) => {
       gender: "",
       identity: "",
       major: "",
-      age: "",
+      age: 0,
       phone: "",
       email: "",
       communication: [],
