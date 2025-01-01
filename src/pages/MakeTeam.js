@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import MaketeamSVG from "../assets/maketeam.svg";
 
-const server = "http://172.30.1.3:8080/post/4";
+const server = "http://192.168.1.24:8080/post/2";
 
 export const postMemberAPI = async (data) => {
   try {
@@ -29,6 +30,8 @@ const MakeTeam = () => {
 
   const [imagePreview, setImagePreview] = useState(null);
   const [errors, setErrors] = useState({});
+  const [isModalVisible, setIsModalVisible] = useState(false);  // 모달 상태 추가
+  const [modalTimer, setModalTimer] = useState(null);  // 모달 타이머 상태 추가
 
   const categories = [
     "디자인",
@@ -80,11 +83,19 @@ const MakeTeam = () => {
 
     try {
       const response = await postMemberAPI(payload);
-      alert("작성 완료! 성공적으로 업로드되었습니다.");
+
       console.log("Uploaded Data:", response.data);
 
+      // 모달 띄우기
+      setIsModalVisible(true);
+
+      // 2초 뒤 자동으로 디테일 페이지로 이동
+      setModalTimer(setTimeout(() => {
+        navigate(`/detail/${encodeURIComponent(response.data)}`);  // 2초 후 이동
+      }, 2000));
+
       // response.data를 state로 넘기기
-      navigate(`/detail/${encodeURIComponent(response.data)}`);
+      // navigate(`/detail/${encodeURIComponent(response.data)}`);
 
       setFormData({
         title: "",
@@ -102,6 +113,11 @@ const MakeTeam = () => {
       console.error("Error submitting form:", error);
       alert("데이터 업로드에 실패했습니다. 다시 시도해주세요.");
     }
+  };
+
+  const closeModal = () => {
+    clearTimeout(modalTimer);  // 타이머 클리어
+    setIsModalVisible(false);  // 모달 닫기
   };
 
   return (
@@ -243,6 +259,15 @@ const MakeTeam = () => {
           </button>
         </div>
       </div>
+      {/* 모달이 보일 때 */}
+      {isModalVisible && (
+        <div style={styles.modalOverlay} onClick={closeModal}>
+          {/* <div style={styles.modalContent} onClick={(e) => e.stopPropagation()}> */}
+            <img src={MaketeamSVG} alt="Success" style={styles.modalImage} />
+            {/* <p>작성 완료! 2초 후 디테일 페이지로 이동합니다.</p> */}
+          {/* </div> */}
+        </div>
+      )}
     </div>
   );
 };
@@ -359,7 +384,32 @@ const styles = {
   },
   labelerror : {
     flexDirection: "column",
-  }
+  },
+  // 모달 관련 스타일 추가
+  modalOverlay: {
+    position: "fixed",
+    top: 0,
+    left: 0,
+    width: "100%",
+    height: "100%",
+    backgroundColor: "rgba(0, 0, 0, 0.7)",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  modalContent: {
+    backgroundColor: "#fff",
+    padding: "2rem",
+    textAlign: "center",
+    borderRadius: "10px",
+    boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
+  },
+  modalImage: {
+    width: "500px", // 화면의 90%로 크기를 설정하여 SVG 이미지가 가득 차도록
+    height: "500px", // 높이는 화면의 80%로 제한하여 가득 차도록 조정
+    objectFit: "contain", // 비율 유지하며 크기 맞추기
+    marginBottom: "1rem",
+  },
 };
 
 export default MakeTeam;

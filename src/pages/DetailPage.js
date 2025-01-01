@@ -3,20 +3,31 @@
 import React from "react";
 import styled from "styled-components";
 import {useState, useEffect} from "react";
-import {useParams} from "react-router-dom";
+import {useParams, useNavigate} from "react-router-dom";
 import axios from "axios";
+import DetailSVG from "../assets/detail.svg";
+
 export default function DetailPage() {
     const [extraData, setExtraData] = useState([]);
     const [postData, setPostData] = useState(null);
     const [error, setError] = useState(null);
 
+    const [isModalOpen, setIsModalOpen] = useState(false); // 모달 표시 여부
+    const [isConfirmationVisible, setIsConfirmationVisible] = useState(false); // 두 번째 이미지 모달 표시 여부
+    const [modalTimer, setModalTimer] = useState(null); // 타이머 상태
+    const [isPostSubmitted, setIsPostSubmitted] = useState(false);
+
+    
+
     const { postId } = useParams();
+    const { userId } = useParams();
+    const navigate = useNavigate(); // Initialize useNavigate hook
 
     useEffect(() => {
         const fetchExtraData = async () => {
             try {
                 const response = await axios.get(
-                    `https://672819eb270bd0b975546065.mockapi.io/api/v1/register?page=1&limit=25`
+                    `http://192.168.1.24:8080/card/${userId}`
                 );
                 setExtraData(Array.isArray(response.data) ? response.data : []);
                 console.log(response.data);
@@ -32,7 +43,7 @@ export default function DetailPage() {
     useEffect(() => {
         const fetchPostData = async () => {
             try {
-                const response = await axios.get(`http://172.17.217.97:8080/post/${postId}`);
+                const response = await axios.get(`http://192.168.1.24:8080/post/${postId}/with-applicants`);
                 // const response = await axios.get(`https://676e83a3df5d7dac1ccae100.mockapi.io/post/1`);
                 setPostData(response.data);
                 console.log("HTTP Status Code:", response.status);
@@ -45,9 +56,41 @@ export default function DetailPage() {
         fetchPostData();
     }, [postId]);
 
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const openModal = () => setIsModalOpen(true);
-    const closeModal = () => setIsModalOpen(false);
+    const handleFirstSubmit = () => {
+      setIsModalOpen(true); // Open the first modal
+  };
+
+  const handleSecondSubmit = async () => {
+      const userId = "4"; // Assuming you retrieve the user ID from authentication
+      try {
+          // Sending POST request to the server
+          await axios.post(
+              `http://192.168.1.24:8080/applications/${userId}/${postId}`
+          );
+          setIsPostSubmitted(true);
+          setIsModalOpen(false); // Close first modal
+
+          // Show second confirmation modal after 2 seconds
+          setModalTimer(setTimeout(() => {
+              setIsConfirmationVisible(true); // Show success confirmation modal
+
+              // Hide success modal after another 2 seconds
+              setTimeout(() => {
+                  setIsConfirmationVisible(false);
+                  navigate(`/detail/${postId}`); // Optionally navigate to another page after 2 seconds
+              }, 2000);
+          }));
+      } catch (err) {
+          alert("지원에 실패했습니다.");
+      }
+  };
+
+  const closeModal = () => {
+      clearTimeout(modalTimer);
+      setIsModalOpen(false);
+      setIsConfirmationVisible(false);
+  };
+
 
     useEffect(() => {
         return () => {
@@ -110,7 +153,8 @@ export default function DetailPage() {
                             </InfoValue>
                         </InfoRow>
                         <InfoRow>
-                            <InfoLabel>총 지원자 {postData.applicants}</InfoLabel>
+                            <InfoLabel>총 지원자</InfoLabel>
+                            <InfoValue>{postData.applicants.length}</InfoValue>
 
                             {/* !ERD applicants = 모집 지원자! */}
                             {/* <InfoValue>1,200 {postData.applicants}</InfoValue> */}
@@ -150,7 +194,7 @@ export default function DetailPage() {
                     {/* 버튼 */}
                     <ActionButtons>
                         <LinkButton>공모전 확인하기</LinkButton>
-                        <ApplyButton onClick={openModal}>지원하기</ApplyButton>
+                        <ApplyButton onClick={handleFirstSubmit}>지원하기</ApplyButton>
                     </ActionButtons>
                 </SideBox>
 
@@ -169,7 +213,7 @@ export default function DetailPage() {
                                         <CloseButton onClick={closeModal}>×</CloseButton>
                                         <HeaderButtons>
 
-                                            <SubmitButton>지원하기</SubmitButton>
+                                            <SubmitButton onClick={handleSecondSubmit}>지원하기</SubmitButton>
                                         </HeaderButtons>
                                     </div>
                                 </div>
@@ -331,6 +375,14 @@ export default function DetailPage() {
                     </ModalOverlay>
                 )
             }
+            {/* Second Confirmation Modal */}
+            {isConfirmationVisible && (
+                        <ModalOverlay color="rgba(0, 0, 0, 0.7)">
+                            <SuccessMessage>
+                                  <img src={DetailSVG} alt="Success" width="500px" height="500px" />
+                            </SuccessMessage>
+                        </ModalOverlay>
+                    )}
              </>
         ) : (
             <div>다시해</div>
@@ -559,6 +611,9 @@ const UnorderedList = styled.div `
 `;
 
 const ListItem = styled.div `
+`;
+
+const SuccessMessage = styled.div`
 `;
 
 const ModalOverlay = styled.div `

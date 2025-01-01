@@ -23,7 +23,32 @@ const RegisterPage1 = () => {
     setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
 
-  const handleNext = () => {
+  const sanitizeFormData = (data) => {
+    const sanitizedData = { ...data };
+  
+    // 배열 필드가 비어 있으면 기본값을 추가 (예: ["string"])
+    const arrayFields = [
+      'communication', 'teamwork', 'thinking', 'role', 
+      'conflictResolution', 'timePreference', 'restPreference', 'friendship',
+      'goal', 'certificates', 'tools', 'awards', 'portfolio', 'additionalInfo', 'url'
+    ];
+  
+    arrayFields.forEach((field) => {
+      if (Array.isArray(sanitizedData[field])) {
+        if (sanitizedData[field].length === 0) {
+          sanitizedData[field] = ["string"]; // 기본값 추가
+        } else {
+          // 배열이 있으면 빈 문자열이 포함되지 않도록 처리
+          sanitizedData[field] = sanitizedData[field].filter(item => item !== "");
+        }
+      }
+    });
+  
+    return sanitizedData;
+  };
+  
+  
+  const handleNext = async () => {
     const { name, gender, identity, major, age, phone, email } = formData;
 
     const missingFields = [];
@@ -53,12 +78,29 @@ const RegisterPage1 = () => {
       return;
     }
 
-    try {
-      // const response = postMemberAPI(formData);
-      // console.log("RegisterPage1 POST response:", response.data);
-    } catch (error) {
-      // console.error("RegisterPage1 POST error:", error);
+    // 데이터 정리
+  const sanitizedData = sanitizeFormData(formData);
+
+   // 서버로 데이터 전송 전에 출력하여 디버깅
+   console.log("POST 전송 데이터:", sanitizedData);
+  
+  try {
+    const response = await postMemberAPI(sanitizedData);
+    console.log("RegisterPage1 POST response:", response.data);
+
+    // 응답 데이터에서 id를 추출하여 formData에 저장
+    const { id } = response.data;
+    setFormData((prevData) => ({
+      ...prevData,
+      id: id,  // POST 응답에서 받은 id를 formData에 저장
+    }));
+  } catch (error) {
+    console.error("RegisterPage1 POST error:", error);
+    if (error.response) {
+      // 서버의 상세 오류 메시지 출력
+      console.error("Error response data:", error.response.data);
     }
+  }
 
     navigate("/register/2");
   };
