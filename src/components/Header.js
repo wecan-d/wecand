@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import styled from "styled-components";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { SearchContext } from "../context/SearchContext";
 import { useSearchParams } from "react-router-dom";
 import logo from "../assets/homepage/HeaderLogo.svg"
@@ -9,12 +9,19 @@ import searchicon from "../assets/homepage/search.svg"
 const Header = () => {
   const { searchTerm, setSearchTerm } = useContext(SearchContext);
   const [, setSearchParams] = useSearchParams(); 
-
+  
+  const location = useLocation();
   const handleSearchChange = (e) => {
     const newSearchTerm = e.target.value;
     setSearchTerm(newSearchTerm);
     setSearchParams({ search: newSearchTerm }); // URL 파라미터 업데이트
 };
+  
+  // recruitingPage 경로를 확인
+  const hideSearchBar = location.pathname.includes("/recruiting");
+
+
+
   return (
     <HeaderContainer>
       {/* 로고 섹션 */}
@@ -27,6 +34,7 @@ const Header = () => {
 
       {/* 검색 섹션 */}
       <IconsWrapper>
+      {!hideSearchBar && (
         <SearchWrapper>
           <SearchInput
           type="text"
@@ -36,6 +44,7 @@ const Header = () => {
         />
           <SearchIcon ><SearchIcon2 src={searchicon} alt="Profile" /></SearchIcon>
         </SearchWrapper>
+      )}
 
         <UserWrapper>
           <UserName>김규리님</UserName>

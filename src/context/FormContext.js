@@ -2,7 +2,7 @@ import React, { createContext, useContext, useState, useEffect } from "react";
 import axios from "axios";
 
 // ---------------------- 서버 주소 & API ----------------------
-const server = "http://192.168.1.24:8080/card/3";
+const server = "http://172.30.1.32:8080/card/3";
 
 // (1) 생성(POST)
 export const postMemberAPI = async (data) => {
