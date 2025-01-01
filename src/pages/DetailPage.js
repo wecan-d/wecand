@@ -20,14 +20,14 @@ export default function DetailPage() {
     const server = process.env.REACT_APP_SERVER;
 
     const { postId } = useParams();
+    const { userId } = useParams();
     const navigate = useNavigate(); // Initialize useNavigate hook
 
     useEffect(() => {
         const fetchExtraData = async () => {
             try {
                 const response = await axios.get(
-                    `https://672819eb270bd0b975546065.mockapi.io/api/v1/register?page=1&limit=25`
-                    
+                    `http://192.168.1.24:8080/card/${userId}`
                 );
                 setExtraData(Array.isArray(response.data) ? response.data : []);
                 console.log(response.data);

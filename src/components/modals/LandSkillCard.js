@@ -7,10 +7,7 @@ import { IoMdClose } from "react-icons/io";
 const LandSkillCard = ({
   isOpen, 
   onClose, 
-  userInfo = {}, 
-  positionTop,
-  positionLeft,
-  centerByTransform
+  userInfo, 
 }) => {
   const modalRef = useRef(null);
 
@@ -33,15 +30,15 @@ const LandSkillCard = ({
   if (!isOpen) return null;
 
   const allCards = [
-    { id: 'communication', title: '소통', content: ['비대면 소통을 선호해요', '새벽연락도 가능해요'] },
-    { id: 'work', title: '작업', content: ['다같이 작업하고 싶어요', '평일에 하고 싶어요'] },
-    { id: 'thinking', title: '사고', content: ['논리적이에요', '창의적이에요'] },
-    { id: 'role', title: '역할', content: ['리더십이 있어요', '기록을 잘 남겨요'] },
-    { id: 'conflict', title: '갈등 해결', content: ['바로 해결해요', '솔직하게 표현해요'] },
-    { id: 'time', title: '시간', content: ['오전(06-12)', '저녁(18-00)', '오전(06-12)', '오전(06-12)', '오전(06-12)'] },
-    { id: 'rest', title: '휴식', content: ['짧게 자주 쉬고 싶어요'] },
-    { id: 'friendship', title: '친목', content: ['작업에만 집중하고 싶어요'] },
-    { id: 'important', title: '중요하게 생각해요', content: ['팀플 시간을 꼭 지켜주기'] },
+    { id: 'communication', title: '소통' },
+    { id: 'teamwork', title: '작업' },
+    { id: 'thinking', title: '사고' },
+    { id: 'role', title: '역할' },
+    { id: 'conflictResolution', title: '갈등 해결' },
+    { id: 'timePreference', title: '시간' },
+    { id: 'restPreference', title: '휴식' },
+    { id: 'friendship', title: '친목' },
+    { id: 'important', title: '중요하게 생각해요' },
   ];
 
   return (
@@ -51,11 +48,11 @@ const LandSkillCard = ({
         <ProfileImage src={profile} alt="프로필 이미지" />
         <UserInfoText>
           <UserInfoTitle>
-            <UserName>김규리</UserName>
-            <UserDetail>20세, 여성</UserDetail>
+            <UserName>{userInfo.name}</UserName>
+            <UserDetail>{userInfo.age}세, {userInfo.gender}</UserDetail>
           </UserInfoTitle>
-          <UserSchool>계명대학교 시각디자인학과 3학년</UserSchool>
-          <UserEmail>jjanggu1083@naver.com</UserEmail>
+          <UserSchool>{userInfo.identity}</UserSchool>
+          <UserEmail>{userInfo.email}</UserEmail>
         </UserInfoText>
       </Header>
       
@@ -63,25 +60,37 @@ const LandSkillCard = ({
 
       <SectionTitle>작업 스타일</SectionTitle>
       <CardGrid>
-        {allCards.map((card) => (
-          <Card
-            key={card.id}
-            style={{ gridArea: card.id }}
-          >
-            <CardTitle>{card.title}</CardTitle>
-            <CardContent>
-              {card.content.map((item, index) => (
-                <p key={index}>{item}</p>
-              ))}
-            </CardContent>
-          </Card>
-        ))}
+        {allCards.map((card) => { 
+          const content = userInfo[card.id];
+          let contentItems = [];
+          if(Array.isArray(content)) {
+            contentItems = content;
+          } else if (typeof content === 'string') {
+            contentItems = [content];
+          }
+
+          return (
+            <Card
+              key={card.id}
+              style={{ gridArea: card.id }}
+            >
+              <CardTitle>{card.title}</CardTitle>
+              <CardContent>
+                {contentItems && contentItems.length > 0 ? (contentItems.map((item, index) => (
+                  <p key={index}>{item}</p>
+                ))
+              ): (<p></p>)}
+              </CardContent>
+            </Card>
+          );
+        })}
       </CardGrid>
 
       <Divider />
 
       <Section>
         <SectionTitle>경력 / 경험</SectionTitle>
+        <SectionSubTitle>툴 / 자격증</SectionSubTitle>
         <CardContent>
           <p>삼성 디자인 멤버십 수료</p>
           <p>2020 해커톤 대상</p>
@@ -194,19 +203,23 @@ const SectionTitle = styled.h3`
   margin-top: 0;
 `;
 
+const SectionSubTitle = styled(SectionTitle)`
+  font-size: 18px;
+`;
+
 const CardGrid = styled.div`
   display: grid;
   grid-template-columns: 225px 225px;
   grid-auto-rows: minmax(120px, auto);
   gap: 14px;
   grid-template-areas:
-    "communication work"
+    "communication teamwork"
     "communication work"
     "thinking role"
     "thinking role"
-    "conflict time"
-    "conflict time"
-    "rest friendship"
+    "conflictResolution timePreference"
+    "conflictResolution timePreference"
+    "restPreference friendship"
     "important important";
 `;
 
@@ -230,7 +243,7 @@ const CardTitle = styled.h4`
 `;
 
 const CardContent = styled.div`
- font-size: 18px;
+  font-size: 18px;
   font-weight: 400;
   color: #111111;
 `;

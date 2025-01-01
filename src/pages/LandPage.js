@@ -17,17 +17,21 @@ import bubble8 from "../assets/LandPage/Bubbles/bubble8.svg";
 import bubble9 from "../assets/LandPage/Bubbles/bubble9.svg";
 import bubble10 from "../assets/LandPage/Bubbles/bubble10.svg";
 
-import exit from "../assets/icon_exit.png";
 import profile from "../assets/profile.png";
-import ConfirmModal from "../components/modals/ConfirmModal";
 import SkillCardModal from "../components/modals/LandSkillCard";
+
+import { urls, urlnames, card, card2, members } from "./LandPageData";
 
 import { getMembersAPI } from "../context/FormContext";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import AddTeamPageModal from "../components/modals/AddTeamPageModal";
 
 const SCR_HEIGHT = window.screen.height - (window.outerHeight - window.innerHeight);
 const SCR_WIDTH = window.screen.width - (window.outerWidth - window.innerWidth);
 const BG_RATIO = 1.82;
+
+const MARGIN_FROM_RIGHT = 50;
 
 const bubbleArr = [bubble1, bubble2, bubble3, bubble4, bubble5, bubble6, bubble7, bubble8, bubble9, bubble10];
 
@@ -134,48 +138,53 @@ const Land = ({ teamMembers, hoveredMemberIds, onHover, onOpenSkillCard }) => {
 
 const TeamListFloatingContainer = styled.div`
   position: absolute;
-  top: 80px;
-  left: calc(100vw - 30px);
+  top: 95px;
+  left: calc(100vw - ${MARGIN_FROM_RIGHT}px);
   transform: translate(-100%, 0);
-  width: 230px;
-  padding: 16px 16px 0 16px;
+  width: 280px;
+  padding: 20px 20px 0 20px;
   background-color: rgba(0, 0, 0, 0.5);
   border-radius: 12px;
   z-index: 5;
 `;
 
 const Title = styled.div`
-  font-size: 1.1rem;
-  font-weight: bold;
-  margin-bottom: 12px;
+  font-size: 20px;
+  font-weight: 700;
   color: white;
 `;
 
 const MemberList = styled.div`
   display: flex;
   flex-direction: column;
+
+  &:last-child {
+    margin-bottom: 10px;
+  }
 `;
 
 const MemberRow = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 6px 0;
+  padding: 7px 0;
 `;
 
 const ProfileWrapper = styled.div`
   display: flex;
   align-items: center;
 `;
+
 const ProfileImage = styled.img`
   width: 32px;
   height: 32px;
   border-radius: 50%;
   object-fit: cover;
-  margin-right: 8px;
+  margin-right: 10px;
 `;
 const MemberName = styled.span`
-  font-size: 0.95rem;
+  font-size: 18px;
+  font-weight: 500;
   color: white;
 `;
 
@@ -183,10 +192,10 @@ const SkillButton = styled.button`
   background-color: #6c54f7;
   color: #fff;
   border: none;
-  border-radius: 6px;
-  padding: 4px 8px;
+  border-radius: 30px;
+  padding: 5px 10px;
   cursor: pointer;
-  font-size: 0.8rem;
+  font-size: 17px;
 `;
 
 const ExpandButton = styled.button`
@@ -238,7 +247,7 @@ const ButtonGroup = styled.div`
   gap: 10px;
 `;
 
-const AddShortcutModal = ({ isOpen, onClose, onAdd }) => {
+const AddShortcutModal2 = ({ isOpen, onClose, onAdd }) => {
   const [shortcutName, setShortcutName] = useState("");
   const [shortcutURL, setShortcutURL] = useState("");
 
@@ -290,7 +299,7 @@ const TeamListFloating = ({ members, onHover, onOpenSkillCard, onToggleExpand })
 
   return (
     <TeamListFloatingContainer>
-      <Title>팀원 목록</Title>
+      <Title style = {{marginBottom: "12px"}}>팀원 목록</Title>
       <MemberList>
         {members.slice(0, visibleCount).map((member) => (
           <MemberRow
@@ -322,10 +331,10 @@ const TeamListFloating = ({ members, onHover, onOpenSkillCard, onToggleExpand })
 
 const TeamPageFloatingContainer = styled.div`
   position: absolute;
-  left: calc(100vw - 30px);
+  left: calc(100vw - ${MARGIN_FROM_RIGHT}px);
   transform: translateX(-100%);
-  width: 230px;
-  padding: 16px 16px 0 16px;
+  width: 280px;
+  padding: 16px;
   background-color: rgba(0, 0, 0, 0.5);
   border-radius: 12px;
   z-index: 5;
@@ -341,7 +350,6 @@ const AddButton = styled.button`
   color: white;
   background-color: rgba(0, 0, 0, 0);
   border: none;
-  margin-bottom: 12px;
   padding: 0;
   cursor: pointer;
 `;
@@ -355,56 +363,46 @@ const ShortcutRow = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 6px 0;
+  margin: 5px 0;
 
-  &:last-child {
-    margin-bottom: 12px;
-  }
+&:first-child {
+  margin-top: 15px;
+}
 `;
 
 const ShortcutName = styled.span`
-  font-size: 0.95rem;
+  font-size: 18px;
   color: white;
   cursor: pointer;
   text-decoration: underline;
 `;
 
-const TeamPageFloating = ({ memberNum, isTeamListExpanded, shortcuts, onAddShortcut }) => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+const TeamPageFloating = ({ memberNum, isTeamListExpanded, teamPages, handleOpenAddTeamPage }) => {
 
   const handleAddClick = () => {
-    setIsModalOpen(true);
-  };
-
-  const handleAddShortcut = (shortcut) => {
-    onAddShortcut(shortcut);
+    handleOpenAddTeamPage();
   };
 
   return (
     <TeamPageFloatingContainer 
-      style={{ top: `calc(86px + 22.5px + ${(memberNum > 4 && (!isTeamListExpanded))? 180: (memberNum <= 4)? 44 * memberNum - 24.5 : 44*memberNum}px + 24.5px + 40px)` }}
+      style={{ top: `calc(111px + 32.5px + ${(memberNum > 4 && (!isTeamListExpanded))? 176: (memberNum <= 4)? 45 * memberNum - 24.5 : 45*memberNum}px + 24.5px + 40px)` }}
     >
       <TeamPageTitleWrapper>
         <Title>팀 페이지</Title>
-        {shortcuts.length < 3 && (
+        {teamPages.length < 5 && (
           <AddButton onClick={handleAddClick}>추가하기</AddButton>
         )}
       </TeamPageTitleWrapper>
       <ShortcutList>
-        {shortcuts.map((shortcut, index) => (
+        {teamPages.map((teamPage, index) => (
           <ShortcutRow key={index}>
-            <ShortcutName onClick={() => window.open(shortcut.url, "_blank")}>
-              {shortcut.name}
+            <ShortcutName onClick={() => window.open("https://"+teamPage.url, "_blank")}>
+              {teamPage.name}
             </ShortcutName>
           </ShortcutRow>
         ))}
       </ShortcutList>
 
-      <AddShortcutModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        onAdd={handleAddShortcut}
-      />
     </TeamPageFloatingContainer>
   );
 };
@@ -438,75 +436,49 @@ const LeftTopButton = styled.img`
 
 const RightTopButton = styled.img`
   position: absolute;
-  left: calc(100vw - 30px);
-  top: 23px;
-  width: 40px;
+  left: calc(100vw - ${MARGIN_FROM_RIGHT}px);
+  top: 25px;
+  width: 50px;
   transform: translate(-100%, 0);
 `;
 
 const RightBottomButton = styled.button`
   position: absolute;
-  left: calc(100vw - 30px);
-  top: calc(100vh - 23px);
+  left: calc(100vw - ${MARGIN_FROM_RIGHT}px);
+  top: calc(100vh - 40px);
   transform: translate(-100%, -100%);
 
-  width: 100px;
-  height: 40px;
+  width: 148px;
+  height: 52px;
+  border: none;
   border-radius: 32px;
 
+  padding: 10px;
+  color: #6C54F7;
+
+  font-size: 20px;
+  font-weight: 700;
+
   cursor: pointer;
+
+  &:hover {
+    width: 150px;
+    height: 54px;
+    left: calc(100vw - 49px);
+    top: calc(100vh - 39px);
+
+    font-size: 20.5px;
+  }
 `;
 
 
 const LandPage = () => {
 
-  // const [teamMembers, setTeamMembers] = useState([]); // 초기값은 빈 배열
-
-  // useEffect(() => {
-  //   const fetchTeamMembers = async () => {
-  //     try {
-  //       console.log("쏩니다");
-  //       const response = await axios.get("http://172.30.1.79:8080/land/2/members");
-  //       setTeamMembers(response.data); // 서버로부터 데이터 설정
-  //       console.log(response.data);
-  //     } catch (error) {
-  //       console.error("API 호출 에러(GET)", error);
-  //     }
-  //   };
-
-  //   fetchTeamMembers(); // 데이터 가져오기
-  // }, []); // 컴포넌트 마운트 시 1회 실행
-
-  // if (!Array.isArray(teamMembers)) {
-  //   alert("에러 발생");
-  // }
-
-  const teamMembers = [
-    { memberId: 1, profile: "profile.png", name: "강신엽" },
-    { memberId: 2, profile: "profile.png", name: "강신엽" },
-    { memberId: 3, profile: "profile.png", name: "지석영" },
-    { memberId: 4, profile: "profile.png", name: "지석영" },
-    { memberId: 5, profile: "profile.png", name: "정민찬" },
-    // { id: 6, profile: "profile.png", name: "정민찬" },
-  ];
-
-  const allCards = [
-    { id: 'communication', title: '소통', content: ['비대면 소통을 선호해요', '새벽연락도 가능해요'] },
-    { id: 'work', title: '작업', content: ['다같이 작업하고 싶어요', '평일에 하고 싶어요'] },
-    { id: 'thinking', title: '사고', content: ['논리적이에요', '창의적이에요'] },
-    { id: 'role', title: '역할', content: ['리더십이 있어요', '기록을 잘 남겨요'] },
-    { id: 'conflict', title: '갈등 해결', content: ['바로 해결해요', '솔직하게 표현해요'] },
-    { id: 'time', title: '시간', content: ['오전(06-12)', '저녁(18-00)'] },
-    { id: 'rest', title: '휴식', content: ['짧게 자주 쉬고 싶어요'] },
-    { id: 'friendship', title: '친목', content: ['작업에만 집중하고 싶어요'] },
-    { id: 'important', title: '중요하게 생각해요', content: ['팀플 시간을 꼭 지켜주기'] },
-  ];
-
   const [isAddTeamPageOpen, setIsAddTeamPageOpen] = useState(false);
   const [isSkillCardOpen, setIsSkillCardOpen] = useState(false);
   const [hoveredMemberIds, setHoveredMemberIds] = useState([]);
   const [isTeamListExpanded, setIsTeamListExpanded] = useState(false);
-  const [shortcuts, setShortcuts] = useState([]);
+  const [teamPage, setTeamPage] = useState([]);
 
   const handleOpenAddTeamPage = () => {
     setIsAddTeamPageOpen(true);
@@ -516,6 +488,13 @@ const LandPage = () => {
     setIsAddTeamPageOpen(false);
   };
 
+  const handleAddTeamPage = (teamPageName, teamPageUrl) => {
+    setTeamPage((prevTeamPage) => [...prevTeamPage, {
+      "name": teamPageName,
+      "url": teamPageUrl
+    }]);
+  };
+
   const handleOpenSkillCard = () => {
     setIsSkillCardOpen(true);
   }
@@ -523,11 +502,6 @@ const LandPage = () => {
   const handleCloseSkillCard = () => {
     setIsSkillCardOpen(false);
   }
-
-  const handleConfirm = () => {
-    setIsAddTeamPageOpen(false);
-    alert("팀에서 나갔습니다!");
-  };
 
   const handleHover = (MemberId, isHovered) => {
     setHoveredMemberIds((prev) => {
@@ -542,18 +516,22 @@ const LandPage = () => {
     });
   };
 
-  const handleAddShortcut = (shortcut) => {
-    if (shortcuts.length < 3) {
-      setShortcuts([...shortcuts, shortcut]);
-    }
-  };
-
   document.body.style.overflow = 'hidden';
+
+  const navigate = useNavigate();
+  const handleRightBottomButtonClick = () => {
+    document.body.style.overflow = 'auto';
+    navigate('/home');
+  }
+  const handleRightTopButtonClick = () => {
+    document.body.style.overflow = 'auto';
+    navigate('/mypage');
+  }
 
   return (
     <div style={{ position: "relative", width: "100vw", height: "100vh", overflow: "hidden", backgroundColor: "#6C54F7" }}>
       <Land 
-        teamMembers={teamMembers} 
+        teamMembers={members} 
         hoveredMemberIds={hoveredMemberIds}
         onHover={handleHover}
         onOpenSkillCard={handleOpenSkillCard}
@@ -564,52 +542,37 @@ const LandPage = () => {
       </LandTitleDiv>
 
       
-      <RightTopButton src={profile} onClick={() => setIsSkillCardOpen(true) } />
+      <RightTopButton src={profile} onClick={handleRightTopButtonClick} />
       
       <TeamListFloating
-        members={teamMembers}
+        members={members}
         onHover={handleHover}
         onOpenSkillCard={handleOpenSkillCard}
         onToggleExpand={setIsTeamListExpanded}
       />
       <TeamPageFloating
-        memberNum={teamMembers.length}
+        memberNum={members.length}
         isTeamListExpanded={isTeamListExpanded}
-        shortcuts={shortcuts}
-        onAddShortcut={handleOpenAddTeamPage}
+        teamPages={teamPage}
+        handleOpenAddTeamPage={handleOpenAddTeamPage}
       />
 
-      <RightBottomButton onClick={handleOpenAddTeamPage} >홈 이동하기</RightBottomButton>
-
-      <ConfirmModal 
-        isOpen={isAddTeamPageOpen}
-        onClose={handleCloseAddTeamPage}
-        onConfirm={handleConfirm}
-        title="팀을 나가시겠습니까?"
-        message="팀을 나가면 진행 중인 활동에 더 이상 참여할 수 없습니다."
-        cancelText="취소"
-        confirmText="나가기"
-        showOverlay={true}
-      />
-
+      <RightBottomButton onClick={handleRightBottomButtonClick} >홈 이동하기</RightBottomButton>
 
       <SkillCardModal
         isOpen={isSkillCardOpen}
         onClose={handleCloseSkillCard}
-        userInfo={{
-          profileImage: {profile},
-          name: "홍길동",
-          age: 21,
-          gender: "남성",
-          affiliation: "서울대학교 컴퓨터공학과 3학년",
-          email: "hong@hong.com",
-          workStyle: "주 1회 오프라인, Git/GitHub 협업",
-          hardSkills: ["React", "Node.js", "AWS"],
-        }}
+        userInfo={card}
 
         positionTop= "50px"
         positionLeft="50px"
         centerByTransform={false}
+      />
+
+      <AddTeamPageModal
+        isOpen={isAddTeamPageOpen}
+        onClose={handleCloseAddTeamPage}
+        onConfirm={handleAddTeamPage}
       />
     </div>
   )
