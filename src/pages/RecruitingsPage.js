@@ -42,10 +42,11 @@ const RecruitmentPage = () => {
         const fetchUsers = async () => {
             try {
                 const response = await axios.get(
-                    // "https://676e83a3df5d7dac1ccae100.mockapi.io/post"
-                    "http://192.168.1.24:8080/post"
+                    "https://676e83a3df5d7dac1ccae100.mockapi.io/post"
+                    // `http://${server}:8080/post`
                 );
                 setUsers(response.data);
+                console.log(response.data);
             } catch (err) {
                 console.error(err);
             }

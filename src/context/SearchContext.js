@@ -9,7 +9,6 @@ export const SearchProvider = ({ children }) => {
   const [data, setData] = useState([]); // 서버에서 받아온 데이터
   const [filteredData, setFilteredData] = useState([]); // 검색어에 따른 필터링된 데이터
 
-  
 
   useEffect(() => {
     // 서버 데이터 가져오기

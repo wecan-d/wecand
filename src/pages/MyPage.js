@@ -11,13 +11,29 @@ import link from "../assets/mypage/Link.svg";
 
 export default function MyPage() {
 
+    const server = process.env.REACT_APP_SERVER;
+
+    // 전체 게시물 sorting 할려고 가져옴
+    const [users, setUsers] = useState([]);
+    // 내가 지원한 공모전 훅 /post/applied/{userId} -> 승인 상태 수락 ? 거절
+    const [apply, setApply] = useState([]);
+    // 내가 작성한 공모전 훅 /post/owner/{userId} -> 진행 중 ? 모집완료 //ApproveCount가 Member-1의 수와 일치할 때 모집완료
+    const [create, setCreate] = useState([]);
+    // 유저 역량 카드 겟또 /card/{userId}
+    const [card,setCard] = useState(Array(1).fill({}));
+    
+    const cardZero = card[0]; 
+
+    // 내가 참여중인 공모전 훅 /land/{landId}/members
+    const [join , setJoin] = useState([]);
+
     // 클백 역량카드 상태관리
-    const [extraData, setExtraData] = useState([]);
+    const [extraData, setExtraData] = useState(Array(19).fill({}));
+    // const [extraData, setExtraData] = useState([{ tools: [], certificates: [] }]);
     const [error, setError] = useState(null);
     
 
-    // user/{userId}/lands
-    // const [data2, setData] = useState([]);
+
 
 
     // 드롭 다운 관련 상태관리
@@ -27,29 +43,85 @@ export default function MyPage() {
     // 토글 핸들러
     const toggleDropdown = () => {
       setIsOpen(!isOpen);
+      setIsOpen2(false);
   };
 
   const toggleDropdown2 = () => {
     setIsOpen2(!isOpen2);
+    setIsOpen(false);
 };
 
+// !!!!데이터 가져옴 PostData 전부
+useEffect(() => {
+  const fetchUsers = async () => {
+      try {
+          const response = await axios.get(
+            //게시물 데이터 다 받아오기
+              // "https://676e83a3df5d7dac1ccae100.mockapi.io/post"
+              `http://${server}/post`
+          );
+          const response2 = await axios.get(
+            // `https://672819eb270bd0b975546065.mockapi.io/api/v1/register?page=1&limit=25`
+            `http://${server}/post/applied/1`
+          );
+          const response3 = await axios.get(
+            // `https://672819eb270bd0b975546065.mockapi.io/api/v1/register?page=1&limit=25`
+            `http://${server}/post/owner/1`
+          );
+          const response4 = await axios.get(
+            `http://${server}/card/1`
+          );
 
-// user/{userId}/lands 데이터 받아오는거
+          
+          setUsers(response.data);
+          //내가 지원한 공모전
+          setApply(response2.data);
+          //내가 생성한 공모전
+          setCreate(response3.data);
+          //유저의 카드 데이터
+          setCard(response4.data);
 
-// useEffect(() => {
-//   const fetchData = async () => {
-//     try {
-//       const response = await axios.get("http://172.30.1.28:8080/user/${userId}/lands");
-//       setData(response.data);
-//       setLoading(false);
-//     } catch (err) {
-//       setError(err);
-//       setLoading(false);
-//     }
-//   };
+          console.log(response.data);
+          //내가 지원한 공모전
+          console.log(response2.data);
+          //내가 생성한 공모전
+          console.log(response3.data);
+          //유저의 카드 데이터
+          console.log(response4.data);
+          
 
-//   fetchData();
-// }, []);
+          
+      } catch (err) {
+          setError(err);
+          console.error(err);
+      }
+  };
+  fetchUsers();
+}, []);
+
+
+// 카테고리별로 그룹화 -> 자신이 지원한 게시물보기
+const ApplyProjects = apply.reduce((acc, apply) => {
+  const { category } = apply;
+  if (!acc[category]) {
+    acc[category] = [];
+  }
+  acc[category].push(apply);
+  return acc;
+}, {});
+
+
+
+// 카테고리별로 그룹화 -> 자신이 작성한 게시물보기
+const CreateProjects = create.reduce((acc, create) => {
+  const { category } = create;
+  if (!acc[category]) {
+    acc[category] = [];
+  }
+  acc[category].push(create);
+  return acc;
+}, {});
+
 
 
     // 역량 카드 관련 서버 연결
@@ -58,10 +130,9 @@ export default function MyPage() {
             try {
                 const response = await axios.get(
                     `https://672819eb270bd0b975546065.mockapi.io/api/v1/register?page=1&limit=25`
-                    // `http://172.30.1.28:8080/card/${userId}`
+                    // `http://${server}/card/${userId}`
                 );
                 setExtraData(Array.isArray(response.data) ? response.data : []);
-                console.log(response.data);
                 
             } catch (err) {
               
@@ -71,6 +142,9 @@ export default function MyPage() {
         };
         fetchExtraData();
     }, []);
+
+
+
 
 
 
@@ -99,13 +173,12 @@ export default function MyPage() {
       <>
       <CardContainer>
         <ImageWrapper>
-          <ProfileImage src="your-image-url-here" alt="Profile" style={({width:'100px',height:'100px'})}/>
-          <AgeBadge>24</AgeBadge>
+          <ProfileImage src="" alt="Profile" style={({width:'100px',height:'100px'})}/>
         </ImageWrapper>
         <TextWrapper2>
-          <Name>김규리</Name>
-          <Details>계명대학교 시각디자인학과 3학년</Details>
-          <Email>Jjanggu1083@naver.com</Email>
+          <Name>{cardZero.name || "이름 없음"}</Name>
+          <Details>{cardZero.major || "전공 정보 없음"}</Details>
+          <Email>{cardZero.email || "이메일 없음"}</Email>
         </TextWrapper2>
     </CardContainer>
 
@@ -126,8 +199,8 @@ export default function MyPage() {
                     <Card style={{ gridArea: "communication" }}>
                         <CardTitle>소통</CardTitle>
                         <CardContent>
-                            {Array.isArray(extraData[18]?.communication)
-                                ? extraData[18].communication.map((contentItem, index) => (
+                            {Array.isArray(cardZero?.communication)
+                                ? cardZero.communication.map((contentItem, index) => (
                                       <p key={index}>{contentItem}</p>
                                   ))
                                 : "내용 없음"}
@@ -136,8 +209,8 @@ export default function MyPage() {
                     <Card style={{ gridArea: "work" }}>
                         <CardTitle>작업</CardTitle>
                         <CardContent>
-                            {Array.isArray(extraData[18]?.teamwork)
-                                ? extraData[18].teamwork.map((contentItem, index) => (
+                            {Array.isArray(cardZero?.teamwork)
+                                ? cardZero.teamwork.map((contentItem, index) => (
                                       <p key={index}>{contentItem}</p>
                                   ))
                                 : "내용 없음"}
@@ -146,8 +219,8 @@ export default function MyPage() {
                     <Card style={{ gridArea: "thinking" }}>
                         <CardTitle>사고</CardTitle>
                         <CardContent>
-                            {Array.isArray(extraData[18]?.thinking)
-                                ? extraData[18].thinking.map((contentItem, index) => (
+                            {Array.isArray(cardZero?.thinking)
+                                ? cardZero.thinking.map((contentItem, index) => (
                                       <p key={index}>{contentItem}</p>
                                   ))
                                 : "내용 없음"}
@@ -156,8 +229,8 @@ export default function MyPage() {
                     <Card style={{ gridArea: "role" }}>
                         <CardTitle>역할</CardTitle>
                         <CardContent>
-                            {Array.isArray(extraData[18]?.role)
-                                ? extraData[18].role.map((contentItem, index) => (
+                            {Array.isArray(cardZero?.role)
+                                ? cardZero.role.map((contentItem, index) => (
                                       <p key={index}>{contentItem}</p>
                                   ))
                                 : "내용 없음"}
@@ -166,8 +239,8 @@ export default function MyPage() {
                     <Card style={{ gridArea: "conflict" }}>
                         <CardTitle>갈등 해결</CardTitle>
                         <CardContent>
-                            {Array.isArray(extraData[18]?.conflictResolution)
-                                ? extraData[18].conflictResolution.map((contentItem, index) => (
+                            {Array.isArray(cardZero?.conflictResolution)
+                                ? cardZero.conflictResolution.map((contentItem, index) => (
                                       <p key={index}>{contentItem}</p>
                                   ))
                                 : "내용 없음"}
@@ -176,8 +249,8 @@ export default function MyPage() {
                     <Card style={{ gridArea: "time" }}>
                         <CardTitle>시간</CardTitle>
                         <CardContent>
-                            {Array.isArray(extraData[18]?.timePreference)
-                                ? extraData[18].timePreference.map((contentItem, index) => (
+                            {Array.isArray(cardZero?.timePreference)
+                                ? cardZero.timePreference.map((contentItem, index) => (
                                       <p key={index}>{contentItem}</p>
                                   ))
                                 : "내용 없음"}
@@ -186,8 +259,8 @@ export default function MyPage() {
                     <Card style={{ gridArea: "rest" }}>
                         <CardTitle>휴식</CardTitle>
                         <CardContent>
-                            {Array.isArray(extraData[18]?.restPreference)
-                                ? extraData[18].restPreference.map((contentItem, index) => (
+                            {Array.isArray(cardZero?.restPreference)
+                                ? cardZero.restPreference.map((contentItem, index) => (
                                       <p key={index}>{contentItem}</p>
                                   ))
                                 : "내용 없음"}
@@ -196,8 +269,8 @@ export default function MyPage() {
                     <Card style={{ gridArea: "friendship" }}>
                         <CardTitle>친목</CardTitle>
                         <CardContent>
-                            {Array.isArray(extraData[18]?.goal)
-                                ? extraData[18].goal.map((contentItem, index) => (
+                            {Array.isArray(cardZero?.goal)
+                                ? cardZero.goal.map((contentItem, index) => (
                                       <p key={index}>{contentItem}</p>
                                   ))
                                 : "내용 없음"}
@@ -206,8 +279,8 @@ export default function MyPage() {
                     <Card style={{ gridArea: "important" }}>
                         <CardTitle>중요하게 생각해요</CardTitle>
                         <CardContent>
-                            {Array.isArray(extraData[18]?.important)
-                                ? extraData[18].important.map((contentItem, index) => (
+                            {Array.isArray(cardZero?.important)
+                                ? cardZero.important.map((contentItem, index) => (
                                       <p key={index}>{contentItem}</p>
                                   ))
                                 : "내용 없음"}
@@ -228,9 +301,17 @@ export default function MyPage() {
                   </DropdownHeader>
             {isOpen && (
                   <DropdownContent>
-                      <ContentItem>PDF 파일</ContentItem>
-                      <ContentItem>웹 링크</ContentItem>
-                      <ContentItem>기타 내용</ContentItem>
+
+                       {/* tools 배열 출력 !! 이거 다 communication에서 tools로 바꾸기*/}
+                      {Array.isArray(cardZero?.tools) && cardZero.tools.map((tools, index) => ( 
+                        <ContentItem key={`tools-${index}`}>{tools}</ContentItem>
+                      ))}
+                      {/* tools 배열 출력 !! 이거 다 communication에서 certificates로 바꾸기*/}
+                      {Array.isArray(cardZero?.certificates) && cardZero.certificates.map((certificates, index) => ( 
+                        <ContentItem key={`certificates-${index}`}>{certificates}</ContentItem>
+                      ))}
+                      
+                    
                   </DropdownContent>
             )}
                 </DropdownContainer>
@@ -242,9 +323,10 @@ export default function MyPage() {
                   </DropdownHeader>
             {isOpen2 && (
                   <DropdownContent>
-                      <ContentItem>PDF 파일</ContentItem>
-                      <ContentItem>웹 링크</ContentItem>
-                      <ContentItem>기타 내용</ContentItem>
+                     {/* tools 배열 출력 !! 이거 다 communication에서 awards로 바꾸기*/}
+                     {Array.isArray(cardZero?.awards) && cardZero.awards.map((awards, index) => ( 
+                        <ContentItem key={`awards-${index}`}>{awards}</ContentItem>
+                      ))}
                   </DropdownContent>
             )}
                 </DropdownContainer>
@@ -279,8 +361,9 @@ export default function MyPage() {
                 </BoxWrapper>
 
 
-                        {/* 여기에 기타사항 추가 로직 짜야함 */}
+                        {/* 여기에 기타사항 추가 로직 짜야함 다 짬*/}
                 <HeaderText2>기타사항</HeaderText2>
+                  <HeaderArea>{cardZero.additionalInfo}</HeaderArea>
 
               </RightGridWrapper>
             </RightGrid>
@@ -309,7 +392,7 @@ export default function MyPage() {
               <Card2 key={`left-${idx}`}>
                 <CardInfo>
                   <ProjectTitle>{item.title}</ProjectTitle>
-                  <TeamLeader>{item.author} <span style={({fontSize:'userIdpx',fontWeight:'400'})}>팀장</span></TeamLeader>
+                  <TeamLeader>{item.author} <span style={({fontSize:'18px',fontWeight:'400'})}>팀장</span></TeamLeader>
                 </CardInfo>
                 <TeamMember>
                   <Avatar>👤👤👤👤</Avatar>
@@ -318,31 +401,18 @@ export default function MyPage() {
               </Card2>
             ))}
           </Column>
-          <Column>
-            {rightColumn.map((item, idx) => (
-              <Card2 key={`right-${idx}`}>
-                <CardInfo>
-                  <ProjectTitle>{item.title}</ProjectTitle>
-                  <TeamLeader>{item.author} 팀장</TeamLeader>
-                </CardInfo>
-                <TeamMember>
-                <Avatar>👤👤👤</Avatar>
-                  <MemberCount>+ 멤버 3명{item.member}</MemberCount>
-                </TeamMember>
-              </Card2>
-            ))}
-          </Column>
+         <Column></Column>
         </Container>
 
 
 
         <MainContainer>
+          {/* 그리드 위에 설명 */}
           <OuterGrid>
             <GridLeft>
               <div style={({fontSize: '32px', fontWeight: '600', marginBottom:'40px'})}>
                 내가 지원한 공모전
               </div>
-              
             </GridLeft>
             <GridLeft>
             <div style={({fontSize: '32px', fontWeight: '600', marginBottom:'40px'})}>
@@ -350,101 +420,72 @@ export default function MyPage() {
               </div>
             </GridLeft>
           </OuterGrid>
-          <OuterGrid>
-          </OuterGrid>
+         
         </MainContainer>
 
-        {/* 젤 밑에 컴포넌트 */}
+        {/* 젤 밑에 컴포넌트 시작*/}
         <MainContainer>
       {/* 전체 그리드 */}
       <OuterGrid>
         {/* 좌측 그리드 */}
         <GridLeft>
 
-
-          <GridSection>
-            {/* 섹션 내 좌측 */}
-            <SectionLeft><CardTitle>기획, 아이디어</CardTitle></SectionLeft>
-            {/* 섹션 내 우측 */}
-            <SectionRight>
-                <Column>
-                {leftColumn.map((item, idx) => (
-                  <Card3 key={`left-${idx}`}>
-                      <ProjectTitle>{item.title}</ProjectTitle>
-                   대기중
-                  </Card3>
-                ))}
-              </Column>
-          </SectionRight>
-          </GridSection>
-
-
-
-          <GridSection>
-            {/* 섹션 내 좌측 */}
-            <SectionLeft><CardTitle>소통</CardTitle></SectionLeft>
-            {/* 섹션 내 우측 */}
-            <SectionRight>
-                <Column>
-                {leftColumn.map((item, idx) => (
-                  <Card3 key={`left-${idx}`}>
-                    <CardInfo>
-                      <ProjectTitle>{item.title}</ProjectTitle>
-                      
-                    </CardInfo>
-                    <TeamMember>
-                      거절
-                    </TeamMember>
-                  </Card3>
-                ))}
-              </Column>
-          </SectionRight>
-          </GridSection>
-
           
-        </GridLeft>
-        {/* 우측 그리드 */}
-        <GridRight>
-        <GridSection>
-            {/* 섹션 내 좌측 */}
-            <SectionLeft><CardTitle>소통</CardTitle></SectionLeft>
-            {/* 섹션 내 우측 */}
-            <SectionRight>
-                <Column>
-                {leftColumn.map((item, idx) => (
-                  <Card3 key={`left-${idx}`}>
-                    <CardInfo>
-                      <ProjectTitle>{item.title}</ProjectTitle>
-                    </CardInfo>
-                    <TeamMember>
-                      진행중
-                    </TeamMember>
-                  </Card3>
-                ))}
-              </Column>
-          </SectionRight>
-          </GridSection>
 
           <GridSection>
-            {/* 섹션 내 좌측 */}
-            <SectionLeft><CardTitle>소통</CardTitle></SectionLeft>
-            {/* 섹션 내 우측 */}
-            <SectionRight>
-                <Column>
-                {leftColumn.map((item, idx) => (
-                  <Card3 key={`left-${idx}`}>
-                    <CardInfo>
-                      <ProjectTitle>{item.title}</ProjectTitle>
-                      
-                    </CardInfo>
-                    <TeamMember>
-                      모집 완료
-                    </TeamMember>
+           {/* 카테고리 정렬 배열 */}
+            {Object.keys(ApplyProjects).map((category, index) => (
+              <Card3 key={index}>
+
+                <SectionLeft>
+                  <CardTitle>{category}</CardTitle>
+                </SectionLeft>
+
+                <SectionRight>
+                  <Column>
+                  {/* 카테고리 별 포스트 배열 */}
+                {CreateProjects[category].map((category) => (
+                  <Card3 key={category.postId}>
+                    <ProjectTitle>{category.title} </ProjectTitle>
+                    <div>{category.approvedCount}</div>
                   </Card3>
                 ))}
-              </Column>
-          </SectionRight>
+                  </Column>
+                </SectionRight>
+              </Card3>
+            ))}
           </GridSection>
+
+        </GridLeft>
+
+                    {/* 찐찐 최종  */}
+                    {/* 우측 그리드 섹션 */}
+        <GridRight>
+
+        <GridSection>
+           {/* 카테고리 정렬 배열 */}
+            {Object.keys(CreateProjects).map((category, index) => (
+              <Card3 key={index}>
+
+                <SectionLeft>
+                  <CardTitle>{category}</CardTitle>
+                </SectionLeft>
+
+                <SectionRight>
+                  <Column>
+                  {/* 카테고리 별 포스트 배열 */}
+                {CreateProjects[category].map((category) => (
+                  <Card3 key={category.postId}>
+                    <ProjectTitle>{category.title} </ProjectTitle>
+                    <div>{category.approvedCount}</div>
+                  </Card3>
+                ))}
+                  </Column>
+                </SectionRight>
+              </Card3>
+            ))}
+        </GridSection>
+          
         </GridRight>
       </OuterGrid>
     </MainContainer>
@@ -481,17 +522,7 @@ const ProfileImage = styled.img`
   object-fit: cover;
 `;
 
-const AgeBadge = styled.div`
-  position: absolute;
-  bottom: 5px;
-  right: 5px;
-  background-color: #ff4d4d;
-  color: #ffffff;
-  font-size: 12px;
-  font-weight: bold;
-  padding: 2px 6px;
-  border-radius: 12px;
-`;
+
 
 const TextWrapper2 = styled.div`
   display: flex;
@@ -506,14 +537,14 @@ const Name = styled.div`
 `;
 
 const Details = styled.div`
-  font-size: userIdpx;
+  font-size: 18px;
   font-weight: 500;
   
   margin-bottom: 4px;
 `;
 
 const Email = styled.div`
-  font-size: userIdpx;
+  font-size: 18px;
   font-weight: 400;
 `;
 
@@ -580,7 +611,7 @@ const CardTitle = styled.div`
     color: white;
     padding: 0.2rem 0.5rem;
     border-radius: 8px;
-    font-size: userIdpx;
+    font-size: 18px;
     font-weight: bold;
     display: inline-block;
     margin-bottom: 0.5rem;
@@ -590,7 +621,7 @@ const CardTitle = styled.div`
 `;
 
 const CardContent = styled.div`
-    font-size: userIdpx;
+    font-size: 18px;
     font-weight: 400;
     color: #111111;
 `;
@@ -600,7 +631,7 @@ const CardContent = styled.div`
 const DropdownContainer = styled.div`
     width: 465px;
     border-radius: 5px;
-    margin-bottom: userIdpx;
+    margin-bottom: 18px;
     
 `;
 
@@ -610,7 +641,7 @@ const DropdownHeader = styled.div`
     align-items: center;
     padding: 10px 0px;
     color: white;
-    font-size: userIdpx;
+    font-size: 18px;
     font-weight: bold;
     cursor: pointer;
     background: #836EFF;
@@ -619,34 +650,43 @@ const DropdownHeader = styled.div`
 
 const HeaderText = styled.div`
     display: inline-block;
-     font-size: userIdpx;
+     font-size: 18px;
     font-weight: 600;
     
 `;
 
 const HeaderText2 = styled.div`
     display: inline-block;
-     font-size: userIdpx;
+     font-size: 18px;
     font-weight: 600;
     color:white;
     
 `;
 
+const HeaderArea = styled.div`
+  width: 455px;
+  height: auto;
+  margin-top: 22px;
+`;
+
 const Arrow = styled.div`
-   font-size: userIdpx;
+   font-size: 18px;
     font-weight: 600;
-    transform: ${({ isOpen }) => (isOpen ? "rotate(userId0deg)" : "rotate(0deg)")};
+    transform: ${({ isOpen }) => (isOpen ? "rotate(180deg)" : "rotate(0deg)")};
     transition: transform 0.2s ease-in-out;
 `;
 
 const Arrow2 = styled.div`
-    font-size: userIdpx;
+    font-size: 18px;
     font-weight: 600;
-    transform: ${({ isOpen }) => (isOpen ? "rotate(userId0deg)" : "rotate(0deg)")};
+    transform: ${({ isOpen }) => (isOpen ? "rotate(180deg)" : "rotate(0deg)")};
     transition: transform 0.2s ease-in-out;
 `;
 
 const DropdownContent = styled.div`
+    position: absolute;
+    width: 470px;
+    height: auto;
     background-color: white;
     color: #111;
     padding: 10px 20px;
@@ -655,7 +695,7 @@ const DropdownContent = styled.div`
 
 const ContentItem = styled.div`
     padding: 5px 0;
-    font-size: userIdpx;
+    font-size: 18px;
     font-weight: 400;
     &:hover {
         cursor: pointer;
@@ -671,7 +711,7 @@ height: 52px;
 border-radius: 8px;
 background-color: white;
 padding: 0 12px;
-margin-bottom: userIdpx;
+margin-bottom: 18px;
 margin-top: 20px;
 
 `;
@@ -685,8 +725,8 @@ height: 20px;
 `;
 
 const ImageStyle = styled.img`
-  width: userIdpx;
-  height: userIdpx;
+  width: 18px;
+  height: 18px;
 `;
 
 const TextWrapper = styled.div`
@@ -699,7 +739,7 @@ margin-left: 10px;
 `;
 
 const FileName = styled.div`
-font-size: userIdpx;
+font-size: 18px;
 font-weight: 400;
 color: #111111;
 white-space: nowrap;
@@ -745,8 +785,8 @@ const Card3 = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0px 25px;
-  margin-bottom: userIdpx;
+  
+  margin-bottom: 18px;
   font-size: 22px;
   font-weight: 400;
   border-radius: 8px;
@@ -775,7 +815,7 @@ const TeamMember = styled.div`
 `;
 
 const Avatar = styled.div`
-  font-size: userIdpx;
+  font-size: 18px;
 `;
 
 const MemberCount = styled.div`
@@ -819,7 +859,6 @@ const GridRight = styled.div`
 
 const GridSection = styled.div`
   display: flex;
-  
   margin: 10px 0;
   margin-bottom: 42px;
   border-radius: 5px;
@@ -844,6 +883,26 @@ const SectionRight = styled.div`
 
 
 
+// {/* <GridSection>
+            
+//             <SectionLeft><CardTitle>소통</CardTitle></SectionLeft>
+            
+//             <SectionRight>
+//                 <Column>
+//                 {leftColumn.map((item, idx) => (
+//                   <Card3 key={`left-${idx}`}>
+//                     <CardInfo>
+//                       <ProjectTitle>{item.title}</ProjectTitle>
+                      
+//                     </CardInfo>
+//                     <TeamMember>
+//                       거절
+//                     </TeamMember>
+//                   </Card3>
+//                 ))}
+//               </Column>
+//           </SectionRight>
+//           </GridSection> */}
 
 
 

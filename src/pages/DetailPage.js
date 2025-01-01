@@ -17,7 +17,7 @@ export default function DetailPage() {
     const [modalTimer, setModalTimer] = useState(null); // 타이머 상태
     const [isPostSubmitted, setIsPostSubmitted] = useState(false);
 
-    
+    const server = process.env.REACT_APP_SERVER;
 
     const { postId } = useParams();
     const navigate = useNavigate(); // Initialize useNavigate hook
@@ -26,9 +26,8 @@ export default function DetailPage() {
         const fetchExtraData = async () => {
             try {
                 const response = await axios.get(
-                    // `https://672819eb270bd0b975546065.mockapi.io/api/v1/register?page=1&limit=25`
-                    // `http://172.17.217.97:8080/card/${userId}`
-                    `http://192.168.1.24:8080/card/1`
+                    `https://672819eb270bd0b975546065.mockapi.io/api/v1/register?page=1&limit=25`
+                    
                 );
                 setExtraData(Array.isArray(response.data) ? response.data : []);
                 console.log(response.data);
@@ -44,7 +43,7 @@ export default function DetailPage() {
     useEffect(() => {
         const fetchPostData = async () => {
             try {
-                const response = await axios.get(`http://192.168.1.24:8080/post/${postId}`);
+                const response = await axios.get(`http://${server}/post/${postId}`);
                 // const response = await axios.get(`https://676e83a3df5d7dac1ccae100.mockapi.io/post/1`);
                 setPostData(response.data);
                 console.log("HTTP Status Code:", response.status);
@@ -62,11 +61,13 @@ export default function DetailPage() {
   };
 
   const handleSecondSubmit = async () => {
+
+      
       const userId = "2"; // Assuming you retrieve the user ID from authentication
       try {
           // Sending POST request to the server
           await axios.post(
-              `http://172.30.1.28:8080/applications/${userId}/${postId}`
+              `http://${server}/applications/${userId}/${postId}`
           );
           setIsPostSubmitted(true);
           setIsModalOpen(false); // Close first modal
