@@ -17,7 +17,7 @@ export default function DetailPage() {
     const [modalTimer, setModalTimer] = useState(null); // 타이머 상태
     const [isPostSubmitted, setIsPostSubmitted] = useState(false);
 
-    
+    const server = process.env.REACT_APP_SERVER;
 
     const { postId } = useParams();
     const { userId } = useParams();
@@ -27,7 +27,7 @@ export default function DetailPage() {
         const fetchExtraData = async () => {
             try {
                 const response = await axios.get(
-                    `http://192.168.1.24:8080/card/${userId}`
+                    `http://${server}:8080/card/${userId}`
                 );
                 setExtraData(Array.isArray(response.data) ? response.data : []);
                 console.log(response.data);
@@ -38,12 +38,12 @@ export default function DetailPage() {
             }
         };
         fetchExtraData();
-    }, []);
+    }, [userId]);
 
     useEffect(() => {
         const fetchPostData = async () => {
             try {
-                const response = await axios.get(`http://192.168.1.24:8080/post/${postId}/with-applicants`);
+                const response = await axios.get(`http://${server}/post/${postId}`);
                 // const response = await axios.get(`https://676e83a3df5d7dac1ccae100.mockapi.io/post/1`);
                 setPostData(response.data);
                 console.log("HTTP Status Code:", response.status);
@@ -61,11 +61,13 @@ export default function DetailPage() {
   };
 
   const handleSecondSubmit = async () => {
-      const userId = "4"; // Assuming you retrieve the user ID from authentication
+
+      
+      const userId = "2"; // Assuming you retrieve the user ID from authentication
       try {
           // Sending POST request to the server
           await axios.post(
-              `http://192.168.1.24:8080/applications/${userId}/${postId}`
+              `http://${server}/applications/${userId}/${postId}`
           );
           setIsPostSubmitted(true);
           setIsModalOpen(false); // Close first modal
@@ -225,6 +227,10 @@ export default function DetailPage() {
                                 {/* 카드 그리드 카드 그리드 카드 그리드 */}
                                 {/* extraData[userId] */}
                                 <CardGrid>
+                                  
+                                    
+
+
                                     <Card style={{ gridArea: "communication" }}>
                                         <CardTitle>소통</CardTitle>
                                         <CardContent>

@@ -1,25 +1,20 @@
-// context/SearchContext.js
 import React, { createContext, useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import axios from "axios";
 
 export const SearchContext = createContext();
 
 export const SearchProvider = ({ children }) => {
-  const [searchTerm, setSearchTerm] = useState(""); // 검색어
-  const [data, setData] = useState([]); // 서버에서 받아온 데이터
-  const [filteredData, setFilteredData] = useState([]); // 검색어에 따른 필터링된 데이터
-
-  
+  const [searchParams] = useSearchParams();
+  const [data, setData] = useState([]); // 전체 데이터
+  const [filteredData, setFilteredData] = useState([]); // 필터링된 데이터
+  const [searchTerm, setSearchTerm] = useState(""); // 검색어 상태
 
   useEffect(() => {
-    // 서버 데이터 가져오기
     const fetchData = async () => {
       try {
-        // const response = await axios.get("https://676e83a3df5d7dac1ccae100.mockapi.io/post");
-        const response = await axios.get("http://172.30.1.44:8080/post");
-        
-        setData(response.data); // 원본 데이터 저장
-        setFilteredData(response.data); // 초기 데이터 설정
+        const response = await axios.get("https://676e83a3df5d7dac1ccae100.mockapi.io/post");
+        setData(response.data); // 전체 데이터 저장
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -28,17 +23,18 @@ export const SearchProvider = ({ children }) => {
   }, []);
 
   useEffect(() => {
-    // 검색어에 따라 데이터 필터링
-    if (searchTerm === "") {
-      setFilteredData(data); // 검색어 없으면 전체 데이터 표시
+    // 검색어에 따라 데이터를 필터링
+    const currentSearch = searchParams.get("search") || "";
+    if (currentSearch === "") {
+      setFilteredData(data); // 검색어가 없으면 전체 데이터 반환
     } else {
       const filtered = data.filter((item) =>
-        item.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        item.category.toLowerCase().includes(searchTerm.toLowerCase())
+        item.title.toLowerCase().includes(currentSearch.toLowerCase()) ||
+        item.category.toLowerCase().includes(currentSearch.toLowerCase())
       );
       setFilteredData(filtered);
     }
-  }, [searchTerm, data]);
+  }, [searchParams, data]); // URL 파라미터 변경 시 필터링
 
   return (
     <SearchContext.Provider value={{ searchTerm, setSearchTerm, filteredData }}>
