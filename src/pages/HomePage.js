@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
-import styled, { createGlobalStyle } from "styled-components";
-import { SearchContext } from '../context/SearchContext';
+import styled from "styled-components";
 import bgsvg from "../assets/homepage/home2.svg";
 import whitelogo from "../assets/homepage/whitelogo.svg";
 import userProfile from "../assets/homepage/useprofileicon.svg";
@@ -11,13 +10,32 @@ import landcard1 from "../assets/homepage/landcard1.svg";
 import landcard2 from "../assets/homepage/landcard2.svg";
 import landcard3 from "../assets/homepage/landcard3.svg";
 import landcard4 from "../assets/homepage/landcard4.svg";
+import { loginInfo } from "../context/Auth";
+import { useGoogleLogin } from "./Login";
+import useLogout from "./Logout";
+import { useRecoilValue } from "recoil";
 
 
+const server = process.env.REACT_APP_SERVER;
+
+let isLoggedIn = false;
 const HomePage = () => {
-  const navigate = useNavigate();
-  const handleLogin = () => {
-    window.location.href = `${process.env.REACT_APP_SERVER}/oauth2/authorization/google`;
+  const googleLogin = useGoogleLogin();
+  const handleLogin = async () => {
+    try {
+      await googleLogin();
+    } catch (error) {
+      console.log("로그인 처리 중 홈 와서 오류", error);
+    }
+  };
+
+  // const googleLogout = useLogout();
+  const handleLogout = () => {
+    // googleLogout();
   }
+
+  const navigate = useNavigate();
+  // let userInfo = useRecoilValue(loginInfo);
 
   const words = ['iscuss','etermine', 'evelop'];
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
@@ -32,50 +50,26 @@ const HomePage = () => {
   // 검색 로직
   const [users, setUsers] = useState([]);
   const [filteredUsers, setFilteredUsers] = useState([]); // 필터링된 데이터
-  const { searchTerm, setSearchTerm } = useContext(SearchContext); // 전역 검색 상태 가져오기
+  // const { searchTerm, setSearchTerm } = useContext(SearchContext); // 전역 검색 상태 가져오기
   const [, setSearchParams] = useSearchParams(); 
 
-  const handleSearchChange = (e) => {
-    const newSearchTerm = e.target.value;
-    setSearchTerm(newSearchTerm);
-    setSearchParams({ search: newSearchTerm }); // URL 파라미터 업데이트
-  };
-
-  useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const response = await axios.get("http://172.17.217.97:8080/post");
-        console.log(response.data);
-        setUsers(response.data);
-        setFilteredUsers(response.data); // 초기 데이터 설정
-      } catch (err) {
-        console.error(err);
-      }
-    };
-    fetchUsers();
-  }, []);
-
-  useEffect(() => {
-    if (searchTerm === "") {
-      // setFilteredUsers(users); // 검색어가 없으면 전체 데이터 표시
-    } else {
-      const filtered = users.filter((user) =>
-        user.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        user.category.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-      setFilteredUsers(filtered);
-    }
-  }, [searchTerm, users]);
 
   return (
     <Container>
-      <GlobalStyle />
+      {/* <GlobalStyle /> */}
       {/* 헤더 */}
       <Header>
-        <Logo src={whitelogo} alt="Wecand Logo" />
+        <Logo src={whitelogo} alt="Wecand Logo" onClick={() => navigate('/home')}/>
         <LoginWrapper>
-          <LoginButton onClick={handleLogin}>로그인</LoginButton>
-          <UserProfile src={userProfile} alt="userIcon" />
+          {!(isLoggedIn) ? (
+            <LoginButton onClick={handleLogin}>로그인</LoginButton>
+          ) : (
+            <>
+              {/* <p>{userInfo.userName}</p> */}
+              <LoginButton onClick={handleLogout}>로그아웃</LoginButton>
+            </>
+          )} 
+          <UserProfile src={userProfile} alt="userIcon" onClick={() => navigate('/mypage')}/>
         </LoginWrapper>
       </Header>
 
@@ -175,7 +169,7 @@ const HomePage = () => {
     </BoxWrapper>
 
         {/* 검색 결과 표시 */}
-        {searchTerm && (
+        {/* {searchTerm && (
           <ResultContainer>
             {filteredUsers.length > 0 ? (
               filteredUsers.slice(0, 6).map((user) => (
@@ -189,7 +183,7 @@ const HomePage = () => {
               <NoResults>검색 결과가 없습니다.</NoResults>
             )}
           </ResultContainer>
-        )}
+        )} */}
       </ContentSection>
     </Container>
   );
@@ -202,18 +196,18 @@ const NoResults = styled.div`
   color: #999;
 `;
 
-const GlobalStyle = createGlobalStyle`
-  * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
-  body {
-    font-family: Pretendard, sans-serif;
-    line-height: 1.4;
-    overflow-x: hidden; /* 좌우 스크롤 방지 */
-  }
-`;
+// const GlobalStyle = createGlobalStyle`
+//   * {
+//     margin: 0;
+//     padding: 0;
+//     box-sizing: border-box;
+//   }
+//   body {
+//     font-family: Pretendard, sans-serif;
+//     line-height: 1.4;
+//     overflow-x: hidden; /* 좌우 스크롤 방지 */
+//   }
+// `;
 
 const StaticText = styled.span`
   font-size: 85px;
@@ -264,7 +258,7 @@ const Container = styled.div`
   overflow: hidden;
 `;
 
-const Header = styled.header`
+const Header = styled.div`
   ${flexCenter};
   position: absolute;
   top: 0;
@@ -307,7 +301,7 @@ const UserProfile = styled.img`
   object-fit: cover;
 `;
 
-const MainBanner = styled.section`
+const MainBanner = styled.div`
   width: 100%;
   height: 1005px;
   background-color: #e0e7ff;
