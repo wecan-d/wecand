@@ -4,10 +4,11 @@ import { useNavigate } from "react-router-dom";
 import MaketeamSVG from "../assets/maketeam.svg";
 import { uploadFileToFirebase } from "../context/UploadFile";
 
-const server = process.env.REACT_APP_SERVER;
 
+const server = process.env.REACT_APP_SERVER;
+const userId = 2;
 // const server = "http://192.168.1.24:8080/post/2";
-const server = "https://67625e5846efb373237455b0.mockapi.io/gemlense/post";
+// const server = "https://67625e5846efb373237455b0.mockapi.io/gemlense/post";
 export const postMemberAPI = async (data) => {
   try {
     const response = await axios.post(`${server}/post/${userId}`, data);
