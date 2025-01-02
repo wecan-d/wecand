@@ -29,11 +29,13 @@ export default function MyPage() {
       const filteredOwnPosts = owner[0].filter(post => post.ownerId === userId);
       // 주어진 데이터를 기반으로 userId에 해당하는 게시글 필터링
       const filteredApplyPosts = applied.filter(post =>post.applicants.some(applicant => applicant.userId === userId));
-      
+
       setUserPosts(filteredOwnPosts);
 
       setApplyPosts(filteredApplyPosts);
     }, [userId]);
+
+    
 
 
 

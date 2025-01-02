@@ -24,7 +24,7 @@ const RecruitmentPage = () => {
     // SearchContext에서 searchTerm, filteredData 받아오기 검색기능 훅
     const { searchTerm, setSearchTerm, filteredData } = useContext(SearchContext); 
 
-    const [users, setUsers] = useState([]);
+    const [post, setPost] = useState([]);
     const { category } = useParams(); // URL에서 카테고리 값을 가져오기
     const [searchParams, setSearchParams] = useSearchParams();
     const navigate = useNavigate();
@@ -51,15 +51,16 @@ const RecruitmentPage = () => {
    
     
 
-    // !!!!데이터 가져옴
+
+    // GET 모든 공모전 게시물에 대한 정보 불러오기 !!완료!!
     useEffect(() => {
         const fetchUsers = async () => {
             try {
                 const response = await axios.get(
                     "https://676e83a3df5d7dac1ccae100.mockapi.io/post"
-                    // `http://${server}:8080/post`
+                    // `http://${server}/post`
                 );
-                setUsers(response.data);
+                setPost(response.data);
                 console.log(response.data);
             } catch (err) {
                 console.error(err);

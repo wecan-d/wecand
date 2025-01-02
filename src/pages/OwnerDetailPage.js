@@ -29,11 +29,11 @@ export default function OwnerDetailPage() {
       // 주어진 데이터를 기반으로 userId에 해당하는 게시글 필터링
       const filteredOwnPosts = owner[0].filter(post => post.ownerId === userId);
       // 주어진 데이터를 기반으로 userId에 해당하는 게시글 필터링
-      const filteredApplyPosts = applied.filter(post =>post.applicants.some(applicant => applicant.userId === userId));
+      const filteredPostsInApplicants = applied.filter(post =>post.applicants.some(applicant => applicant.userId === userId));
       
       setUserPosts(filteredOwnPosts);
 
-      setApplyUsers(filteredApplyPosts);
+      setApplyUsers(filteredPostsInApplicants);
     }, [userId]);
 
     
@@ -170,9 +170,11 @@ const handleFocus = (applicationId) => {
                     지원자 목록
             </div>
             
-
+            
             {applied
+                // postId 필터링은 detail/{postId}/
               .filter(post => post.postId === 1) // postId가 1인 게시물만 필터링
+
               .flatMap(post => post.applicants) // 지원자 배열 펼치기
               .map(applicant => (
                 <UserContainer

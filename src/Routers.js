@@ -37,9 +37,9 @@ const Routers = () => {
             </FormProvider>
           }
         />
+        <Route element={<Layout />}>
         <Route index element={<HomePage />} />
         <Route path="/home" element={<HomePage />} />
-        <Route element={<Layout />}>
           <Route path="/recruiting" element={<RecruitingsPage />}/>
           <Route path="/recruiting/:category" element={<RecruitingsPage />}/>
           <Route path="/maketeam" element={<MakeTeam />} />

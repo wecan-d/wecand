@@ -261,3 +261,58 @@ export const applicants = [
     status: "수락",
   },
 ];
+
+export const UserCard = [
+  {
+    "cardId": 1,
+    "name": "김철수",
+    "gender": "남성",
+    "identity": "학생",
+    "major": "컴퓨터공학",
+    "age": 22,
+    "email": "kimcs@example.com",
+    "important": "팀워크",
+    "tools": ["Java", "Python"],
+    "certificates": ["정보처리기사"],
+    "additionalInfo": "AI 프로젝트 경험 있음."
+  },
+  {
+    "cardId": 2,
+    "name": "이영희",
+    "gender": "여성",
+    "identity": "디자이너",
+    "major": "시각디자인",
+    "age": 25,
+    "email": "leeyh@example.com",
+    "important": "창의성",
+    "tools": ["Photoshop", "Figma"],
+    "certificates": ["UI/UX 전문가"],
+    "additionalInfo": "스타트업 UX/UI 디자인 경험 있음."
+  },
+  {
+    "cardId": 3,
+    "name": "박민수",
+    "gender": "남성",
+    "identity": "프리랜서",
+    "major": "영상제작",
+    "age": 30,
+    "email": "parkms@example.com",
+    "important": "시간 엄수",
+    "tools": ["Premiere Pro", "After Effects"],
+    "certificates": ["영상편집 전문가"],
+    "additionalInfo": "다큐멘터리 제작 경력 5년."
+  },
+  {
+    "cardId": 4,
+    "name": "최수정",
+    "gender": "여성",
+    "identity": "개발자",
+    "major": "소프트웨어공학",
+    "age": 28,
+    "email": "choisj@example.com",
+    "important": "문제 해결 능력",
+    "tools": ["JavaScript", "React"],
+    "certificates": ["프론트엔드 개발자"],
+    "additionalInfo": "e-커머스 플랫폼 개발 경험 있음."
+  }
+]

@@ -361,6 +361,7 @@ const Container = styled.div`
   width: 100%;
   position: relative;
   overflow: hidden;
+  margin-bottom: 325px;
 `;
 
 const Header = styled.header`

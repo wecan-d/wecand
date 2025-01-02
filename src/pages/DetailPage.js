@@ -9,7 +9,8 @@ import DetailSVG from "../assets/detail.svg";
 
 export default function DetailPage() {
     const [extraData, setExtraData] = useState([]);
-    const [postData, setPostData] = useState(null);
+
+    const [selectedPostData, setSelectedPostData] = useState(null);
     const [error, setError] = useState(null);
 
     const [isModalOpen, setIsModalOpen] = useState(false); // 모달 표시 여부
@@ -22,7 +23,9 @@ export default function DetailPage() {
     const server = process.env.REACT_APP_SERVER;
 
     const { postId } = useParams();
+    console.log(postId);
     const { userId } = useParams();
+    
     const navigate = useNavigate(); // Initialize useNavigate hook
 
 
@@ -39,22 +42,30 @@ export default function DetailPage() {
                 console.log("HTTP Status Code:", response.status);
             } catch (err) {
                 console.error("Error fetching post data with status:", err.response?.status);
+                console.log(err.message);
                 setError(err);
             }
         };
         fetchExtraData();
-    }, [userId]);
+    }, []);
 
+
+
+
+
+
+    // GET 선택한 게시물[postId]에 대해서 정보 불러오기 !!완료!!
     useEffect(() => {
         const fetchPostData = async () => {
             try {
-                // const response = await axios.get(`http://${server}/post/${postId}`);
                 const response = await axios.get(`https://676e83a3df5d7dac1ccae100.mockapi.io/post/${postId}`);
-                setPostData(response.data);
+                // const response = await axios.get(`http://${server}/post/${postId}`);
+                setSelectedPostData(response.data);
                 console.log("HTTP Status Code:", response.status);
             } catch (err) {
                 console.error("Error fetching post data:", err.message);
                 console.error("Error fetching post data with status:", err.response?.status);
+                console.log(err.message);
                 setError(err);
             }
         };
@@ -114,7 +125,7 @@ export default function DetailPage() {
     return (
       
         <PageWrapper>
-          {postData ? (
+          {selectedPostData ? (
             <>
             {/* 페이지 헤더 */}
             <Header>
@@ -123,10 +134,10 @@ export default function DetailPage() {
 
                     {/*!ERD category! */}
                     <Category>
-                      {postData.category}
+                      {selectedPostData.category}
                     </Category>
                     {/* !ERD title! */}
-                    <Title>{postData.title}
+                    <Title>{selectedPostData.title}
                     </Title>
                 </CategoryAndTitle>
             </Header>
@@ -146,7 +157,7 @@ export default function DetailPage() {
                         <InfoRow>
                             <InfoLabel>작성자</InfoLabel>
                             <InfoValue>
-                                {postData.name} {/* 작성자의 역량카드 열람 모달 열기 */}
+                                {selectedPostData.name} {/* 작성자의 역량카드 열람 모달 열기 */}
                                 <RoleTag onClick={handleOwnerCard}>역량카드</RoleTag>
 
                             </InfoValue>
@@ -155,20 +166,20 @@ export default function DetailPage() {
                             <InfoLabel>모집 날짜</InfoLabel>
 
                             {/* !ERD date = 모집 마감일! */}
-                            <InfoValue>{postData.date}</InfoValue>
+                            <InfoValue>{selectedPostData.date}</InfoValue>
                         </InfoRow>
                         <InfoRow>
                             <InfoLabel>현재 모집 인원</InfoLabel>
                             {/* !ERD member = 현재원 */}
-                            <InfoValue>{postData.member}
+                            <InfoValue>{selectedPostData.member}
                             </InfoValue>
                         </InfoRow>
                         <InfoRow>
                             <InfoLabel>총 지원자</InfoLabel>
-                            {/* <InfoValue>{postData.applicants.length}</InfoValue> */}
+                            {/* <InfoValue>{selectedPostData.applicants.length}</InfoValue> */}
 
                             {/* !ERD applicants = 모집 지원자! */}
-                            {/* <InfoValue>1,200 {postData.applicants}</InfoValue> */}
+                            {/* <InfoValue>1,200 {selectedPostData.applicants}</InfoValue> */}
                         </InfoRow>
                     </InfoSection>
 
@@ -177,7 +188,7 @@ export default function DetailPage() {
                         <SectionTitle>모집글</SectionTitle>
                         <Text>
                             {/* !ERD memo = 메모 */}
-                            {postData.memo}
+                            {selectedPostData.memo}
 
                             {/* 총 상금 2400만원 같이 따실 분 구합니다.
               <br />
@@ -195,7 +206,7 @@ export default function DetailPage() {
                         <SectionTitle>자격 요건</SectionTitle>
                         <Description>
                             <UnorderedList>
-                                <ListItem>{postData.memo2}</ListItem>
+                                <ListItem>{selectedPostData.memo2}</ListItem>
                                
                                 
                             </UnorderedList>
