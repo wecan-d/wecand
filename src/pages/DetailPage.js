@@ -9,10 +9,13 @@ import DetailSVG from "../assets/detail.svg";
 
 export default function DetailPage() {
     const [extraData, setExtraData] = useState([]);
-    const [postData, setPostData] = useState(null);
+
+    const [selectedPostData, setSelectedPostData] = useState(null);
     const [error, setError] = useState(null);
 
     const [isModalOpen, setIsModalOpen] = useState(false); // 모달 표시 여부
+    const [isOwnerModalOpen, setIsOwnerModalOpen] = useState(false);
+
     const [isConfirmationVisible, setIsConfirmationVisible] = useState(false); // 두 번째 이미지 모달 표시 여부
     const [modalTimer, setModalTimer] = useState(null); // 타이머 상태
     const [isPostSubmitted, setIsPostSubmitted] = useState(false);
@@ -20,36 +23,49 @@ export default function DetailPage() {
     const server = process.env.REACT_APP_SERVER;
 
     const { postId } = useParams();
+    console.log(postId);
     const { userId } = useParams();
+    
     const navigate = useNavigate(); // Initialize useNavigate hook
 
+
+    //역량카드 데이터
     useEffect(() => {
         const fetchExtraData = async () => {
             try {
                 const response = await axios.get(
-                    `http://${server}:8080/card/${userId}`
+                    // `http://${server}:8080/card/${userId}`
+                    `https://672819eb270bd0b975546065.mockapi.io/api/v1/register?page=1&limit=25`
                 );
                 setExtraData(Array.isArray(response.data) ? response.data : []);
                 console.log(response.data);
                 console.log("HTTP Status Code:", response.status);
             } catch (err) {
                 console.error("Error fetching post data with status:", err.response?.status);
+                console.log(err.message);
                 setError(err);
             }
         };
         fetchExtraData();
-    }, [userId]);
+    }, []);
 
+
+
+
+
+
+    // GET 선택한 게시물[postId]에 대해서 정보 불러오기 !!완료!!
     useEffect(() => {
         const fetchPostData = async () => {
             try {
-                const response = await axios.get(`http://${server}/post/${postId}`);
-                // const response = await axios.get(`https://676e83a3df5d7dac1ccae100.mockapi.io/post/1`);
-                setPostData(response.data);
+                const response = await axios.get(`https://676e83a3df5d7dac1ccae100.mockapi.io/post/${postId}`);
+                // const response = await axios.get(`http://${server}/post/${postId}`);
+                setSelectedPostData(response.data);
                 console.log("HTTP Status Code:", response.status);
             } catch (err) {
                 console.error("Error fetching post data:", err.message);
                 console.error("Error fetching post data with status:", err.response?.status);
+                console.log(err.message);
                 setError(err);
             }
         };
@@ -58,54 +74,58 @@ export default function DetailPage() {
 
     const handleFirstSubmit = () => {
       setIsModalOpen(true); // Open the first modal
+      document.body.style.overflow = "hidden"; 
   };
 
-  const handleSecondSubmit = async () => {
+  const handleOwnerCard = () => {
+    setIsOwnerModalOpen(true);
+    document.body.style.overflow = "hidden";
+  };
+
+  // const handleSecondSubmit = async () => {
 
       
-      const userId = "2"; // Assuming you retrieve the user ID from authentication
-      try {
-          // Sending POST request to the server
-          await axios.post(
-              `http://${server}/applications/${userId}/${postId}`
-          );
-          setIsPostSubmitted(true);
-          setIsModalOpen(false); // Close first modal
+  //     const userId = "2"; // Assuming you retrieve the user ID from authentication
+  //     try {
+  //         // Sending POST request to the server
+  //         await axios.post(
+  //             `http://${server}/applications/${userId}/${postId}`
+  //         );
+  //         setIsPostSubmitted(true);
+  //         setIsModalOpen(false); // Close first modal
 
-          // Show second confirmation modal after 2 seconds
-          setModalTimer(setTimeout(() => {
-              setIsConfirmationVisible(true); // Show success confirmation modal
+  //         // Show second confirmation modal after 2 seconds
+  //         setModalTimer(setTimeout(() => {
+  //             setIsConfirmationVisible(true); // Show success confirmation modal
 
-              // Hide success modal after another 2 seconds
-              setTimeout(() => {
-                  setIsConfirmationVisible(false);
-                  navigate(`/detail/${postId}`); // Optionally navigate to another page after 2 seconds
-              }, 2000);
-          }));
-      } catch (err) {
-          alert("지원에 실패했습니다.");
-      }
-  };
+  //             // Hide success modal after another 2 seconds
+  //             setTimeout(() => {
+  //                 setIsConfirmationVisible(false);
+  //                 navigate(`/detail/${postId}`); // Optionally navigate to another page after 2 seconds
+  //             }, 2000);
+  //         }));
+  //     } catch (err) {
+  //         alert("지원에 실패했습니다.");
+  //     }
+  // };
 
   const closeModal = () => {
       clearTimeout(modalTimer);
       setIsModalOpen(false);
+      setIsOwnerModalOpen(false);
       setIsConfirmationVisible(false);
+      document.body.style.overflow = "auto";
   };
 
 
-    useEffect(() => {
-        return () => {
-            document.body.style.overflow = "auto";
-        };
-    }, []);
+  
 
     if (error) 
         return <div>에러가 발생했습니다: {error.message}</div>;
     return (
       
         <PageWrapper>
-          {postData ? (
+          {selectedPostData ? (
             <>
             {/* 페이지 헤더 */}
             <Header>
@@ -114,10 +134,10 @@ export default function DetailPage() {
 
                     {/*!ERD category! */}
                     <Category>
-                      {postData.category}
+                      {selectedPostData.category}
                     </Category>
                     {/* !ERD title! */}
-                    <Title>{postData.title}
+                    <Title>{selectedPostData.title}
                     </Title>
                 </CategoryAndTitle>
             </Header>
@@ -137,8 +157,8 @@ export default function DetailPage() {
                         <InfoRow>
                             <InfoLabel>작성자</InfoLabel>
                             <InfoValue>
-                                박경민 {/* 작성자의 역량카드 열람 모달 열기 */}
-                                <RoleTag>역량카드</RoleTag>
+                                {selectedPostData.name} {/* 작성자의 역량카드 열람 모달 열기 */}
+                                <RoleTag onClick={handleOwnerCard}>역량카드</RoleTag>
 
                             </InfoValue>
                         </InfoRow>
@@ -146,20 +166,20 @@ export default function DetailPage() {
                             <InfoLabel>모집 날짜</InfoLabel>
 
                             {/* !ERD date = 모집 마감일! */}
-                            <InfoValue>{postData.date}</InfoValue>
+                            <InfoValue>{selectedPostData.date}</InfoValue>
                         </InfoRow>
                         <InfoRow>
                             <InfoLabel>현재 모집 인원</InfoLabel>
                             {/* !ERD member = 현재원 */}
-                            <InfoValue>{postData.member}
+                            <InfoValue>{selectedPostData.member}
                             </InfoValue>
                         </InfoRow>
                         <InfoRow>
                             <InfoLabel>총 지원자</InfoLabel>
-                            <InfoValue>{postData.applicants.length}</InfoValue>
+                            {/* <InfoValue>{selectedPostData.applicants.length}</InfoValue> */}
 
                             {/* !ERD applicants = 모집 지원자! */}
-                            {/* <InfoValue>1,200 {postData.applicants}</InfoValue> */}
+                            {/* <InfoValue>1,200 {selectedPostData.applicants}</InfoValue> */}
                         </InfoRow>
                     </InfoSection>
 
@@ -168,7 +188,7 @@ export default function DetailPage() {
                         <SectionTitle>모집글</SectionTitle>
                         <Text>
                             {/* !ERD memo = 메모 */}
-                            {postData.memo}
+                            {selectedPostData.memo}
 
                             {/* 총 상금 2400만원 같이 따실 분 구합니다.
               <br />
@@ -186,7 +206,7 @@ export default function DetailPage() {
                         <SectionTitle>자격 요건</SectionTitle>
                         <Description>
                             <UnorderedList>
-                                <ListItem>{postData.memo2}</ListItem>
+                                <ListItem>{selectedPostData.memo2}</ListItem>
                                
                                 
                             </UnorderedList>
@@ -195,16 +215,19 @@ export default function DetailPage() {
 
                     {/* 버튼 */}
                     <ActionButtons>
-                        <LinkButton>공모전 확인하기</LinkButton>
+                      {/* 이거 제목 옆에 > 랑 같이 */}
+                        <LinkButton>자세히 보기</LinkButton>
+                        {/* 지원하기 완료되면 대기중 띄우기 (개발 / 진행상황) */}
                         <ApplyButton onClick={handleFirstSubmit}>지원하기</ApplyButton>
                     </ActionButtons>
                 </SideBox>
 
             </MainContent>
 
-            {/* 모달 */}
+            {/* 모달 지원자용 */}
             {
                 isModalOpen && (
+                  
                     <ModalOverlay onClick={closeModal}>
                         <ModalContent onClick={(e) => e.stopPropagation()}>
 
@@ -215,7 +238,7 @@ export default function DetailPage() {
                                         <CloseButton onClick={closeModal}>×</CloseButton>
                                         <HeaderButtons>
 
-                                            <SubmitButton onClick={handleSecondSubmit}>지원하기</SubmitButton>
+                                            {/* <SubmitButton onClick={handleSecondSubmit}>지원하기</SubmitButton> */}
                                         </HeaderButtons>
                                     </div>
                                 </div>
@@ -393,6 +416,187 @@ export default function DetailPage() {
         ) : (
             <div>다시해</div>
         )}
+        {
+                isOwnerModalOpen && (
+                  
+                    <ModalOverlay onClick={closeModal}>
+                        <ModalContent onClick={(e) => e.stopPropagation()}>
+
+                            <ModalHeader>
+                                
+                                  {/* 여기에 글 작성자 정보 변수 및 스타일 넣기 */}
+
+                                <div style={({display: 'flex', textAlign: 'right'})}>
+                                    <div>
+                                        <CloseButton onClick={closeModal}>×</CloseButton>
+                                        <HeaderButtons>
+
+                                            {/* <SubmitButton onClick={handleSecondSubmit}>지원하기</SubmitButton> */}
+                                        </HeaderButtons>
+                                    </div>
+                                </div>
+                            </ModalHeader>
+                            <Divider/>
+                            <ModalBody>
+                                <SectionStyle>작업 스타일</SectionStyle>
+
+                                {/* 카드 그리드 카드 그리드 카드 그리드 */}
+                                {/* extraData[userId] */}
+                                <CardGrid>
+                                  
+                                    
+
+
+                                    <Card style={{ gridArea: "communication" }}>
+                                        <CardTitle>소통</CardTitle>
+                                        <CardContent>
+                                          {Array.isArray(extraData[18]?.communication) ? ( extraData[18].communication.map((contentItem, index) => (
+                                            <p key={index}>{contentItem}</p> // 각 요소를 p 태그로 감쌈
+                                          ))
+                                          ) : (
+                                            <p>{extraData[18]?.communication || "내용 없음"}</p> // 배열이 아닌 경우 처리
+                                )}
+                                </CardContent>
+                                    </Card>
+                                    <Card
+                                        style={{
+                                            gridArea: "work"
+                                        }}>
+                                        <CardTitle>작업</CardTitle>
+                                        <CardContent>
+                                          {Array.isArray(extraData[18]?.teamwork) ? ( extraData[18].teamwork.map((contentItem, index) => (
+                                            <p key={index}>{contentItem}</p> // 각 요소를 p 태그로 감쌈
+                                          ))
+                                          ) : (
+                                            <p>{extraData[18]?.teamwork || "내용 없음"}</p> // 배열이 아닌 경우 처리
+                                )}
+                                </CardContent>
+                                    </Card>
+                                    <Card
+                                        style={{
+                                            gridArea: "thinking"
+                                        }}>
+                                        <CardTitle>사고</CardTitle>
+                                        <CardContent>
+                                          {Array.isArray(extraData[18]?.thinking) ? ( extraData[18].thinking.map((contentItem, index) => (
+                                            <p key={index}>{contentItem}</p> // 각 요소를 p 태그로 감쌈
+                                          ))
+                                          ) : (
+                                            <p>{extraData[18]?.thinking || "내용 없음"}</p> // 배열이 아닌 경우 처리
+                                )}
+                                </CardContent>
+                                    </Card>
+                                    <Card
+                                        style={{
+                                            gridArea: "role"
+                                        }}>
+                                        <CardTitle>역할</CardTitle>
+                                        <CardContent>
+                                          {Array.isArray(extraData[18]?.role) ? ( extraData[18].role.map((contentItem, index) => (
+                                            <p key={index}>{contentItem}</p> // 각 요소를 p 태그로 감쌈
+                                          ))
+                                          ) : (
+                                            <p>{extraData[18]?.role || "내용 없음"}</p> // 배열이 아닌 경우 처리
+                                )}
+                                </CardContent>
+                                    </Card>
+                                    <Card
+                                        style={{
+                                            gridArea: "conflict"
+                                        }}>
+                                        <CardTitle>갈등 해결</CardTitle>
+                                        <CardContent>
+                                          {Array.isArray(extraData[18]?.conflictResolution) ? ( extraData[18].conflictResolution.map((contentItem, index) => (
+                                            <p key={index}>{contentItem}</p> // 각 요소를 p 태그로 감쌈
+                                          ))
+                                          ) : (
+                                            <p>{extraData[18]?.conflictResolution || "내용 없음"}</p> // 배열이 아닌 경우 처리
+                                )}
+                                </CardContent>
+                                    </Card>
+                                    <Card
+                                        style={{
+                                            gridArea: "time"
+                                        }}>
+                                        <CardTitle>시간</CardTitle>
+                                        <CardContent>
+                                          {Array.isArray(extraData[18]?.timePreference) ? ( extraData[18].timePreference.map((contentItem, index) => (
+                                            <p key={index}>{contentItem}</p> // 각 요소를 p 태그로 감쌈
+                                          ))
+                                          ) : (
+                                            <p>{extraData[18]?.timePreference || "내용 없음"}</p> // 배열이 아닌 경우 처리
+                                )}
+                                </CardContent>
+                                    </Card>
+                                    <Card
+                                        style={{
+                                            gridArea: "rest"
+                                        }}>
+                                        <CardTitle>휴식</CardTitle>
+                                        <CardContent>
+                                          {Array.isArray(extraData[18]?.restPreference) ? ( extraData[18].restPreference.map((contentItem, index) => (
+                                            <p key={index}>{contentItem}</p> // 각 요소를 p 태그로 감쌈
+                                          ))
+                                          ) : (
+                                            <p>{extraData[18]?.restPreference || "내용 없음"}</p> // 배열이 아닌 경우 처리
+                                )}
+                                </CardContent>
+                                    </Card>
+                                    <Card
+                                        style={{
+                                            gridArea: "friendship"
+                                        }}>
+                                        <CardTitle>친목</CardTitle>
+                                        <CardContent>
+                                          {Array.isArray(extraData[18]?.goal) ? ( extraData[18].goal.map((contentItem, index) => (
+                                            <p key={index}>{contentItem}</p> // 각 요소를 p 태그로 감쌈
+                                          ))
+                                          ) : (
+                                            <p>{extraData[18]?.goal || "내용 없음"}</p> // 배열이 아닌 경우 처리
+                                )}
+                                </CardContent>
+                                    </Card>
+                                    <Card
+                                        style={{
+                                            gridArea: "important"
+                                        }}>
+                                        <CardTitle>중요하게 생각해요</CardTitle>
+                                        <CardContent>
+                                          {Array.isArray(extraData[18]?.important) ? ( extraData[18].important.map((contentItem, index) => (
+                                            <p key={index}>{contentItem}</p> // 각 요소를 p 태그로 감쌈
+                                          ))
+                                          ) : (
+                                            <p>{extraData[18]?.important || "내용 없음"}</p> // 배열이 아닌 경우 처리
+                                )}
+                                </CardContent>
+                                    </Card>
+                                </CardGrid>
+
+                                <div style={({marginTop: '30px'})}/>
+                                <Divider/>
+
+                                <AdditionalSection>
+                                    <SectionColumn>
+                                        <SectionTitle>경력 / 경험</SectionTitle>
+                                        <SectionText>{extraData[18]?.awards}</SectionText>
+                                        <SectionText>{extraData[18]?.tools}</SectionText>
+                                        <SectionText>{extraData[18]?.certificates}</SectionText>
+                                        <SectionText>{extraData[18]?.url}</SectionText>
+                                        <SectionArea>PDF 자리</SectionArea>
+                                    </SectionColumn>
+                                    <SectionColumn>
+                                        <SectionTitle>기타사항</SectionTitle>
+                                        <SectionArea>{extraData[18]?.additionalInfo}</SectionArea>
+                                        
+                                        {/* <SectionArea>{extraData[18]?.file}</SectionArea> */}
+                                        
+                                    </SectionColumn>
+                                </AdditionalSection>
+                            </ModalBody>
+                        </ModalContent>
+                    </ModalOverlay>
+                )
+            }
         </PageWrapper>
     );
 }

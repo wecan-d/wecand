@@ -8,7 +8,7 @@ const server = process.env.REACT_APP_SERVER;
 
 export const postMemberAPI = async (data) => {
   try {
-    const response = await axios.post(`${server}`, data);
+    const response = await axios.post(`${server}/2`, data);
     return response;
   } catch (error) {
     console.error("Error posting user data:", error);
@@ -21,14 +21,14 @@ export const postMemberAPI = async (data) => {
 const MakeTeam = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    title: "", // 공모전 제목
-    category: "", // 카테고리
-    date: "", // 모집 마감 일자
-    member: 0, // 희망 모집 인원
-    url: "", // 공모전 URL
-    memo: "", // 모집글
-    memo2: "", // 자격 요건
-    img: null,
+    title: "",
+    category: "",
+    date: "",
+    member: 0,
+    url: "",
+    memo: "",
+    memo2: "",
+    img: "",
   });
 
   const [imagePreview, setImagePreview] = useState(null);

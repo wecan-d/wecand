@@ -14,6 +14,11 @@ import { loginInfo } from "../context/Auth";
 import { useGoogleLogin } from "./Login";
 import useLogout from "./Logout";
 import { useRecoilValue } from "recoil";
+import wait from "../assets/common/wait.svg"
+import accept from "../assets/common/accept.svg"
+
+//!!임시 데이터 병합할 때 알아서 지워도 됨 빨강색 찾아서 알아서 지워주세여
+import { applied } from "./MyPageData"
 
 
 const server = process.env.REACT_APP_SERVER;
@@ -30,8 +35,40 @@ const HomePage = () => {
   };
 
   // const googleLogout = useLogout();
-  const handleLogout = () => {
+  const handleLogout = () => {};
     // googleLogout();
+
+  //!!임시 데이터 병합할 때 알아서 지워도 됨 빨강색 찾아서 알아서 지워주세여
+  const userId = 2;
+  const [applyPosts, setApplyPosts] = useState([]);
+
+  useEffect(() => {
+    // 주어진 데이터를 기반으로 userId에 해당하는 게시글 필터링
+    const filteredApplyPosts = applied.filter(post =>post.applicants.some(applicant => applicant.userId === userId));
+
+    setApplyPosts(filteredApplyPosts);
+  }, [userId]);
+
+  const ApplyProjects = applyPosts.reduce((acc, apply) => {
+    const { category } = apply;
+    if (!acc[category]) {
+      acc[category] = [];
+    }
+    acc[category].push(apply);
+    return acc;
+  }, {});
+  //!!임시 데이터 병합할 때 알아서 지워도 됨 빨강색 찾아서 알아서 지워주세여
+
+  // 최신순 정렬 함수
+    const sortByLatest = (posts) => {
+      return posts.slice(0,7).sort((a, b) => new Date(b.createTime) - new Date(a.createTime));
+    };
+
+
+
+  const navigate = useNavigate();
+  const handleLogin = () => {
+    window.location.href = `${process.env.REACT_APP_SERVER}/oauth2/authorization/google`;
   }
 
   const navigate = useNavigate();
@@ -50,9 +87,38 @@ const HomePage = () => {
   // 검색 로직
   const [users, setUsers] = useState([]);
   const [filteredUsers, setFilteredUsers] = useState([]); // 필터링된 데이터
-  // const { searchTerm, setSearchTerm } = useContext(SearchContext); // 전역 검색 상태 가져오기
-  const [, setSearchParams] = useSearchParams(); 
+  const { searchTerm, setSearchTerm } = useContext(SearchContext); // 전역 검색 상태 가져오기
+const [last, setLast] = useState([]);
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const response = await axios.get("https://676e83a3df5d7dac1ccae100.mockapi.io/post");
+        console.log(response.data);
+        setUsers(response.data);
 
+        setFilteredUsers(response.data); // 초기 데이터 설정
+
+        const sortedPosts = sortByLatest(response.data);
+        setLast(sortedPosts);
+        console.log("Sorted Posts:", sortedPosts); 
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    fetchUsers();
+  }, []);
+
+  useEffect(() => {
+    if (searchTerm === "") {
+      // setFilteredUsers(users); // 검색어가 없으면 전체 데이터 표시
+    } else {
+      const filtered = users.filter((user) =>
+        user.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        user.category.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+      setFilteredUsers(filtered);
+    }
+  }, [searchTerm, users]);
 
   return (
     <Container>
@@ -101,51 +167,103 @@ const HomePage = () => {
           <CTAButton href="/recruiting">공모전을 찾아보세요</CTAButton>
           <CTAButton href="/maketeam">팀 모집을 위한 글 작성하기</CTAButton>
         </CTAButtonWrapper>
-
+        <Column>신청 공모전 팀 모임 현황
+          
+        </Column>
+        <Text2>최근 신청 한 팀의 대기 중,수락 위주로 보여요</Text2>
         <ScrollWrapper>
           <ScrollContent>
-            <Item>신청 공모전 팀 모임</Item>
-            <Item>신청 한 팀의 수락, 대기 중 위주로 보여요</Item>
-            <Item>새로운 공모전을 신청해 보세요</Item>
-            <Item>수락 상황 더보기</Item>
+         
+          {applyPosts
+          .filter(apply =>
+            apply.applicants.some(applicant =>
+              ["수락", "대기중"].includes(applicant.status)
+            )
+          )
+          .map((apply) => (
+              <Item key={apply.postId}>{apply.title}
+                <img
+                        src={
+                          apply.applicants.some(applicant => applicant.status === "수락")
+                            ? accept // 수락
+                            : apply.applicants.some(applicant => applicant.status === "대기중")
+                            ? wait // 대기중
+                            : null
+                        }
+                        alt=""
+                        style={{ width: "110px", height: "35px" }}
+                      />
+              
+              </Item>
+          ))}
+          
           </ScrollContent>
         </ScrollWrapper>
 
         <CardsWrapper>
+          
         <ItemCard>
           <ImageWrapper>
             <Img src={landcard1} alt="Card Image" />
           </ImageWrapper>
-          <TextWrapper>
-            <CardTitle>카드 제목</CardTitle>
-            <CardDescription>이곳에 카드 설명이 들어갑니다. 간단한 설명을 넣어주세요.</CardDescription>
-          </TextWrapper>
+          <TextOverlay>
+            <div style={({position:'absolute', whiteSpace:'nowrap',left:'260px',top:"20px",color:'white',fontSize:'18px',fontWeight:'500'})}>진행 중</div>
+              <div>
+                <Title2>나는야 파드 공모전</Title2>
+                  
+                  <UserName>박경민 팀장</UserName> 
+                  
+              </div>
+          </TextOverlay>
         </ItemCard>
+
         <ItemCard>
           <ImageWrapper>
             <Img src={landcard2} alt="Card Image" />
           </ImageWrapper>
           <TextWrapper>
-            <CardTitle>카드 제목</CardTitle>
-            <CardDescription>이곳에 카드 설명이 들어갑니다. 간단한 설명을 넣어주세요.</CardDescription>
+          <TextOverlay>
+            <div style={({position:'absolute', whiteSpace:'nowrap',left:'260px',top:"20px",color:'white',fontSize:'18px',fontWeight:'500'})}>진행 중</div>
+              <div>
+                <Title2>나는야 파드 공모전</Title2>
+                  
+                  <UserName>박경민 팀장</UserName> 
+                  
+              </div>
+          </TextOverlay>
           </TextWrapper>
         </ItemCard>
+
         <ItemCard>
           <ImageWrapper>
             <Img src={landcard3} alt="Card Image" />
           </ImageWrapper>
           <TextWrapper>
+          <TextOverlay>
+            <div style={({position:'absolute', whiteSpace:'nowrap',left:'260px',top:"20px",color:'white',fontSize:'18px',fontWeight:'500'})}>진행 중</div>
+              <div>
+                <Title2>나는야 파드 공모전</Title2>
+                  
+                  <UserName>박경민 팀장</UserName> 
+                  
+              </div>
+          </TextOverlay>
           </TextWrapper>
         </ItemCard>
+        
         <ItemCard>
           <ImageWrapper>
             <Img src={landcard4} alt="Card Image" />
           </ImageWrapper>
           <TextOverlay>
-          <div>진행 중</div>
-          <div>나는야 파드 공모전</div>
-          <div>박경민 팀장</div>
-        </TextOverlay>
+            <div style={({position:'absolute', whiteSpace:'nowrap',left:'260px',top:"20px",color:'white',fontSize:'18px',fontWeight:'500'})}>진행 중</div>
+              <div>
+                <Title2>나는야 파드 공모전</Title2>
+                  
+                  <UserName>박경민 팀장</UserName> 
+                  
+              </div>
+          </TextOverlay>
           <TextWrapper>
             <CardTitle>카드 제목</CardTitle>
             <CardDescription>이곳에 카드 설명이 들어갑니다. 간단한 설명을 넣어주세요.</CardDescription>
@@ -154,12 +272,23 @@ const HomePage = () => {
         
       </CardsWrapper>
 
+        <SectionTitle>새로운 공모전 모집 글</SectionTitle>
         <BoxWrapper>
       <LeftSection>
-        <SectionTitle>새로운 공모전 모집 글</SectionTitle>
-        <Description2>
-          다양한 분야에서 공모전 참가자를 모집합니다. 원하는 분야를 찾아보세요.
-        </Description2>
+          <GridLeft>
+            
+          {last.map((post) => (
+            <TagContainer>
+            <Category>
+              {post.category}
+            </Category>
+            <Title>
+              {post.title}
+            </Title>
+          </TagContainer>
+          ))}
+
+          </GridLeft>
       </LeftSection>
 
       <RightSection>
@@ -256,6 +385,7 @@ const Container = styled.div`
   width: 100%;
   position: relative;
   overflow: hidden;
+  margin-bottom: 325px;
 `;
 
 const Header = styled.div`
@@ -324,6 +454,7 @@ const CTAButtonWrapper = styled.div`
   flex-direction: row;
   align-items: center;
   gap: 22px;
+  margin-top: 10px;
 `;
 
 const CTAButton = styled.a`
@@ -355,6 +486,8 @@ const ContentSection = styled.section`
   text-align: center;
   line-height: 1.4;
   letter-spacing: -0.56px;
+  margin-top: 140px;
+  position: relative;
 `;
 
 const SectionTitle = styled.h2`
@@ -366,6 +499,10 @@ font-style: normal;
 font-weight: 600;
 line-height: 140%;
 margin-top: 130px;
+display: flex;
+width: 100%;
+margin-left: 260px;
+margin-bottom: 30px;
 `;
 
 const Description = styled.p`
@@ -416,8 +553,32 @@ const ScrollContent = styled.div`
   display: flex; /* 가로로 배치하기 위해 flexbox 사용 */
   min-width: 1726px; /* 화면 기준 1726px로 설정 */
   gap: 10px; /* 항목 간 간격 설정 */
-  margin: 120px;
+  margin: 30px 0 120px 134px;
 `;
+
+const Column = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  font-size: 28px;
+  margin-right: 1230px;
+  font-weight: 600;
+  margin-top: 195px;
+`;
+
+const Text2 = styled.span`
+  color: #787878;
+font-family: Pretendard;
+font-size: 16px;
+font-style: normal;
+font-weight: 500;
+line-height: 140%; /* 22.4px */
+letter-spacing: -0.32px;
+position: absolute;
+z-index: 1000;
+top: 392px;
+right: 1100px;
+`
 
 const Item = styled.div`
   padding: 10px 20px;
@@ -428,8 +589,9 @@ const Item = styled.div`
   justify-content: center;
   min-width: 150px; /* 각 항목의 최소 너비 설정 */
   height: 50px;
-  color: #333;
-  font-size: 16px;
+  color: black;
+  font-weight: 500;
+  font-size: 18px;
 `;
 
 
@@ -444,9 +606,46 @@ const BoxWrapper = styled.div`
 const LeftSection = styled.div`
   width: 627px;
   height: 100%;
-  padding: 20px;
+  padding: 38px 30px;
   background-color: #f0f3fa; /* 좌측 섹션 배경 색상 */
 `;
+
+const GridLeft = styled.div`
+  display: flex;
+  flex-direction: column;
+  
+`;
+
+
+const TagContainer = styled.div`
+  display: flex;
+  align-items: center;
+  width: 457px;
+  height: 50px;
+  
+  border-radius: 8px;
+  
+`;
+
+const Category = styled.div`
+  color: #6c54f7; /* 텍스트 색상 */
+  font-weight: 600;
+  font-size: 22px;
+  padding: 0 10px;
+  width: 123px;
+  white-space: nowrap;
+  margin-right: 22px;
+`;
+
+
+
+const Title = styled.div`
+  font-size: 22px;
+  font-weight: 400;
+  color: #000000; /* 텍스트 색상 */
+  white-space: nowrap;
+`;
+
 
 const RightSection = styled.div`
   width: 861px;
@@ -486,6 +685,33 @@ const TextOverlay = styled.div`
   font-weight: bold;
 `;
 
+
+const Title2 = styled.div`
+  color: #FFF;
+font-family: Pretendard;
+font-size: 28px;
+font-style: normal;
+font-weight: 600;
+line-height: 140%; /* 39.2px */
+letter-spacing: -0.56px;
+position: absolute;
+white-space: nowrap;
+top: 90px;
+`;
+
+const UserName = styled.span`
+  color: #FFF;
+font-family: Pretendard;
+font-size: 22px;
+font-style: normal;
+font-weight: 400;
+line-height: 140%; /* 30.8px */
+letter-spacing: -0.44px;
+position: absolute;
+top: 130px;
+left: 0;
+white-space: nowrap;
+`;
 // const Container2 = styled.div`
 //   width: 100%;
 //   display: flex;
