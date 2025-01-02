@@ -14,7 +14,7 @@ const Layout = () => {
 
   return (
     <LayoutContainer>
-      <Header/>
+      {!isHomePage && <Header/>}
 
       <MainContent>
         <Outlet />

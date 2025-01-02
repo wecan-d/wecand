@@ -24,6 +24,7 @@ const FooterContainer = styled.div`
 `;
 
 const Logo = styled.img`
+  border-top: 1px solid #F0F3FA;
   width: 100%;
   height: 100%;
 `;
