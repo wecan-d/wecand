@@ -55,8 +55,9 @@ const MakeTeam = () => {
     setErrors({ ...errors, [name]: false }); // 입력 시 에러 제거
   };
 
-  const handleImageChange = (e) => {
+  const handleFileChange = (e) => {
     const file = e.target.files[0];
+
     if (file) {
       setFormData({ ...formData, img: file });
       setImagePreview(URL.createObjectURL(file));
@@ -140,7 +141,7 @@ const MakeTeam = () => {
               type="file"
               id="imageInput"
               accept="image/*"
-              onChange={handleImageChange}
+              onChange={handleFileChange}
               style={styles.fileInput}
             />
           </div>
