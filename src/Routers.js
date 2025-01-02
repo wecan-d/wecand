@@ -15,24 +15,15 @@ import EditPage from './pages/EditPage'
 import Layout from './components/Layout'
 import MakeTeam from './pages/MakeTeam'
 import OwnerDetailPage from './pages/OwnerDetailPage'
+import { loginInfo } from './context/Auth'
 
-const Routers = () => {
-  // const setLoginInfoState = useSetRecoilState(loginInfo);
-  // const navigate = useNavigate();
-
-  // useEffect(() => {
-  //   const storedLoginInfo = localStorage.getItem('loginInfo');
-  //   if(storedLoginInfo) {
-  //     setLoginInfoState(JSON.parse(storedLoginInfo));
-  //   }
-  // }, [setLoginInfoState]);
-
+const Routers = () => {  
   return (
       <Routes>
         <Route
           path="/register/*"
           element={
-            <FormProvider>
+            // <FormProvider>
               <Routes>
               <Route element={<Layout />}>
                 <Route path="1" element={<RegisterPage1 />} />
@@ -42,7 +33,7 @@ const Routers = () => {
                 <Route path="edit/:id" element={<EditPage />} />
               </Route>
               </Routes>
-            </FormProvider>
+            // </FormProvider>
           }
         />
         <Route element={<Layout />}>

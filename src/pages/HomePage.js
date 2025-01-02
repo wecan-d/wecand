@@ -3,7 +3,7 @@ import axios from "axios";
 import styled from "styled-components";
 import bgsvg from "../assets/homepage/home2.svg";
 import whitelogo from "../assets/homepage/whitelogo.svg";
-import userProfile from "../assets/homepage/useprofileicon.svg";
+import userProfile from "../assets/profile.png";
 import landsec from "../assets/homepage/landsec.svg";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import landcard1 from "../assets/homepage/landcard1.svg";
@@ -12,41 +12,89 @@ import landcard3 from "../assets/homepage/landcard3.svg";
 import landcard4 from "../assets/homepage/landcard4.svg";
 import { loginInfo } from "../context/Auth";
 import { useGoogleLogin } from "./Login";
-import useLogout from "./Logout";
-import { useRecoilValue } from "recoil";
-import wait from "../assets/common/wait.svg"
-import accept from "../assets/common/accept.svg"
 
-//!!임시 데이터 병합할 때 알아서 지워도 됨 빨강색 찾아서 알아서 지워주세여
-import { applied } from "./MyPageData"
+import { PurpleText } from "../components/RegisterComponents";
+import { TeamAllowStateBox } from "../components/homepage/TeamAllowStateBox";
+import LandCard from "../components/homepage/LandCards";
+import { AuthContext } from "../context/AuthContext";
+import { SearchIcon, SearchInput, SearchWrapper } from "../components/Header";
 
 
 const server = process.env.REACT_APP_SERVER;
 
-let isLoggedIn = false;
 const HomePage = () => {
-  const googleLogin = useGoogleLogin();
+  const { userInfo, handleLogout } = useContext(AuthContext);
+  const navigate = useNavigate();
+  
+  // 로그인, 로그아웃
+  const handleGoogleLogin = useGoogleLogin();
   const handleLogin = async () => {
     try {
-      await googleLogin();
+      await handleGoogleLogin();
     } catch (error) {
       console.log("로그인 처리 중 홈 와서 오류", error);
     }
   };
+  
+  console.log(userInfo);
+  // 신청 공모전 팀 모임 현황 필터링
+  const [applyPosts, setApplyPosts] = useState([
+    {
+      id: 0,
+      title: "새로운 공모전을 신청해보세요",
+      status: "approved",
+    },
+    {
+      id: 1,
+      title: "공모전을 신청",
+      status: "pending",
+    },
+    {
+      id: 2,
+      title: "공모전을 신청하지마",
+      status: "pending",
+    },
+    {
+      id: 3,
+      title: "공모전을 신청해",
+      status: "pending",
+    },
+    {
+      id: 4,
+      title: "공모전을 신청ㄴㄴㄴ",
+      status: "pending",
+    },
+    {
+      id: 5,
+      title: "공모전을 신청하던지",
+      status: "pending",
+    }
+  ]);
+  const filteredApplyPosts = (data, userToken) => {
+    return data.map((post) => {
+      const matchingApplicant = post.applicants.find(
+        (applicant) => applicant.userId === userToken
+      );
 
-  // const googleLogout = useLogout();
-  const handleLogout = () => {};
-    // googleLogout();
+      if(matchingApplicant) {
+        return {
+          id: post.postId,
+          title: post.title,
+          status: matchingApplicant.status,
+        }
+      }
 
-  //!!임시 데이터 병합할 때 알아서 지워도 됨 빨강색 찾아서 알아서 지워주세여
-  const userId = 2;
-  const [applyPosts, setApplyPosts] = useState([]);
+      return null;
+    }).filter((item) => item != null);
 
+  }
+
+  /*
   useEffect(() => {
     // 주어진 데이터를 기반으로 userId에 해당하는 게시글 필터링
-    const filteredApplyPosts = applied.filter(post =>post.applicants.some(applicant => applicant.userId === userId));
+    const filteredApplyPosts2 = applied.filter(post =>post.applicants.some(applicant => applicant.userId === userId));
 
-    setApplyPosts(filteredApplyPosts);
+    setApplyPosts(filteredApplyPosts2);
   }, [userId]);
 
   const ApplyProjects = applyPosts.reduce((acc, apply) => {
@@ -57,22 +105,13 @@ const HomePage = () => {
     acc[category].push(apply);
     return acc;
   }, {});
-  //!!임시 데이터 병합할 때 알아서 지워도 됨 빨강색 찾아서 알아서 지워주세여
+
+  */
 
   // 최신순 정렬 함수
-    const sortByLatest = (posts) => {
-      return posts.slice(0,7).sort((a, b) => new Date(b.createTime) - new Date(a.createTime));
-    };
-
-
-
-  const navigate = useNavigate();
-  const handleLogin = () => {
-    window.location.href = `${process.env.REACT_APP_SERVER}/oauth2/authorization/google`;
-  }
-
-  const navigate = useNavigate();
-  // let userInfo = useRecoilValue(loginInfo);
+  const sortByLatest = (posts) => {
+    return posts.slice(0,7).sort((a, b) => new Date(b.createTime) - new Date(a.createTime));
+  };
 
   const words = ['iscuss','etermine', 'evelop'];
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
@@ -84,30 +123,35 @@ const HomePage = () => {
     return () => clearInterval(interval);
   }, [words.length]);
 
+
   // 검색 로직
-  const [users, setUsers] = useState([]);
-  const [filteredUsers, setFilteredUsers] = useState([]); // 필터링된 데이터
-  const { searchTerm, setSearchTerm } = useContext(SearchContext); // 전역 검색 상태 가져오기
-const [last, setLast] = useState([]);
-  useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const response = await axios.get("https://676e83a3df5d7dac1ccae100.mockapi.io/post");
-        console.log(response.data);
-        setUsers(response.data);
+  // const [filteredUsers, setFilteredUsers] = useState([]); // 필터링된 데이터
+  const [last, setLast] = useState([
+    {
+      "category": "농구",
+      "title": "눙구할사람 구해요"
+    }
+  ]);
+  // useEffect(() => {
+  //   const fetchUsers = async () => {
+  //     try {
+  //       const response = await axios.get("https://676e83a3df5d7dac1ccae100.mockapi.io/post");
+  //       console.log(response.data);
+  //       setUsers(response.data);
 
-        setFilteredUsers(response.data); // 초기 데이터 설정
+  //       setFilteredUsers(response.data); // 초기 데이터 설정
 
-        const sortedPosts = sortByLatest(response.data);
-        setLast(sortedPosts);
-        console.log("Sorted Posts:", sortedPosts); 
-      } catch (err) {
-        console.error(err);
-      }
-    };
-    fetchUsers();
-  }, []);
+  //       const sortedPosts = sortByLatest(response.data);
+  //       setLast(sortedPosts);
+  //       console.log("Sorted Posts:", sortedPosts); 
+  //     } catch (err) {
+  //       console.error(err);
+  //     }
+  //   };
+  //   fetchUsers();
+  // }, []);
 
+  /*
   useEffect(() => {
     if (searchTerm === "") {
       // setFilteredUsers(users); // 검색어가 없으면 전체 데이터 표시
@@ -119,19 +163,66 @@ const [last, setLast] = useState([]);
       setFilteredUsers(filtered);
     }
   }, [searchTerm, users]);
+  */
+
+  const landCardData = [
+    {
+      "landId": 1,
+      "landName": "랜드이름1",
+      "role": "king",
+      "countMember": 3
+    },
+    {
+      "landId": 1,
+      "landName": "롯데월드",
+      "role": "string",
+      "countMember": 5
+    },
+    {
+      "landId": 5,
+      "landName": "기나긴김치찌개",
+      "role": "string",
+      "countMember": 7
+    },
+
+  ];
+
+  const filteredlandCardData = landCardData.length < 4 ? [...landCardData, ...new Array(4 - landCardData.length).fill(null)] : landCardData;
+
+
+  const handleSubmit = () => {
+    // 예: 검색 페이지 혹은 /recruiting으로 이동하면서 쿼리 파라미터로 searchword 넘기기
+    navigate(`/recruiting?searchword=${searchWord}`);
+  };
+
+  const [searchWord, setSearchWord] = useState("");
+  
 
   return (
     <Container>
-      {/* <GlobalStyle /> */}
       {/* 헤더 */}
       <Header>
         <Logo src={whitelogo} alt="Wecand Logo" onClick={() => navigate('/home')}/>
-        <LoginWrapper>
-          {!(isLoggedIn) ? (
+        {/* 검색창 */}
+        <SearchWrapper onSubmit={(e) => {
+          e.preventDefault();
+          handleSubmit();
+
+        }}>
+          <SearchInput
+            type="text"
+            placeholder="검색어를 입력하세요"
+            value={searchWord}
+            onChange={(e) => setSearchWord(e.target.value)}
+          />
+          <SearchIcon onClick={() => handleSubmit()} />
+        </SearchWrapper>
+          <LoginWrapper>
+          {!(userInfo.isLoggedIn) ? ( // 로그인 안한 경우
             <LoginButton onClick={handleLogin}>로그인</LoginButton>
           ) : (
             <>
-              {/* <p>{userInfo.userName}</p> */}
+              <UserNameP>{userInfo.userName} 님</UserNameP>
               <LoginButton onClick={handleLogout}>로그아웃</LoginButton>
             </>
           )} 
@@ -144,7 +235,7 @@ const [last, setLast] = useState([]);
         <SVGImage src={bgsvg} alt="Main Banner" />
         <MainText>
           <RotatingTextContainer>
-            <StaticText>D</StaticText>
+            {/* <StaticText>D</StaticText> */}
             <HighlightBox>
               <RotatingText>{words[currentWordIndex]}</RotatingText>
             </HighlightBox>
@@ -155,11 +246,11 @@ const [last, setLast] = useState([]);
 
       {/* 콘텐츠 섹션 */}
       <ContentSection>
-        <SectionTitle2>환상의 팀워크는 서로를 아는 데서 시작됩니다!</SectionTitle2>
+        <Description>환상의 팀워크는 서로를 아는 데서 시작됩니다!</Description>
         <Description>
           팀원들의
-           <span style={{color: '#6C54F7'}}> 기본정보, 작업 스타일,  경력/경험을 한눈에 파악 후 최적의 팀  
-          </span>
+           <PurpleText> 기본정보, 작업 스타일,  경력/경험을 한눈에 파악 후 최적의 팀  
+          </PurpleText>
            을 찾아보세요.
         </Description>
 
@@ -167,41 +258,56 @@ const [last, setLast] = useState([]);
           <CTAButton href="/recruiting">공모전을 찾아보세요</CTAButton>
           <CTAButton href="/maketeam">팀 모집을 위한 글 작성하기</CTAButton>
         </CTAButtonWrapper>
-        <Column>신청 공모전 팀 모임 현황
-          
-        </Column>
-        <Text2>최근 신청 한 팀의 대기 중,수락 위주로 보여요</Text2>
-        <ScrollWrapper>
-          <ScrollContent>
-         
-          {applyPosts
-          .filter(apply =>
-            apply.applicants.some(applicant =>
-              ["수락", "대기중"].includes(applicant.status)
-            )
-          )
-          .map((apply) => (
-              <Item key={apply.postId}>{apply.title}
-                <img
-                        src={
-                          apply.applicants.some(applicant => applicant.status === "수락")
-                            ? accept // 수락
-                            : apply.applicants.some(applicant => applicant.status === "대기중")
-                            ? wait // 대기중
-                            : null
-                        }
-                        alt=""
-                        style={{ width: "110px", height: "35px" }}
-                      />
-              
-              </Item>
-          ))}
-          
-          </ScrollContent>
-        </ScrollWrapper>
 
+        
+        <RowContainer>
+            <RowContainerTitle>
+              신청 공모전 팀 모임 현황
+            </RowContainerTitle>
+            <RowContainerSubTitle>
+              최근 신청 한 팀의 대기 중,수락 위주로 보여요
+            </RowContainerSubTitle>
+          <MoreText>수락 현황 더보기</MoreText>
+        </RowContainer>
+
+        <TeamAllowStateBoxWrapper>
+          {applyPosts.map((post) => (
+            <TeamAllowStateBox
+              key={post.id}
+              id={post.id}
+              title={post.title}
+              status={post.status}
+            />
+          ))}
+        </TeamAllowStateBoxWrapper>
+
+
+        <RowContainer>
+          <RowContainerTitle>최근 사용한 내 아일랜드</RowContainerTitle>
+          <MoreText>내 아일랜드 더보기</MoreText>
+        </RowContainer>
+
+        <RowContainer  style={{
+          display:"flex",
+          width: "100%",
+          justifyContent: "space-between",
+        }}>
+          {filteredlandCardData.map((cardData, index) => (
+            <LandCard
+              key={index+1}
+              id={cardData ? cardData.landId : 0}
+              title={cardData ? cardData.landName : ''}
+              role={cardData ? cardData.role : ''}
+              mem={cardData ? cardData.countMember : 0}
+              imageKey = {index+1}
+            />
+          ))}
+        </RowContainer>
+
+
+{/*
         <CardsWrapper>
-          
+        <LandCards lands={landCardData} />
         <ItemCard>
           <ImageWrapper>
             <Img src={landcard1} alt="Card Image" />
@@ -271,9 +377,17 @@ const [last, setLast] = useState([]);
         </ItemCard>
         
       </CardsWrapper>
+      */}
 
-        <SectionTitle>새로운 공모전 모집 글</SectionTitle>
-        <BoxWrapper>
+      <RowContainer style={{marginTop: "100px"}}>
+        <RowContainerTitle>새로운 공모전 모집 글</RowContainerTitle>
+        <MoreText onClick={() => {
+          navigate('/recruiting');
+        }}>모집 글 더보기</MoreText>
+      </RowContainer>
+      
+      <BoxWrapper>
+
       <LeftSection>
           <GridLeft>
             
@@ -353,8 +467,8 @@ const HighlightBox = styled.div`
   border-radius: 16px;
   padding: 0 20px;
   height: 60px;
-  top: 448px;
-  right: 245px;
+  top: 452px;
+  right: 247px;
 `;
 
 const RotatingTextContainer = styled.div`
@@ -389,12 +503,15 @@ const Container = styled.div`
 `;
 
 const Header = styled.div`
-  ${flexCenter};
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
   position: absolute;
   top: 0;
   width: 100%;
   z-index: 7;
-  justify-content: space-between;
+
   padding: 16px 32px;
   background: transparent;
   color: white;
@@ -407,26 +524,27 @@ const Logo = styled.img`
 `;
 
 const LoginButton = styled.button`
-  color: #FFF;
-  text-align: right;
-  font-family: Pretendard;
-  font-size: 16px;
-  font-style: normal;
-  font-weight: 500;
-  line-height: 140%; /* 22.4px */
-  letter-spacing: -0.32px;
+  background: none;
+  border: none;
+  font-size: 18px;
+  color: white;
+  font-weight: 600;
 `;
 
 const LoginWrapper = styled.div`
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  gap: 12px;
+  gap: 15px;
+`;
+
+const UserNameP = styled.p`
+  font-size: 18px;
 `;
 
 const UserProfile = styled.img`
-  width: 40px;
-  height: 40px;
+  width: 50px;
+  height: 50px;
   border-radius: 50%;
   object-fit: cover;
 `;
@@ -454,18 +572,19 @@ const CTAButtonWrapper = styled.div`
   flex-direction: row;
   align-items: center;
   gap: 22px;
-  margin-top: 10px;
+  margin-top: 30px;
+  margin-bottom: 200px;
 `;
 
 const CTAButton = styled.a`
-  display: inline-block;
+  display: flex;
+
   width: 219px;
   height: 54px;
   margin-top: 20px;
-  padding: 14px 10px 0 10px;
   justify-content: center;
   align-items: center;
-  font-size: 18px;
+  font-size: 19px;
   font-weight: 700;
   background: white;
   color: #6c54f7;
@@ -477,14 +596,73 @@ const CTAButton = styled.a`
   font-weight: 600;
 `;
 
+const RowContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: baseline;
+
+  width: 1480px;
+`;
+
+const RowContainerTitle = styled.h3`
+  font-size: 28px;
+`;
+
+const RowContainerSubTitle = styled.p`
+  margin-left: 15px;
+  font-size: 17px;
+  color: #787878;
+  font-weight: 500;
+`;
+
+const MoreText = styled.div`
+  margin-left: auto;
+  font-size: 18px;
+`;
+
+const TeamAllowStateBoxRow = styled.div`
+  width: 1480px;
+  display: flex;
+  margin: 0;
+  justify-content: flex-start;
+`
+
+// const TeamAllowStateBox = styled.div`
+//   display: flex;
+//   justify-content: space-between;
+//   align-items: center;
+//   padding: 10px 14px;
+//   min-width: 300px;
+//   height: 54px;
+//   background-color: #F0F3FA;
+//   margin: 0;
+//   border-radius: 16px;
+
+
+// `;
+
+const TeamAllowStateBoxState = styled.div`
+  width: 100px;
+  height: 100%;
+
+  background-color: white;
+  margin-left: auto;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`;
+
+
 const ContentSection = styled.section`
-   display: flex;
+  margin: 0 auto;
+  display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 0px 20px;
-  text-align: center;
-  line-height: 1.4;
+  width: 1480px;
+  
   letter-spacing: -0.56px;
   margin-top: 140px;
   position: relative;
@@ -509,6 +687,7 @@ const Description = styled.p`
   font-size: 28px;
   font-weight: 600;
   color: #555;
+  margin: 5px;
 `;
 
 const ResultContainer = styled.div`
@@ -517,68 +696,23 @@ const ResultContainer = styled.div`
   padding: 10px;
 `;
 
-const ResultCard = styled.div`
-  width: 537px;
-  background: #fff;
-  border-radius: 8px;
-  padding: 10px;
-  position: relative;
-`;
-
-const ResultBox = styled.div`
+const TeamAllowStateBoxWrapper = styled.div`
+  width: 100%;
   display: flex;
+  flex-direction: row; /* 가로로 배열 */
   justify-content: flex-start;
-`;
-
-const PostTitle = styled.h3 `
-  font-size: 18;
-  color: #111;
-  font-weight: 500;
-`;
-
-const ScrollWrapper = styled.div`
-  width: 100%; /* 화면 너비에 맞춰 크기 지정 */
-  overflow-x: auto; /* 가로 스크롤 활성화 */
-  padding: 10px 0; /* 적당한 간격 추가 */
-  box-sizing: border-box; /* padding을 포함하여 width 설정 */
-
-  -ms-overflow-style: none;
-
-  ::-webkit-scrollbar {
-    display: none; /* 스크롤바를 숨깁니다 */
+  overflow-x: auto; /* 가로 스크롤 가능 */
+  gap: 16px;
+  
+  /* 스크롤바 숨기기 */
+  -ms-overflow-style: none; /* IE, Edge */
+  scrollbar-width: none; /* Firefox */
+  &::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera */
   }
-`;
 
-const ScrollContent = styled.div`
-  display: flex; /* 가로로 배치하기 위해 flexbox 사용 */
-  min-width: 1726px; /* 화면 기준 1726px로 설정 */
-  gap: 10px; /* 항목 간 간격 설정 */
-  margin: 30px 0 120px 134px;
+  margin-bottom: 80px;
 `;
-
-const Column = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  font-size: 28px;
-  margin-right: 1230px;
-  font-weight: 600;
-  margin-top: 195px;
-`;
-
-const Text2 = styled.span`
-  color: #787878;
-font-family: Pretendard;
-font-size: 16px;
-font-style: normal;
-font-weight: 500;
-line-height: 140%; /* 22.4px */
-letter-spacing: -0.32px;
-position: absolute;
-z-index: 1000;
-top: 392px;
-right: 1100px;
-`
 
 const Item = styled.div`
   padding: 10px 20px;
@@ -596,18 +730,20 @@ const Item = styled.div`
 
 
 const BoxWrapper = styled.div`
-  width: 1488px;
-  height: 413px;
+  width: 1480px;
+  height: 417px;
   display: flex;
   border: 1px solid #ddd;
   background:#F0F3FA;
+  border-radius: 16px;
 `;
 
 const LeftSection = styled.div`
   width: 627px;
   height: 100%;
-  padding: 38px 30px;
-  background-color: #f0f3fa; /* 좌측 섹션 배경 색상 */
+  padding: 29px 30px;
+  background-color: #f0f3fa;
+  border-radius: 16px;
 `;
 
 const GridLeft = styled.div`
@@ -654,6 +790,7 @@ const RightSection = styled.div`
   justify-content: center;
   align-items: center;
   background:#F0F3FA;
+  border-radius: 16px;
 `;
 
 const ImageContainer = styled.img`
@@ -661,6 +798,7 @@ const ImageContainer = styled.img`
   height: 100%;
   background-color: #F0F3FA;
   object-fit: cover;
+  border-radius: 0 16px 16px 0;
 `;
 
 const SectionTitle2 = styled.h2`
@@ -712,12 +850,6 @@ top: 130px;
 left: 0;
 white-space: nowrap;
 `;
-// const Container2 = styled.div`
-//   width: 100%;
-//   display: flex;
-//   justify-content: center;
-//   padding: 20px 0;
-// `;
 
 const CardsWrapper = styled.div`
   display: flex;
@@ -884,316 +1016,3 @@ const CardDescription = styled.p`
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// <ResultsContainer>
-//       {filteredUsers.length > 0 ? (
-//         filteredUsers.map((user) => (
-//           <ResultCard key={user.id}>
-//             <Tag>{user.category}</Tag>
-//             <PostTitle>{user.title}</PostTitle>
-//           </ResultCard>
-//         ))
-//       ) : (
-//         <NoResults>검색 결과가 없습니다.</NoResults>
-//       )}
-//     </ResultsContainer>
-
-
-
-//             {/* 홈 배경 이미지 */}
-//             <LandContainer>
-//                 <Overlay>
-//                     <LandButton>내 공모전 랜드 들어가기</LandButton>
-//                 </Overlay>
-//             </LandContainer>
-
-//             {/* 카테고리 , 모집 신청 현황 */}
-//             <CategoryAndStatus>
-//                 <CategoryContainer>
-//                     <CategoryWrapper>
-//                         {
-//                             categories.map((category) => (
-//                                 <CategoryCard key={category.id}>
-//                                     <CardContent onClick={() => categoryHandler(category.id)}></CardContent>
-//                                     <CategoryText>{category.name}</CategoryText>
-//                                 </CategoryCard>
-//                             ))
-//                         }
-//                     </CategoryWrapper>
-//                 </CategoryContainer>
-
-//                 <StatusWrapper>
-//                     <StatusHeader>
-//                         <StatusTitle>모집 신청 현황</StatusTitle>
-//                         <MoreButton>더보기</MoreButton>
-//                     </StatusHeader>
-//                     <StatusContent>
-//                         <StatusList>
-//                             {
-//                                 Array
-//                                     .from({length: 6})
-//                                     .map((_, index) => (
-//                                         <StatusItem key={index}>
-//                                             아이아이아아
-//                                             <StatusButton>{
-//                                                     index === 5
-//                                                         ? "거절"
-//                                                         : "수락"
-//                                                 }</StatusButton>
-//                                         </StatusItem>
-//                                     ))
-//                             }
-//                         </StatusList>
-//                     </StatusContent>
-//                 </StatusWrapper>
-//             </CategoryAndStatus>
-
-//             {/* 새로 올라온 공모전 모집 글 */}
-//             <NewPostsSection>
-//                 <SectionTitle>새로 올라온 공모전 모집 글</SectionTitle>
-//                 <PostsWrapper>
-//                     {
-//                         visibleUsers.map((users) => (
-//                             <PostCard key={users.postId} onClick={newFeedHandler}>
-//                                 <Tag>{users.category}</Tag>
-//                                 <PostTitle>{users.title}
-//                                     날짜{users.date}</PostTitle>
-//                             </PostCard>
-//                         ))
-//                     }
-//                 </PostsWrapper>
-//             </NewPostsSection>
-//         </PageContainer>
-//     );
-// };
-
-// export default HomePage;
-
-// // Styled Components
-
-// const PageContainer = styled.div `
-//   padding: 4rem;
-// `;
-
-// const LandContainer = styled.div `
-//   position: relative;
-//   width: 100%;
-//   height: 300px;
-//   background-image: url("/assets/land.png");
-//   background-size: cover;
-//   background-position: center;
-// `;
-
-// const Overlay = styled.div `
-//   position: absolute;
-//   top: 0;
-//   left: 0;
-//   width: 100%;
-//   height: 100%;
-//   display: flex;
-//   align-items: center;
-//   justify-content: center;
-// `;
-
-// const LandButton = styled.button `
-//   padding: 10px 20px;
-//   background-color: white;
-//   border: none;
-//   cursor: pointer;
-//   font-weight: bold;
-
-//   &:hover {
-//     background-color: #eee;
-//   }
-// `;
-
-// const CategoryAndStatus = styled.div `
-//   display: flex;
-//   gap: 2rem;
-//   margin: 2rem 6rem;
-// `;
-
-// const CategoryContainer = styled.div `
-//   flex: 7;
-//   display: flex;
-//   flex-direction: column;
-//   background: #EEE;
-//   justify-content: center;
-// `;
-
-// const CategoryWrapper = styled.div `
-//   display: grid;
-//   grid-template-columns: repeat(5, minmax(120px, 1fr));
-//   gap: 2rem;
-// `;
-
-// const CategoryCard = styled.div `
-//   display: flex;
-//   flex-direction: column;
-//   align-items: center;
-  
-// `;
-// const CardContent = styled.div `
-//   width: 120px;
-//   height: 120px;
-//   background-color: #BFBFBF;
-//   border-radius: 8px;
-//   display: flex;
-//   align-items: center;
-//   justify-content: center;
-//   overflow: hidden;
-//   cursor: pointer;
-//   border: none;
-  
-
-//   &:hover {
-//     border: 1px solid black;
-//   }
-// `;
-
-// const CategoryText = styled.div `
-//   font-size: 0.9rem;
-//   color: #333;
-// `;
-
-// const StatusWrapper = styled.div `
-//   flex: 3;
-//   background: #7b7b7b;
-// `;
-
-// const StatusHeader = styled.div `
-//   height: 12%;
-//   display: flex;
-//   justify-content: space-between;
-//   align-items: center;
-//   background: #555555;
-//   color: white;
-//   padding: 0.5rem 1rem;
-// `;
-
-// const StatusTitle = styled.h3 `
-//   margin: 0;
-// `;
-
-// const MoreButton = styled.button `
-//   background: #888;
-//   color: white;
-//   border: none;
-//   padding: 0.3rem 0.8rem;
-//   cursor: pointer;
-
-//   &:hover {
-//     background: #666;
-//   }
-// `;
-
-// const StatusContent = styled.div `
-//   background: #d9d9d9;
-//   padding: 1rem;
-// `;
-
-// const StatusList = styled.div `
-//   display: flex;
-//   flex-direction: column;
-//   gap: 0.5rem;
-// `;
-
-// const StatusItem = styled.div `
-//   display: flex;
-//   justify-content: space-between;
-//   align-items: center;
-//   padding: 10px;
-//   background: #d9d9d9;
-// `;
-
-// const StatusButton = styled.button `
-//   background: white;
-//   color: black;
-//   border: none;
-//   padding: 0.5rem 1rem;
-//   cursor: pointer;
-
-//   &:hover {
-//     background-color: #0056b3;
-//   }
-// `;
-
-// const NewPostsSection = styled.section `
-//   margin: 4rem 6rem;
-// `;
-
-// const SectionTitle = styled.h2 `
-//   margin-bottom: 1rem;
-// `;
-
-// const PostsWrapper = styled.div `
-//   display: grid;
-//   grid-template-columns: repeat(2, 1fr);
-//   gap: 1rem;
-//   background: #EEE;
-  
-// `;
-
-// const PostCard = styled.div `
-//   background-color: white;
-//   padding: 1rem;
-// `;
-
-// const Tag = styled.div `
-//   background: #c4c4c4;
-//   color: black;
-//   font-size: 0.8rem;
-//   padding: 0.2rem 0.5rem;
-//   margin-bottom: 0.5rem;
-//   width: 4rem;
-// `;
-
-// const PostTitle = styled.h3 `
-//   font-size: 1rem;
-//   color: #333;
-// `;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// const ResultsContainer = styled.div`
-//   display: grid;
-//   grid-template-columns: repeat(2, 1fr);
-//   gap: 1rem;
-//   margin-top: 1rem;
-// `;
-
-// const ResultCard = styled.div`
-//   background: #fff;
-//   padding: 1rem;
-//   border-radius: 8px;
-//   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-// `;
-
-// const NoResults = styled.div`
-//   text-align: center;
-//   color: #999;
-// `;

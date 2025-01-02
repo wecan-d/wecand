@@ -1,56 +1,75 @@
-import React, { useContext } from "react";
+import React, { useState, useContext } from "react";
+import { useNavigate, location } from "react-router-dom";
 import styled from "styled-components";
-import { Link, useLocation } from "react-router-dom";
-import { SearchContext } from "../context/SearchContext";
-import { useSearchParams } from "react-router-dom";
+
+import { AuthContext } from "../context/AuthContext";
 import logo from "../assets/homepage/HeaderLogo.svg"
 import searchicon from "../assets/homepage/search.svg"
+import { useGoogleLogin } from "../pages/Login";
+import userProfile from "../assets/profile.png";
+
 
 const Header = () => {
-  const { searchTerm, setSearchTerm } = useContext(SearchContext);
-  const [, setSearchParams] = useSearchParams(); 
+  const { userInfo, handleLogout } = useContext(AuthContext);
+  const navigate = useNavigate();
+  const googleLogin = useGoogleLogin();
   
-  const location = useLocation();
-  const handleSearchChange = (e) => {
-    const newSearchTerm = e.target.value;
-    setSearchTerm(newSearchTerm);
-    setSearchParams({ search: newSearchTerm }); // URL 파라미터 업데이트
-};
-  
+  const [searchWord, setSearchWord] = useState("");
+
+  const handleLogin = async () => {
+    try {
+      await googleLogin();
+    } catch (error) {
+      console.log("로그인 처리 중 에러:", error);
+    }
+  };
+
+  const handleSubmit = () => {
+    // 예: 검색 페이지 혹은 /recruiting으로 이동하면서 쿼리 파라미터로 searchword 넘기기
+    navigate(`/recruiting?searchword=${searchWord}`);
+  };
+
   // recruitingPage 경로를 확인
-  const hideSearchBar = location.pathname.includes("/recruiting");
-
-
+  // const isRecruitingPage = location.pathname.including("/recruiting");
 
   return (
     <HeaderContainer>
-      {/* 로고 섹션 */}
-      <LogoWrapper>
-        <Link to="/">
-          <Logo src={logo} alt="Logo" />
-        </Link>
-        
-      </LogoWrapper>
+      {/* 로고 클릭 시 홈으로 이동 */}
+      <Logo src={logo} alt="Wecand Logo" onClick={() => navigate("/home")} />
 
-      {/* 검색 섹션 */}
-      <IconsWrapper>
-      {!hideSearchBar && (
-        <SearchWrapper>
-          <SearchInput
+      {/* 검색창 */}
+      <SearchWrapper onSubmit={(e) => {
+        e.preventDefault();
+        handleSubmit();
+
+      }}>
+        <SearchInput
           type="text"
-          placeholder="원하는 검색어를 입력하세요"
-          value={searchTerm}
-          onChange={handleSearchChange}// 검색 상태 업데이트
+          placeholder="검색어를 입력하세요"
+          value={searchWord}
+          onChange={(e) => setSearchWord(e.target.value)}
         />
-          <SearchIcon ><SearchIcon2 src={searchicon} alt="Profile" /></SearchIcon>
-        </SearchWrapper>
-      )}
+        <SearchIcon src={searchicon} onClick={() => handleSubmit()} />
+      </SearchWrapper>
 
-        <UserWrapper>
-          <UserName>김규리님</UserName>
-          <ProfileImage src="/profile/userprofile.svg" alt="Profile" />
-        </UserWrapper>
-      </IconsWrapper>
+      {/* 로그인/프로필 영역 */}
+      <LoginWrapper>
+        {!userInfo.isLoggedIn ? (
+          // 로그인 안 된 경우
+          <LoginButton onClick={handleLogin}>로그인</LoginButton>
+        ) : (
+          // 로그인 된 경우
+          <>
+            <UserNameP>{userInfo.userName} 님</UserNameP>
+            <LoginButton onClick={handleLogout}>로그아웃</LoginButton>
+          </>
+        )}
+        <UserProfile
+          src={userProfile}
+          alt="userIcon"
+          onClick={() => navigate("/mypage")}
+        />
+      </LoginWrapper>
     </HeaderContainer>
   );
 };
@@ -59,30 +78,46 @@ export default Header;
 
 const HeaderContainer = styled.div`
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   align-items: center;
-  padding: 29px 120px 30px 114px;
-  background-color: white;
-  
+
+  /* position: absolute; */
+  width: 100%;
+
+  background: transparent;
+  color: white;
+  padding: 30px 116px;
 `;
 
-const LogoWrapper = styled.div`
+const UserNameP = styled.p`
+  font-size: 18px;
+  color: #111;
+  font-size: 24px,
+`;
+
+export const LoginButton = styled.button`
+  background: none;
+  border: none;
+  font-size: 18px;
+  color: black;
+  font-weight: 600;
+`;
+
+const LoginWrapper = styled.div`
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  justify-content: flex-end;
+  gap: 15px;
 `;
 
-const Logo = styled.img`
+export const Logo = styled.img`
   width: 116px;
+  margin-right: auto;
+
 `;
 
-const IconsWrapper = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 1.5rem;
-`;
 
-const SearchWrapper = styled.div`
+export const SearchWrapper = styled.form`
   display: flex;
   align-items: center;
   width: 360px;
@@ -91,9 +126,11 @@ const SearchWrapper = styled.div`
   border-radius: 8px;
   justify-content: space-between;
   padding: 15px;
+
+  margin-right: 15px;
 `;
 
-const SearchInput = styled.input`
+export const SearchInput = styled.input`
   flex: 1;
   border: none;
   outline: none;
@@ -106,33 +143,15 @@ const SearchInput = styled.input`
   }
 `;
 
-const SearchIcon = styled.span`
+export const SearchIcon = styled.span`
   font-size: 1.2rem;
   color: #6c6c6c;
   cursor: pointer;
 `;
 
-const UserWrapper = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-`;
-
-const UserName = styled.span`
-  font-size: 1rem;
-  color: #6c6c6c;
-  margin-right: 12px;
-`;
-
-const ProfileImage = styled.img`
-  width: 40px;
-  height: 40px;
+export const UserProfile = styled.img`
+  width: 50px;
+  height: 50px;
   border-radius: 50%;
   object-fit: cover;
-`;
-
-const SearchIcon2 = styled.img`
-  width: 21.028px;
-height: 21.026px;
-flex-shrink: 0;
 `;
