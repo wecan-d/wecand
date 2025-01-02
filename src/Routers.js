@@ -1,7 +1,6 @@
-import React from 'react'
-import { Route, Routes } from 'react-router-dom'
+import React, { useEffect } from 'react'
+import { Route, Routes, useNavigate } from 'react-router-dom'
 
-import WelcomePage from './pages/WelcomePage'
 import HomePage from './pages/HomePage'
 import RegisterPage1 from './pages/RegisterPage1'
 import RegisterPage2 from './pages/RegisterPage2'
@@ -14,11 +13,20 @@ import MyPage from './pages/MyPage'
 import EditPage from './pages/EditPage'
 
 import Layout from './components/Layout'
-import { FormProvider } from './context/FormContext'
 import MakeTeam from './pages/MakeTeam'
 import OwnerDetailPage from './pages/OwnerDetailPage'
 
 const Routers = () => {
+  // const setLoginInfoState = useSetRecoilState(loginInfo);
+  // const navigate = useNavigate();
+
+  // useEffect(() => {
+  //   const storedLoginInfo = localStorage.getItem('loginInfo');
+  //   if(storedLoginInfo) {
+  //     setLoginInfoState(JSON.parse(storedLoginInfo));
+  //   }
+  // }, [setLoginInfoState]);
+
   return (
       <Routes>
         <Route
@@ -47,6 +55,8 @@ const Routers = () => {
           <Route path="/detail/:postId/applicantlist" element={<OwnerDetailPage/>}/>
           <Route path="/mypage" element={<MyPage/>}/>
         </Route>
+
+        {/* Land */}
         <Route path="/land/:landId" element={<LandPage/>}/>
       </Routes>
   )
