@@ -41,6 +41,8 @@ const LandSkillCard = ({
     { id: 'important', title: '중요하게 생각해요' },
   ];
 
+  console.log(userInfo);
+
   return (
     <ModalContent ref={modalRef} onClick={(e) => e.stopPropagation()}>
       <CloseButton onClick={onClose}><IoMdClose /></CloseButton>
@@ -90,19 +92,44 @@ const LandSkillCard = ({
 
       <Section>
         <SectionTitle>경력 / 경험</SectionTitle>
-        <SectionSubTitle>툴 / 자격증</SectionSubTitle>
-        <CardContent>
-          <p>삼성 디자인 멤버십 수료</p>
-          <p>2020 해커톤 대상</p>
-          <p>피그마, 어도비 사용 가능</p>
-          <FileLink>잼민이를.pdf 1234KB</FileLink>
-          <Link href="https://www.figma.com">www.figma.com</Link>
-        </CardContent>
+        {(userInfo.certificates?.length > 0 || userInfo.tools?.length > 0) && (
+          <>
+            <SectionSubTitle>툴 / 자격증</SectionSubTitle>
+            <CardContent>
+              {userInfo.certificates?.map((cert, index) => (
+                <p key={`cert-${index}`}>{cert}</p>
+              ))}
+              {userInfo.tools?.map((tool, index) => (
+                <p key={`tool-${index}`}>{tool}</p>
+              ))}
+            </CardContent>
+          </>
+        )}
+        {userInfo.awards?.length > 0 && (
+          <>
+            <SectionSubTitle>경력 / 경험</SectionSubTitle>
+            <CardContent>
+              {userInfo.awards.map((award, index) => (
+                <p key={`award-${index}`}>{award}</p>
+              ))}
+            </CardContent>
+          </>
+        )}
+        {userInfo.portfolio?.length > 0 && (
+          <>
+            <SectionSubTitle>작업물</SectionSubTitle>
+            <CardContent>
+              {userInfo.portfolio.map((item, index) => (
+                <p key={`portfolio-${index}`}>{item}</p>
+              ))}
+            </CardContent>
+          </>
+        )}
       </Section>
       <Divider />
       <Section>
         <SectionTitle>기타사항</SectionTitle>
-        <p>아직 작성된 글이 없습니다.</p>
+        <p>{userInfo.addtionalInfo}</p>
       </Section>
     </ModalContent>
   );
@@ -210,11 +237,11 @@ const SectionSubTitle = styled(SectionTitle)`
 const CardGrid = styled.div`
   display: grid;
   grid-template-columns: 225px 225px;
-  grid-auto-rows: minmax(120px, auto);
+  grid-auto-rows: auto;
   gap: 14px;
   grid-template-areas:
     "communication teamwork"
-    "communication work"
+    "communication teamwork"
     "thinking role"
     "thinking role"
     "conflictResolution timePreference"
@@ -264,7 +291,7 @@ const Link = styled.a`
 `;
 
 const Section = styled.section`
-  margin-bottom: 32px;
+  /* margin-bottom: 32px; */
   &:last-child {
     margin-bottom: 0;
   }

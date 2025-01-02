@@ -20,7 +20,7 @@ import bubble10 from "../assets/LandPage/Bubbles/bubble10.svg";
 import profile from "../assets/profile.png";
 import SkillCardModal from "../components/modals/LandSkillCard";
 
-import { urls, urlnames, card, card2, members } from "./LandPageData";
+import { urls, urlnames, card, card2, members, card1, card4, card3, card5 } from "./LandPageData";
 
 import { getMembersAPI } from "../context/FormContext";
 import axios from "axios";
@@ -111,7 +111,7 @@ const Land = ({ teamMembers, hoveredMemberIds, onHover, onOpenSkillCard }) => {
                         onMouseEnter={() => onHover(member.userId, true)}
                         onMouseLeave={() => onHover(member.userId, false)}
 
-                        onClick={() => onOpenSkillCard?.()}
+                        onClick={() => onOpenSkillCard(member.userId)}
                       >
                         <KeepScale style={{ transformOrigin: "center bottom" }}>
                           <div>
@@ -311,7 +311,7 @@ const TeamListFloating = ({ members, onHover, onOpenSkillCard, onToggleExpand })
               <ProfileImage src={require("../assets/profile.png")} alt={member.name} />
               <MemberName>{member.name}</MemberName>
             </ProfileWrapper>
-            <SkillButton onClick={() => onOpenSkillCard?.()}>역량카드</SkillButton>
+            <SkillButton onClick={() => onOpenSkillCard(member.userId)}>역량카드</SkillButton>
           </MemberRow>
         ))}
       </MemberList>
@@ -363,10 +363,14 @@ const ShortcutRow = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin: 5px 0;
+  margin: 10px 0;
+  padding-left: 5px;
 
 &:first-child {
   margin-top: 15px;
+}
+&:last-child {
+  margin-bottom: 2px;
 }
 `;
 
@@ -396,7 +400,12 @@ const TeamPageFloating = ({ memberNum, isTeamListExpanded, teamPages, handleOpen
       <ShortcutList>
         {teamPages.map((teamPage, index) => (
           <ShortcutRow key={index}>
-            <ShortcutName onClick={() => window.open("https://"+teamPage.url, "_blank")}>
+            <ShortcutName 
+              onClick={() => {
+                const url = teamPage.url.startsWith("http")? teamPage.url : `https://${teamPage.url}`
+                window.open(url, "_blank")
+              }}
+            >
               {teamPage.name}
             </ShortcutName>
           </ShortcutRow>
@@ -422,16 +431,6 @@ const LandTitle = styled.h1`
   margin: 0;
   margin-right: 5px;
   padding: 0;
-`;
-
-const LeftTopButton = styled.img`
-  position: absolute;
-  left: 3vw;
-  top: 5vh;
-  width: 30px;
-  transform: translate(-50%, -50%);
-
-  cursor: pointer;
 `;
 
 const RightTopButton = styled.img`
@@ -478,6 +477,7 @@ const LandPage = () => {
   const [isSkillCardOpen, setIsSkillCardOpen] = useState(false);
   const [hoveredMemberIds, setHoveredMemberIds] = useState([]);
   const [isTeamListExpanded, setIsTeamListExpanded] = useState(false);
+  const [selectedUserInfo, setSelectedUserInfo] = useState(null);
   const [teamPage, setTeamPage] = useState([]);
 
   const handleOpenAddTeamPage = () => {
@@ -495,12 +495,26 @@ const LandPage = () => {
     }]);
   };
 
-  const handleOpenSkillCard = () => {
+  const combinedUrls = urls.map((url, index) => {
+    return {name: urlnames[index], url: url};
+  });
+
+  const handleOpenSkillCard = (userId) => {
+    const cardMap = {
+      1: card1,
+      2: card2,
+      3: card3,
+      4: card4,
+      5: card5,
+    };
+    setSelectedUserInfo(cardMap[userId]);
+    
     setIsSkillCardOpen(true);
   }
 
   const handleCloseSkillCard = () => {
     setIsSkillCardOpen(false);
+    setSelectedUserInfo(null);
   }
 
   const handleHover = (MemberId, isHovered) => {
@@ -553,7 +567,7 @@ const LandPage = () => {
       <TeamPageFloating
         memberNum={members.length}
         isTeamListExpanded={isTeamListExpanded}
-        teamPages={teamPage}
+        teamPages={combinedUrls}
         handleOpenAddTeamPage={handleOpenAddTeamPage}
       />
 
@@ -562,7 +576,7 @@ const LandPage = () => {
       <SkillCardModal
         isOpen={isSkillCardOpen}
         onClose={handleCloseSkillCard}
-        userInfo={card}
+        userInfo={selectedUserInfo}
 
         positionTop= "50px"
         positionLeft="50px"

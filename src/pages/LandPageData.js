@@ -8,7 +8,7 @@ export const urlnames = [
   "신엽이 깃헙"
 ];
 
-export const card2 = 
+export const card1 = 
 {
   "cardId": 1,
   "name": "콜캉",
@@ -73,17 +73,279 @@ export const card2 =
     "https://github.com/corkang"
   ]
 };
+export const card2 = 
+{
+  "cardId": 2,
+  "name": "김민제",
+  "gender": "남성",
+  "identity": "대학생",
+  "major": "컴퓨터공학",
+  "age": 25,
+  "phone": "010-2333-1581",
+  "email": "corkang19@gmail.com",
+  "communication": [
+    "비대면소통을 선호해요",
+    "대면 소통을 선호해요",
+    "새벽 연락을 피해주세요"
+  ],
+  "teamwork": [
+    "다같이 작업하고 싶어요",
+    "일을 나눠서 하고 싶어요"
+  ],
+  "thinking": [
+    "결과 중심적이에요",
+    "비판적이에요"
+  ],
+  "role": [
+    "설득력이 있어요",
+    "호기심이 많아요"
+  ],
+  "conflictResolution": [
+    "솔직하게 표현해요",
+    "바로 해결해요",
+    "먼저 다가가요"
+  ],
+  "timePreference": [
+    "낮(12-18)",
+    "저녁(18-00)"
+  ],
+  "restPreference": [
+    "짧게 자주 쉬고 싶어요"
+  ],
+  "friendship": [
+    "친목시간도 가지고 싶어요"
+  ],
+  "goal": [
+    "string"
+  ],
+  "important": "깃헙에 푸시할 때 절대절대절대 메인에 푸시하지 마세요 각자 브랜치에 올리고 메인으로 PR을 날리삼",
+  "certificates": [
+  ],
+  "tools": [
+    "깃헙",
+    "React"
+  ],
+  "awards": [
+    "미식축구 전국 3등"
+  ],
+  "portfolio": [
+    "대한미식축구협회장배 대학 미식축구 전국대회 3위"
+  ],
+  "additionalInfo": [
+    "미식축구 좀 칩니다"
+  ],
+  "url": [
+    "https://github.com/corkang"
+  ]
+};
+export const card3 = 
+{
+  "cardId": 3,
+  "name": "민짜이",
+  "gender": "남성",
+  "identity": "대학생",
+  "major": "컴퓨터공학",
+  "age": 24,
+  "phone": "010-2003-1581",
+  "email": "corkang19@gmail.com",
+  "communication": [
+    "비대면소통을 선호해요",
+    "대면 소통을 선호해요",
+    "새벽 연락을 피해주세요"
+  ],
+  "teamwork": [
+    "다같이 작업하고 싶어요",
+    "일을 나눠서 하고 싶어요"
+  ],
+  "thinking": [
+    "결과 중심적이에요",
+    "비판적이에요"
+  ],
+  "role": [
+    "설득력이 있어요",
+    "호기심이 많아요"
+  ],
+  "conflictResolution": [
+    "솔직하게 표현해요",
+    "바로 해결해요",
+    "먼저 다가가요"
+  ],
+  "timePreference": [
+    "낮(12-18)",
+    "저녁(18-00)"
+  ],
+  "restPreference": [
+    "짧게 자주 쉬고 싶어요"
+  ],
+  "friendship": [
+    "친목시간도 가지고 싶어요"
+  ],
+  "goal": [
+    "string"
+  ],
+  "important": "깃헙에 푸시할 때 절대절대절대 메인에 푸시하지 마세요 각자 브랜치에 올리고 메인으로 PR을 날리삼",
+  "certificates": [
+  ],
+  "tools": [
+    "깃헙",
+    "React"
+  ],
+  "awards": [
+    "미식축구 전국 3등"
+  ],
+  "portfolio": [
+    "대한미식축구협회장배 대학 미식축구 전국대회 3위"
+  ],
+  "additionalInfo": [
+    "미식축구 좀 칩니다"
+  ],
+  "url": [
+    "https://github.com/corkang"
+  ]
+};
+export const card4 = 
+{
+  "cardId": 4,
+  "name": "서켱지",
+  "gender": "남성",
+  "identity": "대학생",
+  "major": "컴퓨터공학",
+  "age": 24,
+  "phone": "010-2003-1581",
+  "email": "corkang19@gmail.com",
+  "communication": [
+    "비대면소통을 선호해요",
+    "대면 소통을 선호해요",
+    "새벽 연락을 피해주세요"
+  ],
+  "teamwork": [
+    "다같이 작업하고 싶어요",
+    "일을 나눠서 하고 싶어요"
+  ],
+  "thinking": [
+    "결과 중심적이에요",
+    "비판적이에요"
+  ],
+  "role": [
+    "설득력이 있어요",
+    "호기심이 많아요"
+  ],
+  "conflictResolution": [
+    "솔직하게 표현해요",
+    "바로 해결해요",
+    "먼저 다가가요"
+  ],
+  "timePreference": [
+    "낮(12-18)",
+    "저녁(18-00)"
+  ],
+  "restPreference": [
+    "짧게 자주 쉬고 싶어요"
+  ],
+  "friendship": [
+    "친목시간도 가지고 싶어요"
+  ],
+  "goal": [
+    "string"
+  ],
+  "important": "깃헙에 푸시할 때 절대절대절대 메인에 푸시하지 마세요 각자 브랜치에 올리고 메인으로 PR을 날리삼",
+  "certificates": [
+  ],
+  "tools": [
+    "깃헙",
+    "React"
+  ],
+  "awards": [
+    "미식축구 전국 3등"
+  ],
+  "portfolio": [
+    "대한미식축구협회장배 대학 미식축구 전국대회 3위"
+  ],
+  "additionalInfo": [
+    "미식축구 좀 칩니다"
+  ],
+  "url": [
+    "https://github.com/corkang"
+  ]
+};
+
+
+export const card5 = 
+{
+  "cardId": 5,
+  "name": "서켱지",
+  "gender": "남성",
+  "identity": "대학생",
+  "major": "컴퓨터공학",
+  "age": 24,
+  "phone": "010-2003-1581",
+  "email": "corkang19@gmail.com",
+  "communication": [
+    "비대면소통을 선호해요",
+    "대면 소통을 선호해요",
+    "새벽 연락을 피해주세요"
+  ],
+  "teamwork": [
+    "다같이 작업하고 싶어요",
+  ],
+  "thinking": [
+    "결과 중심적이에요",
+    "비판적이에요"
+  ],
+  "role": [
+    "설득력이 있어요",
+    "호기심이 많아요"
+  ],
+  "conflictResolution": [
+    "솔직하게 표현해요",
+    "바로 해결해요",
+    "먼저 다가가요"
+  ],
+  "timePreference": [
+    "낮(12-18)",
+    "저녁(18-00)"
+  ],
+  "restPreference": [
+    "짧게 자주 쉬고 싶어요"
+  ],
+  "friendship": [
+    "친목시간도 가지고 싶어요"
+  ],
+  "goal": [
+    "string"
+  ],
+  "important": "깃헙에 푸시할 때 절대절대절대 메인에 푸시하지 마세요 각자 브랜치에 올리고 메인으로 PR을 날리삼",
+  "certificates": [
+  ],
+  "tools": [
+    "깃헙",
+    "React"
+  ],
+  "awards": [
+    "미식축구 전국 3등"
+  ],
+  "portfolio": [
+    "대한미식축구협회장배 대학 미식축구 전국대회 3위"
+  ],
+  "additionalInfo": [
+    "미식축구 좀 칩니다"
+  ],
+  "url": [
+    "https://github.com/corkang"
+  ]
+};
+
 
 export const members = [
   {
-    "userId": 1,
+    "userId": 5,
     "name": "김민제1",
     "email": "kimminje@gmail.com",
     "role": "king",
     "num": 1
   },
   {
-    "userId": 2,
+    "userId": 4,
     "name": "김민제2",
     "email": "kimminje2@gmail.com",
     "role": "member",
@@ -97,40 +359,54 @@ export const members = [
     "num": 3
   },
   {
-    "userId": 4,
-    "name": "김민제2",
+    "userId": 2,
+    "name": "김민제4",
     "email": "kimminje2@gmail.com",
     "role": "member",
-    "num": 2
+    "num": 4
   },
   {
-    "userId": 5,
-    "name": "김민제2",
+    "userId": 1,
+    "name": "김민제5",
     "email": "kimminje2@gmail.com",
     "role": "member",
-    "num": 2
+    "num": 5
   },
-  {
-    "userId": 6,
-    "name": "김민제2",
-    "email": "kimminje2@gmail.com",
-    "role": "member",
-    "num": 2
-  },
-  {
-    "userId": 7,
-    "name": "김민제2",
-    "email": "kimminje2@gmail.com",
-    "role": "member",
-    "num": 2
-  },
-  {
-    "userId": 8,
-    "name": "김민제2",
-    "email": "kimminje2@gmail.com",
-    "role": "member",
-    "num": 2
-  },
+  // {
+  //   "userId": 10,
+  //   "name": "김민제6",
+  //   "email": "kimminje2@gmail.com",
+  //   "role": "member",
+  //   "num": 6
+  // },
+  // {
+  //   "userId": 9,
+  //   "name": "김민제7",
+  //   "email": "kimminje2@gmail.com",
+  //   "role": "member",
+  //   "num": 7
+  // },
+  // {
+  //   "userId": 8,
+  //   "name": "김민제8",
+  //   "email": "kimminje2@gmail.com",
+  //   "role": "member",
+  //   "num": 8
+  // },
+  // {
+  //   "userId": 7,
+  //   "name": "김민제9",
+  //   "email": "kimminje2@gmail.com",
+  //   "role": "member",
+  //   "num": 9
+  // },
+  // {
+  //   "userId": 6,
+  //   "name": "김민제10",
+  //   "email": "kimminje2@gmail.com",
+  //   "role": "member",
+  //   "num": 10
+  // },
 ];
 
 export const card = [

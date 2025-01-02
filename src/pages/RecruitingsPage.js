@@ -6,6 +6,7 @@ import { useParams, useSearchParams, useNavigate } from "react-router-dom";
 import { SearchContext } from '../context/SearchContext';
 import styled from "styled-components";
 import axios from "axios";
+import design from "../assets/homepage/디자인.svg"
 import idea from "../assets/homepage/기획아이디어.svg"
 import munhak from "../assets/homepage/문학에세이.svg"
 import photo1 from "../assets/homepage/사진.svg"
@@ -23,7 +24,7 @@ const RecruitmentPage = () => {
     // SearchContext에서 searchTerm, filteredData 받아오기 검색기능 훅
     const { searchTerm, setSearchTerm, filteredData } = useContext(SearchContext); 
 
-    const [users, setUsers] = useState([]);
+    const [post, setPost] = useState([]);
     const { category } = useParams(); // URL에서 카테고리 값을 가져오기
     const [searchParams, setSearchParams] = useSearchParams();
     const navigate = useNavigate();
@@ -50,15 +51,16 @@ const RecruitmentPage = () => {
    
     
 
-    // !!!!데이터 가져옴
+
+    // GET 모든 공모전 게시물에 대한 정보 불러오기 !!완료!!
     useEffect(() => {
         const fetchUsers = async () => {
             try {
                 const response = await axios.get(
                     "https://676e83a3df5d7dac1ccae100.mockapi.io/post"
-                    // `http://${server}:8080/post`
+                    // `http://${server}/post`
                 );
-                setUsers(response.data);
+                setPost(response.data);
                 console.log(response.data);
             } catch (err) {
                 console.error(err);
@@ -121,7 +123,7 @@ const RecruitmentPage = () => {
 
       // !!!! 카테고리 sorting
     const categories = [
-        { id: "디자인", name: "디자인", photo: photo1 },
+        { id: "디자인", name: "디자인", photo: design },
         { id: "영상미디어", name: "영상 미디어", photo: media },
         { id: "기획아이디어", name: "기획/아이디어", photo: idea },
         { id: "IT프로그래밍", name: "IT/프로그래밍", photo: programming },
@@ -416,8 +418,8 @@ const CategoryCard = styled.img `
   justify-content: center;
   gap: 1rem;
   
-  height: 56px;
-  width: 56px;
+  height: 70px;
+  width: 70px;
   border-radius: 8px;
 `;
 
@@ -454,6 +456,7 @@ font-size: 24px;
 const PostListSection = styled.section `
   display: flex;
   flex-direction: column;
+  margin-bottom: 5px;
   
 `;
 
@@ -604,18 +607,45 @@ const Pagination = styled.div`
     margin-top: 95px;
 `;
 
+// const PageButton = styled.button`
+//     color: #4E5968;
+//     background-color: white;
+//     border:none;
+//     margin: 5px; 5px;
+//     font-size: 18px;
+    
+    
+//     cursor: pointer;
+
+//     &:hover {
+//       color: #6C54F7;
+//       border-bottom : 2px solid #6C54F7;
+//     }
+// `;
+
 const PageButton = styled.button`
     color: #4E5968;
     background-color: white;
-    border:none;
-    margin: 0 5px;
+    border: none;
+    margin: 5px;
     font-size: 18px;
-    
-    
     cursor: pointer;
+    position: relative; /* box-shadow를 사용할 경우 필요 없음 */
 
     &:hover {
       color: #6C54F7;
-      border-bottom : 2px solid #6C54F7;
+    }
+
+    &::after {
+      content: "";
+      display: block;
+      width: 35px;
+      height: 2px; /* border와 동일한 높이 */
+      background: transparent; /* 초기에는 투명 */
+      
+    }
+
+    &:hover::after {
+      background: #6C54F7; /* hover 시 색 변경 */
     }
 `;
