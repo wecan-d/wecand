@@ -15,6 +15,7 @@ import EditPage from './pages/EditPage'
 import Layout from './components/Layout'
 import MakeTeam from './pages/MakeTeam'
 import OwnerDetailPage from './pages/OwnerDetailPage'
+import { FormProvider } from './context/FormContext'
 
 const Routers = () => {
   // const setLoginInfoState = useSetRecoilState(loginInfo);

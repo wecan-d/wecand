@@ -176,7 +176,7 @@ export default function DetailPage() {
                         </InfoRow>
                         <InfoRow>
                             <InfoLabel>총 지원자</InfoLabel>
-                            {/* <InfoValue>{selectedPostData.applicants.length}</InfoValue> */}
+                            <InfoValue>{selectedPostData.applicants.length}</InfoValue>
 
                             {/* !ERD applicants = 모집 지원자! */}
                             {/* <InfoValue>1,200 {selectedPostData.applicants}</InfoValue> */}
