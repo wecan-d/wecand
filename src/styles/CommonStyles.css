@@ -230,3 +230,42 @@
 .btn-prev:hover, .btn-next:hover {
   background-color: #0056b3;
 }
+
+
+input[type='file'] {
+  display: block;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+}
+.form__input--file_wrap {
+  display: flex;
+}
+.form__label--file {
+  width: 80px;
+  height: 30px;
+  line-height:30px;
+  background: #999;
+  border-radius: 3px;
+  color: #fff;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+.form__span--file {
+  padding: 0 5px 0 10px;
+  margin-left: 5px;
+  display: block;
+  width: 500px;
+  min-height: 30px;
+  border: 1px solid #e7e7e7;
+  border-radius: 3px;
+  line-height: 30px;
+  color: #999;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  box-sizing: border-box;
+}
