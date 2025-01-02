@@ -129,7 +129,7 @@ const RecruitmentPage = () => {
         { id: "IT프로그래밍", name: "IT/프로그래밍", photo: programming },
         { id: "문학에세이", name: "문학/에세이", photo: munhak },
         { id: "창업비즈니스", name: "창업/비즈니스", photo: business },
-        { id: "학술논물", name: "학술/논문", photo: nonmun },
+        { id: "학술논문", name: "학술/논문", photo: nonmun },
         { id: "사진", name: "사진", photo: photo1 },
         { id: "음악공연", name: "음악/공연", photo: music },
         { id: "사회공헌봉사", name: "사회공헌/봉사", photo: social },

@@ -11,6 +11,7 @@ const server = "https://67625e5846efb373237455b0.mockapi.io/gemlense/post";
 export const postMemberAPI = async (data) => {
   try {
     const response = await axios.post(`${server}/post/${userId}`, data);
+
     return response;
   } catch (error) {
     console.error("Error posting user data:", error);

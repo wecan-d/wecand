@@ -1,30 +1,33 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import styled from "styled-components";
 import bgsvg from "../assets/homepage/home2.svg";
 import whitelogo from "../assets/homepage/whitelogo.svg";
 import userProfile from "../assets/homepage/useprofileicon.svg";
 import landsec from "../assets/homepage/landsec.svg";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import landcard1 from "../assets/homepage/landcard1.svg";
 import landcard2 from "../assets/homepage/landcard2.svg";
 import landcard3 from "../assets/homepage/landcard3.svg";
 import landcard4 from "../assets/homepage/landcard4.svg";
-import { loginInfo } from "../context/Auth";
 import { useGoogleLogin } from "./Login";
-import useLogout from "./Logout";
-import { useRecoilValue } from "recoil";
+// import { loginInfo } from "../context/Auth";
+// import useLogout from "./Logout";
+
 import wait from "../assets/common/wait.svg"
 import accept from "../assets/common/accept.svg"
+
 
 //!!임시 데이터 병합할 때 알아서 지워도 됨 빨강색 찾아서 알아서 지워주세여
 import { applied } from "./MyPageData"
 
 
-const server = process.env.REACT_APP_SERVER;
+
+// const server = process.env.REACT_APP_SERVER;
 
 let isLoggedIn = false;
 const HomePage = () => {
+  
   const googleLogin = useGoogleLogin();
   const handleLogin = async () => {
     try {
@@ -49,27 +52,20 @@ const HomePage = () => {
     setApplyPosts(filteredApplyPosts);
   }, [userId]);
 
-  const ApplyProjects = applyPosts.reduce((acc, apply) => {
-    const { category } = apply;
-    if (!acc[category]) {
-      acc[category] = [];
-    }
-    acc[category].push(apply);
-    return acc;
-  }, {});
+  // const ApplyProjects = applyPosts.reduce((acc, apply) => {
+  //   const { category } = apply;
+  //   if (!acc[category]) {
+  //     acc[category] = [];
+  //   }
+  //   acc[category].push(apply);
+  //   return acc;
+  // }, {});
   //!!임시 데이터 병합할 때 알아서 지워도 됨 빨강색 찾아서 알아서 지워주세여
 
   // 최신순 정렬 함수
     const sortByLatest = (posts) => {
       return posts.slice(0,7).sort((a, b) => new Date(b.createTime) - new Date(a.createTime));
     };
-
-
-
-  const navigate = useNavigate();
-  const handleLogin = () => {
-    window.location.href = `${process.env.REACT_APP_SERVER}/oauth2/authorization/google`;
-  }
 
   const navigate = useNavigate();
   // let userInfo = useRecoilValue(loginInfo);
@@ -85,9 +81,9 @@ const HomePage = () => {
   }, [words.length]);
 
   // 검색 로직
-  const [users, setUsers] = useState([]);
-  const [filteredUsers, setFilteredUsers] = useState([]); // 필터링된 데이터
-  const { searchTerm, setSearchTerm } = useContext(SearchContext); // 전역 검색 상태 가져오기
+  const [, setUsers] = useState([]);
+  const [, setFilteredUsers] = useState([]); // 필터링된 데이터
+
 const [last, setLast] = useState([]);
   useEffect(() => {
     const fetchUsers = async () => {
@@ -107,18 +103,6 @@ const [last, setLast] = useState([]);
     };
     fetchUsers();
   }, []);
-
-  useEffect(() => {
-    if (searchTerm === "") {
-      // setFilteredUsers(users); // 검색어가 없으면 전체 데이터 표시
-    } else {
-      const filtered = users.filter((user) =>
-        user.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        user.category.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-      setFilteredUsers(filtered);
-    }
-  }, [searchTerm, users]);
 
   return (
     <Container>
@@ -320,11 +304,6 @@ const [last, setLast] = useState([]);
 
 export default HomePage;
 
-const NoResults = styled.div`
-  text-align: center;
-  color: #999;
-`;
-
 // const GlobalStyle = createGlobalStyle`
 //   * {
 //     margin: 0;
@@ -511,30 +490,6 @@ const Description = styled.p`
   color: #555;
 `;
 
-const ResultContainer = styled.div`
-  border: 1px solid #DBDBDB;
-  overflow: hidden; 
-  padding: 10px;
-`;
-
-const ResultCard = styled.div`
-  width: 537px;
-  background: #fff;
-  border-radius: 8px;
-  padding: 10px;
-  position: relative;
-`;
-
-const ResultBox = styled.div`
-  display: flex;
-  justify-content: flex-start;
-`;
-
-const PostTitle = styled.h3 `
-  font-size: 18;
-  color: #111;
-  font-weight: 500;
-`;
 
 const ScrollWrapper = styled.div`
   width: 100%; /* 화면 너비에 맞춰 크기 지정 */
@@ -668,11 +623,6 @@ const SectionTitle2 = styled.h2`
   font-weight: 600;
   color: #111;
   margin-bottom: 20px;
-`;
-
-const Description2 = styled.p`
-  font-size: 18px;
-  color: #333;
 `;
 
 
