@@ -454,6 +454,7 @@ font-size: 24px;
 const PostListSection = styled.section `
   display: flex;
   flex-direction: column;
+  margin-bottom: 5px;
   
 `;
 
@@ -604,18 +605,45 @@ const Pagination = styled.div`
     margin-top: 95px;
 `;
 
+// const PageButton = styled.button`
+//     color: #4E5968;
+//     background-color: white;
+//     border:none;
+//     margin: 5px; 5px;
+//     font-size: 18px;
+    
+    
+//     cursor: pointer;
+
+//     &:hover {
+//       color: #6C54F7;
+//       border-bottom : 2px solid #6C54F7;
+//     }
+// `;
+
 const PageButton = styled.button`
     color: #4E5968;
     background-color: white;
-    border:none;
-    margin: 0 5px;
+    border: none;
+    margin: 5px;
     font-size: 18px;
-    
-    
     cursor: pointer;
+    position: relative; /* box-shadow를 사용할 경우 필요 없음 */
 
     &:hover {
       color: #6C54F7;
-      border-bottom : 2px solid #6C54F7;
+    }
+
+    &::after {
+      content: "";
+      display: block;
+      width: 35px;
+      height: 2px; /* border와 동일한 높이 */
+      background: transparent; /* 초기에는 투명 */
+      
+    }
+
+    &:hover::after {
+      background: #6C54F7; /* hover 시 색 변경 */
     }
 `;

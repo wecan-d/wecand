@@ -195,7 +195,9 @@ export default function DetailPage() {
 
                     {/* 버튼 */}
                     <ActionButtons>
-                        <LinkButton>공모전 확인하기</LinkButton>
+                      {/* 이거 제목 옆에 > 랑 같이 */}
+                        <LinkButton>자세히 보기</LinkButton>
+                        {/* 지원하기 완료되면 대기중 띄우기 (개발 / 진행상황) */}
                         <ApplyButton onClick={handleFirstSubmit}>지원하기</ApplyButton>
                     </ActionButtons>
                 </SideBox>

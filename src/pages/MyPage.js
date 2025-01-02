@@ -3,6 +3,11 @@ import styled from "styled-components";
 import axios from "axios";
 import file from "../assets/mypage/File.svg";
 import link from "../assets/mypage/Link.svg";
+import progress from "../assets/common/progress.svg"
+import complete from "../assets/common/complete.svg"
+import reject from "../assets/common/reject.svg"
+import accept from "../assets/common/accept.svg"
+import wait from "../assets/common/wait.svg"
 
 //임시 데이터
 import { owner, applied } from "./MyPageData"
@@ -14,16 +19,28 @@ import { owner, applied } from "./MyPageData"
 
 export default function MyPage() {
 
+    //테스트 용 applied
+
+
 
     // 테스트 용
     const userId = 2;
     const [userPosts, setUserPosts] = useState([]);
 
+    const [applyPosts, setApplyPosts] = useState([]);
+
     useEffect(() => {
       // 주어진 데이터를 기반으로 userId에 해당하는 게시글 필터링
-      const filteredPosts = owner[0].filter(post => post.ownerId === userId);
-      setUserPosts(filteredPosts);
+      const filteredOwnPosts = owner[0].filter(post => post.ownerId === userId);
+      // 주어진 데이터를 기반으로 userId에 해당하는 게시글 필터링
+      const filteredApplyPosts = applied.filter(post =>post.applicants.some(applicant => applicant.userId === userId));
+      
+      setUserPosts(filteredOwnPosts);
+
+      setApplyPosts(filteredApplyPosts);
     }, [userId]);
+
+    
 
 
 
@@ -119,7 +136,7 @@ useEffect(() => {
 
 
 // 카테고리별로 그룹화 -> 자신이 지원한 게시물보기
-const ApplyProjects = apply.reduce((acc, apply) => {
+const ApplyProjects = applyPosts.reduce((acc, apply) => {
   const { category } = apply;
   if (!acc[category]) {
     acc[category] = [];
@@ -501,8 +518,8 @@ const OwnerProjects = userPosts.reduce((acc, create) => {
 
           
 
-          <GridSection>
-           {/* 카테고리 정렬 배열 */}
+        <GridSection>
+           {/* 카테고리 정렬 배열 변수만 다 박으면 되삼*/}
             {Object.keys(ApplyProjects).map((category, index) => (
               <Card3 key={index}>
 
@@ -513,17 +530,36 @@ const OwnerProjects = userPosts.reduce((acc, create) => {
                 <SectionRight>
                   <Column>
                   {/* 카테고리 별 포스트 배열 */}
-                {CreateProjects[category].map((category) => (
+                {ApplyProjects[category]
+
+                .filter(apply =>
+                  apply.applicants.some(applicant =>
+                    ["거절", "대기중"].includes(applicant.status)
+                  )
+                ).map((category) => (
+                  
                   <Card3 key={category.postId}>
                     <ProjectTitle>{category.title} </ProjectTitle>
-                    <div>{category.approvedCount}</div>
+                    
+                    <img
+                        src={
+                          category.applicants.some(applicant => applicant.status === "대기중")
+                            ? wait // 대기 중
+                            : category.applicants.some(applicant => applicant.status === "거절")
+                            ? reject // 거절
+                            : null
+                        }
+                        alt=""
+                        style={{ width: "110px", height: "35px" }}
+                      />
                   </Card3>
+                 
                 ))}
-                  </Column>
-                </SectionRight>
+                 </Column>
+              </SectionRight>
               </Card3>
             ))}
-          </GridSection>
+        </GridSection>
 
         </GridLeft>
 
@@ -573,7 +609,14 @@ const OwnerProjects = userPosts.reduce((acc, create) => {
                   
                   <Card3 key={category.postId}>
                     <ProjectTitle>{category.title} </ProjectTitle>
-                    <div>{category.approvedCount}</div>
+                    
+                    
+                      <img
+                        src={category.approvedCount > 0 ? progress : complete}
+                        alt={category.approvedCount > 0 ? "Approved" : "Not Approved"}
+                        style={{ width: "110px", height: "35px" }}
+                      />
+                    
                   </Card3>
                  
                 ))}

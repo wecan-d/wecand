@@ -83,31 +83,178 @@ export const owner = [
 //내가 지원한 글 /post/applied/{userId}
 // /post/applied/2
 
-export const applied= [
-
+export const applied = [
   {
-    "postId": 0,
-    "title": "string",
-    "category": "string",
-    "date": "string",
-    "member": 0,
-    "url": "string",
-    "memo": "string",
-    "memo2": "string",
-    "img": "string",
-    "createTime": "string",
-    "ownerId": 0,
+    "postId": 1,
+    "title": "Gemlense 프로젝트 모집",
+    "category": "IT/프로그래밍",
+    "date": "2024-01-15",
+    "member": 3,
+    "url": "https://example.com/react-project",
+    "memo": "React 프로젝트를 함께 진행할 팀원을 찾습니다.",
+    "memo2": "Git 사용 경험 필수",
+    "img": "https://example.com/image1.jpg",
+    "createTime": "2024-01-01",
+    "ownerId": 2,
     "applicants": [
       {
-        "applicationId": 0,
-        "userId": 0,
-        "userName": "string",
-        "userEmail": "string",
-        "status": "진행 중"
+        "applicationId": 1,
+        "userId": 2,
+        "userName": "박수민",
+        "userEmail": "sumin@example.com",
+        "status": "수락"
+      },
+      {
+        "applicationId": 2,
+        "userId": 3,
+        "userName": "박수지",
+        "userEmail": "sumin@example.com",
+        "status": "수락"
+      },
+      {
+        "applicationId": 3,
+        "userId": 4,
+        "userName": "박수빈",
+        "userEmail": "sumin@example.com",
+        "status": "수락"
+      },
+      {
+        "applicationId": 4,
+        "userId": 5,
+        "userName": "박수긴",
+        "userEmail": "sumin@example.com",
+        "status": "수락"
       }
     ],
-    "imageUrl": "string",
+    "imageUrl": "https://example.com/react-project-image.jpg",
+    "approvedCount": 1
+  },
+  {
+    "postId": 2,
+    "title": "잼민이 포켓몬 카드",
+    "category": "디자인",
+    "date": "2024-02-01",
+    "member": 5,
+    "url": "https://example.com/design-contest",
+    "memo": "디자인 공모전에 함께 참가할 팀원을 모집합니다.",
+    "memo2": "포토샵, 일러스트레이터 사용 가능자 우대",
+    "img": "https://example.com/image2.jpg",
+    "createTime": "2024-01-10",
+    "ownerId": 2,
+    "applicants": [
+      {
+        "applicationId": 2,
+        "userId": 2,
+        "userName": "이수민",
+        "userEmail": "sumin@example.com",
+        "status": "거절"
+      }
+    ],
+    "imageUrl": "https://example.com/design-contest-image.jpg",
     "approvedCount": 0
-  }
+  },
+  {
+    "postId": 3,
+    "title": "Python 튜토리얼 제작팀 모집",
+    "category": "IT/프로그래밍",
+    "date": "2024-03-01",
+    "member": 2,
+    "url": "https://example.com/python-tutorial",
+    "memo": "Python 튜토리얼 제작을 위한 팀원을 모집합니다.",
+    "memo2": "Python 경험 2년 이상 우대",
+    "img": "https://example.com/image3.jpg",
+    "createTime": "2024-01-20",
+    "ownerId": 2,
+    "applicants": [
+        {
+        "applicationId": 2,
+        "userId": 2,
+        "userName": "이수민",
+        "userEmail": "sumin@example.com",
+        "status": "대기중"
+      }
+    ],
+    "imageUrl": "https://example.com/python-tutorial-image.jpg",
+    "approvedCount": 1
+  },
+  {
+    "postId": 4,
+    "title": "음하하 로직 구현 완료",
+    "category": "디자인",
+    "date": "2024-03-01",
+    "member": 2,
+    "url": "https://example.com/python-tutorial",
+    "memo": "Python 튜토리얼 제작을 위한 팀원을 모집합니다.",
+    "memo2": "Python 경험 2년 이상 우대",
+    "img": "https://example.com/image3.jpg",
+    "createTime": "2024-01-20",
+    "ownerId": 2,
+    "applicants": [
+        {
+        "applicationId": 2,
+        "userId": 2,
+        "userName": "이수민",
+        "userEmail": "sumin@example.com",
+        "status": "거절"
+      }
+    ],
+    "imageUrl": "https://example.com/python-tutorial-image.jpg",
+    "approvedCount": 1
+  },
 
+  {
+    "postId": 5,
+    "title": "음하하 롱커톤 1등 각",
+    "category": "디자인",
+    "date": "2024-03-01",
+    "member": 2,
+    "url": "https://example.com/python-tutorial",
+    "memo": "Python 튜토리얼 제작을 위한 팀원을 모집합니다.",
+    "memo2": "Python 경험 2년 이상 우대",
+    "img": "https://example.com/image3.jpg",
+    "createTime": "2024-01-20",
+    "ownerId": 2,
+    "applicants": [
+        {
+        "applicationId": 2,
+        "userId": 2,
+        "userName": "이수민",
+        "userEmail": "sumin@example.com",
+        "status": "대기중"
+      }
+    ],
+    "imageUrl": "https://example.com/python-tutorial-image.jpg",
+    "approvedCount": 1
+  }
+];
+
+export const applicants = [
+  {
+    applicationId: 1,
+    userId: 2,
+    userName: "박수민",
+    userEmail: "sumin@example.com",
+    status: "수락",
+  },
+  {
+    applicationId: 2,
+    userId: 3,
+    userName: "박수지",
+    userEmail: "sumin@example.com",
+    status: "수락",
+  },
+  {
+    applicationId: 3,
+    userId: 4,
+    userName: "박수빈",
+    userEmail: "sumin@example.com",
+    status: "수락",
+  },
+  {
+    applicationId: 4,
+    userId: 5,
+    userName: "박수긴",
+    userEmail: "sumin@example.com",
+    status: "수락",
+  },
 ];

@@ -11,9 +11,38 @@ import landcard1 from "../assets/homepage/landcard1.svg";
 import landcard2 from "../assets/homepage/landcard2.svg";
 import landcard3 from "../assets/homepage/landcard3.svg";
 import landcard4 from "../assets/homepage/landcard4.svg";
+import wait from "../assets/common/wait.svg"
+import accept from "../assets/common/accept.svg"
+
+//!!임시 데이터 병합할 때 알아서 지워도 됨 빨강색 찾아서 알아서 지워주세여
+import { applied } from "./MyPageData"
 
 
 const HomePage = () => {
+
+  //!!임시 데이터 병합할 때 알아서 지워도 됨 빨강색 찾아서 알아서 지워주세여
+  const userId = 2;
+  const [applyPosts, setApplyPosts] = useState([]);
+
+  useEffect(() => {
+    // 주어진 데이터를 기반으로 userId에 해당하는 게시글 필터링
+    const filteredApplyPosts = applied.filter(post =>post.applicants.some(applicant => applicant.userId === userId));
+
+    setApplyPosts(filteredApplyPosts);
+  }, [userId]);
+
+  const ApplyProjects = applyPosts.reduce((acc, apply) => {
+    const { category } = apply;
+    if (!acc[category]) {
+      acc[category] = [];
+    }
+    acc[category].push(apply);
+    return acc;
+  }, {});
+  //!!임시 데이터 병합할 때 알아서 지워도 됨 빨강색 찾아서 알아서 지워주세여
+
+
+
   const navigate = useNavigate();
   const handleLogin = () => {
     window.location.href = `${process.env.REACT_APP_SERVER}/oauth2/authorization/google`;
@@ -110,10 +139,30 @@ const HomePage = () => {
 
         <ScrollWrapper>
           <ScrollContent>
-            <Item>신청 공모전 팀 모임</Item>
-            <Item>신청 한 팀의 수락, 대기 중 위주로 보여요</Item>
-            <Item>새로운 공모전을 신청해 보세요</Item>
-            <Item>수락 상황 더보기</Item>
+
+
+          {applyPosts
+          .filter(apply =>
+            apply.applicants.some(applicant =>
+              ["수락", "대기중"].includes(applicant.status)
+            )
+          )
+          .map((apply) => (
+              <Item key={apply.postId}>{apply.title}
+                <img
+                        src={
+                          apply.applicants.some(applicant => applicant.status === "수락")
+                            ? accept // 수락
+                            : apply.applicants.some(applicant => applicant.status === "대기중")
+                            ? wait // 대기중
+                            : null
+                        }
+                        alt=""
+                        style={{ width: "110px", height: "35px" }}
+                      />
+              
+              </Item>
+          ))}
           </ScrollContent>
         </ScrollWrapper>
 
@@ -434,8 +483,9 @@ const Item = styled.div`
   justify-content: center;
   min-width: 150px; /* 각 항목의 최소 너비 설정 */
   height: 50px;
-  color: #333;
-  font-size: 16px;
+  color: black;
+  font-weight: 500;
+  font-size: 18px;
 `;
 
 
