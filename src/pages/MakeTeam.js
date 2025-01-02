@@ -8,7 +8,8 @@ const server = process.env.REACT_APP_SERVER;
 
 export const postMemberAPI = async (data) => {
   try {
-    const response = await axios.post(`${server}/2`, data);
+    // const response = await axios.post(`${server}/2`, data);
+    const response = await axios.post(``)
     return response;
   } catch (error) {
     console.error("Error posting user data:", error);
