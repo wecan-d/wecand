@@ -6,6 +6,7 @@ import { useParams, useSearchParams, useNavigate } from "react-router-dom";
 import { SearchContext } from '../context/SearchContext';
 import styled from "styled-components";
 import axios from "axios";
+import design from "../assets/homepage/디자인.svg"
 import idea from "../assets/homepage/기획아이디어.svg"
 import munhak from "../assets/homepage/문학에세이.svg"
 import photo1 from "../assets/homepage/사진.svg"
@@ -121,7 +122,7 @@ const RecruitmentPage = () => {
 
       // !!!! 카테고리 sorting
     const categories = [
-        { id: "디자인", name: "디자인", photo: photo1 },
+        { id: "디자인", name: "디자인", photo: design },
         { id: "영상미디어", name: "영상 미디어", photo: media },
         { id: "기획아이디어", name: "기획/아이디어", photo: idea },
         { id: "IT프로그래밍", name: "IT/프로그래밍", photo: programming },
@@ -416,8 +417,8 @@ const CategoryCard = styled.img `
   justify-content: center;
   gap: 1rem;
   
-  height: 56px;
-  width: 56px;
+  height: 70px;
+  width: 70px;
   border-radius: 8px;
 `;
 

@@ -162,7 +162,14 @@ const handleFocus = (applicationId) => {
 
         <PageWrapperLeft>
           <UserListWrapper>
-            지원자 목록
+            <div style={({color: '#FFF',
+                  fontSize: '28px',
+                  fontWeight: '600',
+                  marginBottom: '20px',
+                  marginLeft: '14px'})}>
+                    지원자 목록
+            </div>
+            
 
             {applied
               .filter(post => post.postId === 1) // postId가 1인 게시물만 필터링
@@ -172,23 +179,21 @@ const handleFocus = (applicationId) => {
                       key={applicant.applicationId}
                       applicationId={applicant.userId} //해당 공모전에 지원한 유저의 id
                       userId={applicant.userId}
+                      onClick={() => handleFocus(applicant.applicationId)} // 클릭된 ID 설정
+                      focused={focusedId === applicant.applicationId} // 조건부 스타일링
                 >
                   <UserName
                       >{applicant.userName} </UserName>
                     <StatusButtons>
-                      <StatusButton
-
-                      >
+                      <StatusButton>
                           수락
 
                       </StatusButton>
                       <StatusDivider />
 
-                      <StatusButton2
-                      
-                      >
-                거절
-              </StatusButton2>
+                      <StatusButton2>
+                          거절
+                      </StatusButton2>
                     </StatusButtons>
                   {/* 지원자 이름 출력 */}
                 </UserContainer>
@@ -207,9 +212,11 @@ const handleFocus = (applicationId) => {
       
         <PageWrapperRight>
             {/* extraData[userId] */}
+      <div>
+        <div style={({display:'flex', flexDirection:'row', justifyContent:'space-between', alignItems:'center', marginBottom:'42px'})}>
             <CardContainer>
         <ImageWrapper>
-          <ProfileImage src="" alt="Profile" style={({width:'100px',height:'100px'})}/>
+          <ProfileImage src="" alt="Profile" style={({width:'1000px',height:'100px'})}/>
         </ImageWrapper>
         <TextWrapper2>
           <div style={({display:'flex', flexDirection:'row', alignItems: 'center', gap:'12px'})}>
@@ -224,7 +231,15 @@ const handleFocus = (applicationId) => {
           
         </TextWrapper2>
     </CardContainer>
-        <Text>{cardZero.name || "이름 없음"}</Text>
+    <ButtonContainer>
+      <Button>거절하기</Button>
+      <Button>수락하기</Button>
+    </ButtonContainer>
+    </div>
+   
+
+    </div>
+        <Text>작업 스타일</Text>
 
                                       {/* 그리드 좌측 */}
             
@@ -510,9 +525,29 @@ const CardContainer = styled.div`
   border-radius: 8px;
   padding: 10px;
   
-  margin-bottom: 42px;
 `;
 
+const ButtonContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap:16px;
+`;
+
+const Button = styled.button`
+  width: 124px;
+  height: 52px;
+  background: #DBDBDB;
+  border: none;
+  font-size: 20px;
+  font-weight: 500;
+  padding: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 8px;
+  
+`;
 const ImageWrapper = styled.div`
   position: relative;
   margin-right: 24px;
@@ -566,6 +601,7 @@ const PageContainer = styled.div`
   display: flex;
   justify-content: center;
   margin-bottom: 120px;
+  
 `;
 
 const PageWrapperLeft = styled.div`
@@ -579,7 +615,7 @@ const PageWrapperLeft = styled.div`
 `;
 
 const UserListWrapper = styled.div`
-  padding: 50px 48px;
+  padding: 50px 0px 50px 38px;
 `;
 
 const UserBox = styled.div`
@@ -592,10 +628,10 @@ const UserContainer = styled.div`
   display: flex;
   align-items: center;
   
-  padding: 10px 20px;
-  border-radius: 8px;
-  color: ${(props) => (props.active1 ? "black" : "white")}; //클릭시 텍스트 색 하얀색으로
-  background-color: ${(props) => (props.active1 ? "white" : "#6c54f7")}; //클릭시 배경 색상 하얀색으로
+  padding: 10px 15px;
+  border-radius: 8px 0px 0px 8px;
+  color: ${(props) => (props.focused ? "black" : "white")}; //클릭시 텍스트 색 하얀색으로
+  background-color: ${(props) => (props.focused ? "#F0F3FA" : "#6c54f7")}; //클릭시 배경 색상 하얀색으로
 `;
 
 const UserName = styled.div`
@@ -607,6 +643,7 @@ const UserName = styled.div`
 const StatusButtons = styled.div`
   display: flex;
   align-items: center;
+  padding-right: 25px;
 `;
 
 const StatusButton = styled.div`
@@ -616,8 +653,6 @@ const StatusButton = styled.div`
   font-weight: 500;
   border-radius: 4px;
   cursor: pointer;
-  color: ${(props) => (props.active ? "#5020D3A3" : "##DBDBDB")}; //활성시 화이트 진하게 다시 누르면 
-  font-weight: ${(props) => (props.active ? "700" : "500")};
 `;
 
 const StatusButton2 = styled.div`
@@ -627,8 +662,6 @@ const StatusButton2 = styled.div`
   font-weight: 500;
   border-radius: 4px;
   cursor: pointer;
-  color: ${(props) => (props.deactivated  ? "#DBDBDB" : "black")};
-  
 `;
 
 
@@ -640,7 +673,7 @@ const StatusDivider = styled.div`
 `;
 
 const PageWrapperRight = styled.div`
-    width: 1060px;
+    width: 1140px;
     height: 815px;
     padding: 30px;
     padding-left: 60px;

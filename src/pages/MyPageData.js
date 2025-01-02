@@ -33,7 +33,8 @@ export const owner = [
         }
       ],
       "imageUrl": "https://example.com/react-project-image.jpg",
-      "approvedCount": 1
+      "approvedCount": 4,
+      "totalApplicants": 5
     },
     {
       "postId": 2,
@@ -57,7 +58,8 @@ export const owner = [
         }
       ],
       "imageUrl": "https://example.com/design-contest-image.jpg",
-      "approvedCount": 1
+      "approvedCount": 1,
+      "totalApplicants": 2
     },
     {
       "postId": 3,
@@ -73,7 +75,8 @@ export const owner = [
       "ownerId": 2,
       "applicants": [],
       "imageUrl": "https://example.com/python-tutorial-image.jpg",
-      "approvedCount": 0
+      "approvedCount": 0,
+      "totalApplicants": 0
     }
   ]
 ];
@@ -147,7 +150,7 @@ export const applied = [
         "userId": 2,
         "userName": "이수민",
         "userEmail": "sumin@example.com",
-        "status": "거절"
+        "status": "대기중"
       }
     ],
     "imageUrl": "https://example.com/design-contest-image.jpg",

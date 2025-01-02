@@ -12,11 +12,6 @@ import wait from "../assets/common/wait.svg"
 //임시 데이터
 import { owner, applied } from "./MyPageData"
 
-// 리코일 변수 받아오기
-// import { useRecoilValue } from 'recoil';
-// import { atom에서 받아오는 변수 } from '';
-
-
 export default function MyPage() {
 
     //테스트 용 applied
@@ -40,7 +35,6 @@ export default function MyPage() {
       setApplyPosts(filteredApplyPosts);
     }, [userId]);
 
-    
 
 
 
@@ -592,7 +586,7 @@ const OwnerProjects = userPosts.reduce((acc, create) => {
         </GridSection> */}
 
 
-{/* 테스트용 여기 변수만 맞추면 되삼 */}
+{/* !!테스트용 여기 변수만 맞추면 되삼 */}
         <GridSection>
            {/* 카테고리 정렬 배열 */}
             {Object.keys(OwnerProjects).map((category, index) => (
@@ -609,11 +603,12 @@ const OwnerProjects = userPosts.reduce((acc, create) => {
                   
                   <Card3 key={category.postId}>
                     <ProjectTitle>{category.title} </ProjectTitle>
+                    <div>{category.approvedCount}</div>
                     
                     
                       <img
-                        src={category.approvedCount > 0 ? progress : complete}
-                        alt={category.approvedCount > 0 ? "Approved" : "Not Approved"}
+                        src={category.approvedCount === category.totalApplicants - 1 ? complete : progress}
+                        alt=""
                         style={{ width: "110px", height: "35px" }}
                       />
                     
