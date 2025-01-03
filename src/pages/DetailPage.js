@@ -113,7 +113,7 @@ export default function DetailPage() {
       try {
           // Sending POST request to the server
           await axios.post(
-              `http://${server}/applications/${userId}/${postId}`
+              `${server}/applications/${userId}/${postId}`
           );
           setIsPostSubmitted(true);
           setIsModalOpen(false); // Close first modal
