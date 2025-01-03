@@ -5,11 +5,7 @@ import bgsvg from "../assets/homepage/home2.svg";
 import whitelogo from "../assets/homepage/whitelogo.svg";
 import userProfile from "../assets/profile.png";
 import landsec from "../assets/homepage/landsec.svg";
-import { useNavigate, useSearchParams } from "react-router-dom";
-// import landcard1 from "../assets/homepage/landcard1.svg";
-// import landcard2 from "../assets/homepage/landcard2.svg";
-// import landcard3 from "../assets/homepage/landcard3.svg";
-// import landcard4 from "../assets/homepage/landcard4.svg";
+import { useNavigate } from "react-router-dom";
 import { useGoogleLogin } from "./Login";
 
 import { PurpleText } from "../components/RegisterComponents";
@@ -44,31 +40,6 @@ const HomePage = () => {
       id: 0,
       title: "새로운 공모전을 신청해보세요",
       status: "approved",
-    },
-    {
-      id: 1,
-      title: "공모전을 신청",
-      status: "pending",
-    },
-    {
-      id: 2,
-      title: "공모전을 신청하지마",
-      status: "pending",
-    },
-    {
-      id: 3,
-      title: "공모전을 신청해",
-      status: "pending",
-    },
-    {
-      id: 4,
-      title: "공모전을 신청ㄴㄴㄴ",
-      status: "pending",
-    },
-    {
-      id: 5,
-      title: "공모전을 신청하던지",
-      status: "pending",
     }
   ]);
   const filteredApplyPosts = (data, userToken) => {
@@ -231,7 +202,7 @@ const HomePage = () => {
             <LoginButton onClick={handleLogin}>로그인</LoginButton>
           ) : (
             <>
-              <UserNameP>{userInfo.userName} 님</UserNameP>
+              <UserNameP>{userInfo.userName}님</UserNameP>
               <LoginButton onClick={handleLogout}>로그아웃</LoginButton>
             </>
           )} 
@@ -708,15 +679,13 @@ const TeamAllowStateBoxWrapper = styled.div`
   justify-content: flex-start;
   overflow-x: auto; /* 가로 스크롤 가능 */
   gap: 16px;
-  
+  margin-bottom: 80px;
+
   /* 스크롤바 숨기기 */
   -ms-overflow-style: none; /* IE, Edge */
   scrollbar-width: none; /* Firefox */
   &::-webkit-scrollbar {
     display: none; /* Chrome, Safari, Opera */
-
-  }
-  margin-bottom: 80px;
   }
 `;
 

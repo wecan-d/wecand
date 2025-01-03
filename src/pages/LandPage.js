@@ -478,6 +478,12 @@ const Name = styled.p`
   z-index: 10;
   font-size: 20px;
   color: white;
+  
+  position: absolute;
+  top: 42px;
+  right: 50px;
+
+  transform: translate(-100%, -100%);
 `;
 
 const LandPage = () => {
@@ -539,15 +545,11 @@ const LandPage = () => {
     });
   };
 
-  // document.body.style.overflow = 'hidden';
-
   const navigate = useNavigate();
   const handleRightBottomButtonClick = () => {
-    document.body.style.overflow = 'auto';
     navigate('/home');
   }
   const handleRightTopButtonClick = () => {
-    document.body.style.overflow = 'auto';
     navigate('/mypage');
   }
 
@@ -564,7 +566,7 @@ const LandPage = () => {
         <LandTitle>PARD</LandTitle>
       </LandTitleDiv>
 
-      <Name>김규리 님</Name>
+      <Name>김규리님</Name>
       <RightTopButton src={profile} onClick={handleRightTopButtonClick} />
       
       <TeamListFloating
