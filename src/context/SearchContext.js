@@ -5,7 +5,7 @@ import axios from "axios";
 export const SearchContext = createContext();
 const server = process.env.REACT_APP_SERVER;
 
-const server = process.env.REACT_APP_SERVER;
+
 
 export const SearchProvider = ({ children }) => {
   const [searchParams] = useSearchParams();
