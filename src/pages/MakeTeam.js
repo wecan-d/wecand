@@ -295,13 +295,12 @@ const MakeTeam = () => {
 
 const styles = {
   container: {
-    padding: "2rem",
-    backgroundColor: "#f9f9f9",
+    paddingTop: "20px",
   },
   pageTitle: {
     textAlign: "left",
     fontSize: "1.8rem",
-    marginLeft: "160px",
+    marginLeft: "120px",
     marginBottom: "1.5rem",
   },
   contentWrapper: {
@@ -310,7 +309,7 @@ const styles = {
     gap: "2rem",
   },
   leftPanel: {
-    marginLeft: "150px",
+    marginLeft: "90px",
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
@@ -322,8 +321,7 @@ const styles = {
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#f0f0f0",
-    border: "2px dashed #ddd",
+    background: "#F0F3FA",
     borderRadius: "8px",
     overflow: "hidden",
     cursor: "pointer",
@@ -342,7 +340,7 @@ const styles = {
     display: "none",
   },
   rightPanel: {
-    paddingRight: "300px",
+    paddingRight: "188px",
     flex: 1,
     justifyContent: "left",
     display: "flex",
@@ -396,7 +394,7 @@ const styles = {
   submitButton: {
     padding: "0.8rem 2rem",
     color: "#fff",
-    backgroundColor: "#007bff",
+    background: "#6C54F7",
     border: "none",
     borderRadius: "5px",
     cursor: "pointer",
