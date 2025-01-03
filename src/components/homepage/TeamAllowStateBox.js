@@ -62,15 +62,15 @@ export const TeamAllowStateBox = ({ id, title, status }) => {
 
   // 상태에 따른 이미지 경로
   const statusText = {
-    approved: "수락",
-    pending: "대기 중",
-    rejected: "거절",
+    APPROVED: "수락",
+    PENDING: "대기 중",
+    REJECTED: "거절",
   };
 
   const statusColor = {
-    approved: "#54B8A7",
-    pending: "#EF8C3E",
-    rejected: "#D74F8B"
+    APPROVED: "#54B8A7",
+    PENDING: "#EF8C3E",
+    REJECTED: "#D74F8B",
   }
 
   const handleClick = () => {
