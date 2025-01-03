@@ -214,8 +214,17 @@ const HomePage = () => {
             placeholder="검색어를 입력하세요"
             value={searchWord}
             onChange={(e) => setSearchWord(e.target.value)}
+            onSubmit={() => handleSubmit()}
+            style={{"color": "white"}}
           />
-          <SearchIcon onClick={() => handleSubmit()} />
+          <SearchIcon 
+            onClick={() => handleSubmit()} 
+            style={{
+              "position": "absolute",
+              "zIndex": 1,
+
+            }}
+          />
         </SearchWrapper>
           <LoginWrapper>
           {!(userInfo.isLoggedIn) ? ( // 로그인 안한 경우
