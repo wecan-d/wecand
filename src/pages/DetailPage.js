@@ -24,9 +24,9 @@ export default function DetailPage() {
 
     const { postId } = useParams();
     console.log(postId);
-    const { userId } = useParams();
     
-    const navigate = useNavigate(); // Initialize useNavigate hook
+    
+    
 
 
     //역량카드 데이터
