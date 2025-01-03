@@ -6,7 +6,7 @@ import { uploadFileToFirebase } from "../context/UploadFile";
 
 
 const server = process.env.REACT_APP_SERVER;
-const userId = 2;
+const userId = 15;
 // const server = "http://192.168.1.24:8080/post/2";
 // const server = "https://67625e5846efb373237455b0.mockapi.io/gemlense/post";
 export const postMemberAPI = async (data) => {
@@ -39,6 +39,8 @@ const MakeTeam = () => {
   const [errors, setErrors] = useState({});
   const [isModalVisible, setIsModalVisible] = useState(false);  // 모달 상태 추가
   const [modalTimer, setModalTimer] = useState(null);  // 모달 타이머 상태 추가
+  const [imgFile, setImgFile] = useState(null);
+  const [imgURL, setImgURL] = useState("");
 
   const categories = [
     "디자인",
@@ -63,7 +65,7 @@ const MakeTeam = () => {
     const file = e.target.files[0];
 
     if (file) {
-      setFormData({ ...formData, img: file });
+      setImgFile(file);
       setImagePreview(URL.createObjectURL(file));
     }
   };
@@ -83,27 +85,33 @@ const MakeTeam = () => {
     if (!validateForm()) {
       return;
     }
-
+  
     try {
-      const imgURL = await uploadFileToFirebase(formData.img);
-      console.log("Uploaded Image URL:", imgURL);
-
+      let uploadedImgURL = "";
+      if (imgFile) {
+        uploadedImgURL = await uploadFileToFirebase(imgFile);
+        console.log("Uploaded Image URL:", uploadedImgURL);
+      }
+  
       const payload = {
         ...formData,
-        img: imgURL,
+        img: uploadedImgURL,
       };
-
+      
+      console.log("Payload to POST:", payload);
+  
       const response = await postMemberAPI(payload);
       console.log("Uploaded Data:", response.data);
-
-      // 모달 띄우기
-      setIsModalVisible(true);
-
-      // 2초 뒤 자동으로 디테일 페이지로 이동
-      setModalTimer(setTimeout(() => {
-        navigate(`/detail/${encodeURIComponent(response.data)}`);  // 2초 후 이동
-      }, 2000));
-
+  
+      if (response.data) {
+        setIsModalVisible(true);
+        setModalTimer(setTimeout(() => {
+          navigate(`/detail/${encodeURIComponent(response.data)}`);
+        }, 2000));
+      } else {
+        console.warn("서버가 유효한 ID를 반환하지 않았습니다.");
+      }
+  
       setFormData({
         title: "",
         category: "",
@@ -112,8 +120,8 @@ const MakeTeam = () => {
         url: "",
         memo: "",
         memo2: "",
-        img: null,
       });
+      setImgFile(null);
       setImagePreview(null);
       setErrors({});
     } catch (error) {

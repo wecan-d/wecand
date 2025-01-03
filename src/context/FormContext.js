@@ -5,7 +5,7 @@ import axios from "axios";
 // const server = "http://172.30.1.32:8080/card/3";
 const server = process.env.REACT_APP_SERVER;
 // const server = "https://672819eb270bd0b975546065.mockapi.io/api/v1/register";
-const userId = 2;
+const userId = 15;
 // (1) 생성(POST)
 export const postMemberAPI = async (data) => {
   try {
@@ -32,16 +32,23 @@ export const getMembersAPI = async () => {
 
 // (3) 수정(PATCH)
 export const updateMemberAPI = async (id, data) => {
+  if (!id) {
+    throw new Error("ID가 필요합니다. 데이터 업데이트를 중단합니다.");
+  }
+
   try {
-    const response = await axios.patch(`${server}/card/${userId}`, id, data, {
+    const response = await axios.patch(`${server}/card/${id}`, data, {
       headers: { "Content-Type": "application/json" },
     });
     return response;
   } catch (error) {
     console.error("API 호출 에러(PATCH):", error);
+    console.error("서버 응답 데이터:", error.response?.data);
     throw error;
   }
 };
+
+
 
 // (4) 삭제(DELETE)
 export const deleteMemberAPI = async (id) => {
@@ -62,7 +69,7 @@ export const FormProvider = ({ children }) => {
     const savedData = localStorage.getItem("formData");
     return savedData ? JSON.parse(savedData) : {
       // id: "",
-      name: "",
+      cardName: "",
       gender: "",
       identity: "",
       major: "",
@@ -81,18 +88,20 @@ export const FormProvider = ({ children }) => {
       certificates: [],
       tools: [],
       awards: [],
-      url: [],
+      url: "",
       additionalInfo: "",
-      file: null,
+      fileUrl: "",
     };
   });
 
+  const userId = 15;
+  
   useEffect(() => {
-    localStorage.setItem("formData", JSON.stringify(formData));
+      localStorage.setItem("formData", JSON.stringify(formData));
   }, [formData]);
 
   return (
-    <FormContext.Provider value={{ formData, setFormData }}>
+    <FormContext.Provider value={{ formData, setFormData, userId }}>
       {children}
     </FormContext.Provider>
   );
