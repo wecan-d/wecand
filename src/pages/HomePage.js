@@ -16,7 +16,7 @@ import { SearchIcon, SearchInput, SearchWrapper } from "../components/Header";
 
 
 
-// const server = process.env.REACT_APP_SERVER;
+const server = process.env.REACT_APP_SERVER;
 
 const HomePage = () => {
   const { userInfo, handleLogout } = useContext(AuthContext);
@@ -24,7 +24,6 @@ const HomePage = () => {
   
   // 로그인, 로그아웃
   const handleGoogleLogin = useGoogleLogin();
-
   const handleLogin = async () => {
     try {
       await handleGoogleLogin();
@@ -34,6 +33,7 @@ const HomePage = () => {
   };
   
   console.log(userInfo);
+
   // 신청 공모전 팀 모임 현황 필터링
   const [applyPosts, setApplyPosts] = useState([
     {
@@ -42,6 +42,14 @@ const HomePage = () => {
       status: "approved",
     }
   ]);
+
+  const getApplyPosts = async (userId) => {
+    const applyPostsData = await axios.get(`${server}/post/applied/${userId}`);
+    const newApplyPosts = filteredApplyPosts(applyPostsData, userId);
+    console.log(newApplyPosts);
+    setApplyPosts(newApplyPosts);
+  }
+
   const filteredApplyPosts = (data, userToken) => {
     return data.map((post) => {
       const matchingApplicant = post.applicants.find(
@@ -58,27 +66,8 @@ const HomePage = () => {
 
       return null;
     }).filter((item) => item != null);
-
   }
 
-  /*
-  useEffect(() => {
-    // 주어진 데이터를 기반으로 userId에 해당하는 게시글 필터링
-    const filteredApplyPosts2 = applied.filter(post =>post.applicants.some(applicant => applicant.userId === userId));
-
-    setApplyPosts(filteredApplyPosts2);
-  }, [userId]);
-
-  const ApplyProjects = applyPosts.reduce((acc, apply) => {
-    const { category } = apply;
-    if (!acc[category]) {
-      acc[category] = [];
-    }
-    acc[category].push(apply);
-    return acc;
-  }, {});
-
-  */
 
   // 최신순 정렬 함수
   const sortByLatest = (posts) => {
@@ -96,66 +85,26 @@ const HomePage = () => {
   }, [words.length]);
 
   // 검색 로직
-  // const [filteredUsers, setFilteredUsers] = useState([]); // 필터링된 데이터
   const [last, setLast] = useState([
     {
-      "category": "농구",
-      "title": "눙구할사람 구해요"
+      "category": " ",
+      "title": " ",
     }
   ]);
-  // useEffect(() => {
-  //   const fetchUsers = async () => {
-  //     try {
-  //       const response = await axios.get("https://676e83a3df5d7dac1ccae100.mockapi.io/post");
-  //       console.log(response.data);
-  //       setUsers(response.data);
 
-  //       setFilteredUsers(response.data); // 초기 데이터 설정
+  const getLatestPosts = async () => {
+    const allPosts = await axios.get(`${server}/post`);
+    setLast(allPosts.data?.slice(0,7));
+  }
 
-  //       const sortedPosts = sortByLatest(response.data);
-  //       setLast(sortedPosts);
-  //       console.log("Sorted Posts:", sortedPosts); 
-  //     } catch (err) {
-  //       console.error(err);
-  //     }
-  //   };
-  //   fetchUsers();
-  // }, []);
-
-  /*
-  useEffect(() => {
-    if (searchTerm === "") {
-      // setFilteredUsers(users); // 검색어가 없으면 전체 데이터 표시
-    } else {
-      const filtered = users.filter((user) =>
-        user.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        user.category.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-      setFilteredUsers(filtered);
-    }
-  }, [searchTerm, users]);
-  */
 
   const landCardData = [
     {
-      "landId": 1,
-      "landName": "랜드이름1",
-      "role": "king",
-      "countMember": 3
-    },
-    {
-      "landId": 1,
-      "landName": "롯데월드",
-      "role": "string",
-      "countMember": 5
-    },
-    {
-      "landId": 5,
-      "landName": "기나긴김치찌개",
-      "role": "string",
-      "countMember": 7
-    },
-
+      "landId": 0,
+      "landName": "랜드이름",
+      "role": "owner",
+      "countMember": 1,
+    }
   ];
 
   const filteredlandCardData = landCardData.length < 4 ? [...landCardData, ...new Array(4 - landCardData.length).fill(null)] : landCardData;
@@ -168,6 +117,11 @@ const HomePage = () => {
 
   const [searchWord, setSearchWord] = useState("");
   
+
+  useEffect(() => {
+    if(userInfo.isLoggedIn) getApplyPosts(userInfo.token);
+    getLatestPosts();
+  }, []); 
 
   return (
     <Container>
@@ -274,7 +228,7 @@ const HomePage = () => {
         }}>
           {filteredlandCardData.map((cardData, index) => (
             <LandCard
-              key={index+1}
+              key={index}
               id={cardData ? cardData.landId : 0}
               title={cardData ? cardData.landName : ''}
               role={cardData ? cardData.role : ''}
@@ -284,80 +238,6 @@ const HomePage = () => {
           ))}
         </RowContainer>
 
-
-{/*
-        <CardsWrapper>
-        <LandCards lands={landCardData} />
-        <ItemCard>
-          <ImageWrapper>
-            <Img src={landcard1} alt="Card Image" />
-          </ImageWrapper>
-          <TextOverlay>
-            <div style={({position:'absolute', whiteSpace:'nowrap',left:'260px',top:"20px",color:'white',fontSize:'18px',fontWeight:'500'})}>진행 중</div>
-              <div>
-                <Title2>나는야 파드 공모전</Title2>
-                  
-                  <UserName>박경민 팀장</UserName> 
-                  
-              </div>
-          </TextOverlay>
-        </ItemCard>
-
-        <ItemCard>
-          <ImageWrapper>
-            <Img src={landcard2} alt="Card Image" />
-          </ImageWrapper>
-          <TextWrapper>
-          <TextOverlay>
-            <div style={({position:'absolute', whiteSpace:'nowrap',left:'260px',top:"20px",color:'white',fontSize:'18px',fontWeight:'500'})}>진행 중</div>
-              <div>
-                <Title2>나는야 파드 공모전</Title2>
-                  
-                  <UserName>박경민 팀장</UserName> 
-                  
-              </div>
-          </TextOverlay>
-          </TextWrapper>
-        </ItemCard>
-
-        <ItemCard>
-          <ImageWrapper>
-            <Img src={landcard3} alt="Card Image" />
-          </ImageWrapper>
-          <TextWrapper>
-          <TextOverlay>
-            <div style={({position:'absolute', whiteSpace:'nowrap',left:'260px',top:"20px",color:'white',fontSize:'18px',fontWeight:'500'})}>진행 중</div>
-              <div>
-                <Title2>나는야 파드 공모전</Title2>
-                  
-                  <UserName>박경민 팀장</UserName> 
-                  
-              </div>
-          </TextOverlay>
-          </TextWrapper>
-        </ItemCard>
-        
-        <ItemCard>
-          <ImageWrapper>
-            <Img src={landcard4} alt="Card Image" />
-          </ImageWrapper>
-          <TextOverlay>
-            <div style={({position:'absolute', whiteSpace:'nowrap',left:'260px',top:"20px",color:'white',fontSize:'18px',fontWeight:'500'})}>진행 중</div>
-              <div>
-                <Title2>나는야 파드 공모전</Title2>
-                  
-                  <UserName>박경민 팀장</UserName> 
-                  
-              </div>
-          </TextOverlay>
-          <TextWrapper>
-            <CardTitle>카드 제목</CardTitle>
-            <CardDescription>이곳에 카드 설명이 들어갑니다. 간단한 설명을 넣어주세요.</CardDescription>
-          </TextWrapper>
-        </ItemCard>
-        
-      </CardsWrapper>
-      */}
 
       <RowContainer style={{marginTop: "100px"}}>
         <RowContainerTitle>새로운 공모전 모집 글</RowContainerTitle>
@@ -391,22 +271,6 @@ const HomePage = () => {
       </RightSection>
     </BoxWrapper>
 
-        {/* 검색 결과 표시 */}
-        {/* {searchTerm && (
-          <ResultContainer>
-            {filteredUsers.length > 0 ? (
-              filteredUsers.slice(0, 6).map((user) => (
-                <ResultCard key={user.id}>
-                  <ResultBox>
-                    <PostTitle>{user.title}</PostTitle>
-                  </ResultBox>
-                </ResultCard>
-              ))
-            ) : (
-              <NoResults>검색 결과가 없습니다.</NoResults>
-            )}
-          </ResultContainer>
-        )} */}
       </ContentSection>
     </Container>
   );
@@ -414,25 +278,6 @@ const HomePage = () => {
 
 export default HomePage;
 
-// const GlobalStyle = createGlobalStyle`
-//   * {
-//     margin: 0;
-//     padding: 0;
-//     box-sizing: border-box;
-//   }
-//   body {
-//     font-family: Pretendard, sans-serif;
-//     line-height: 1.4;
-//     overflow-x: hidden; /* 좌우 스크롤 방지 */
-//   }
-// `;
-
-const StaticText = styled.span`
-  font-size: 85px;
-  font-weight: 700;
-  color: #6c54f7;
-  margin-right: 10px;
-`;
 
 const HighlightBox = styled.div`
   position: absolute;
