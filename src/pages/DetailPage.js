@@ -1,7 +1,8 @@
 //!!!!RecruitingPage랑 데이터 연결 성공
 // POST 되는지 확인 필요 handleSecondSubmit 주석 풀면 navigate 선언 안되어 있다고 에러 뜸
 // 작성자의 이름을 불러올 방법이 떠오르질 않음
-
+import file from "../assets/mypage/File.svg";
+import link from "../assets/mypage/Link.svg";
 import React, { useContext } from "react";
 import styled from "styled-components";
 import {useState, useEffect} from "react";
@@ -168,6 +169,15 @@ export default function DetailPage() {
   };
 
 
+let result;
+if (owner[0] && owner[0].url) {
+    const index = owner[0].url.indexOf('.com');
+    result = index !== -1 ? owner[0].url.slice(0, index + 4) : 'URL 없음';
+} else {
+    result = 'URL 없음';
+}
+
+
   
 
     if (error) 
@@ -189,7 +199,7 @@ export default function DetailPage() {
                     {/* !ERD title! */}
                     <Title>{selectedPostData.title} <span><a href={selectedPostData.url} target="_blank" style={({fontSize:'22px',fontWeight:'500',
                             
-                    })}>자세히 보기</a></span>
+                    })} target="_blank">자세히 보기</a></span>
                     </Title>
                    
                 </CategoryAndTitle>
@@ -200,7 +210,9 @@ export default function DetailPage() {
                 <MainBox>
 
                     {/* !ERD img */}
+                    
                     <Image src={selectedPostData.img}/>
+                    
                 </MainBox>
 
                 {/* 우측 정보 섹션 */}
@@ -440,21 +452,95 @@ export default function DetailPage() {
                                 <div style={({marginTop: '30px'})}/>
                                 <Divider/>
 
+                                
                                 <AdditionalSection>
                                     <SectionColumn>
-                                        <SectionTitle>경력 / 경험</SectionTitle>
-                                        <SectionText>{extraData[0]?.awards}</SectionText>
-                                        <SectionText>{extraData[0]?.tools}</SectionText>
-                                        <SectionText>{extraData[0]?.certificates}</SectionText>
-                                        <SectionText>{extraData[0]?.url}</SectionText>
-                                        <SectionArea>PDF 자리</SectionArea>
+                                    <SectionTitle2>경력 / 경험</SectionTitle2>
+                                    
+                                    <SectionTitle>툴 / 자격증</SectionTitle>
+
+                                            {/* 툴 자격증 */}
+                                        {Array.isArray(extraData[0]?.tools) ? ( extraData[0].tools.map((contentItem, index) => (
+                                            <SectionText key={index}>{contentItem}</SectionText> // 각 요소를 p 태그로 감쌈
+                                          ))
+                                          ) : (
+                                            <p>{extraData[0]?.important || "내용 없음"}</p> // 배열이 아닌 경우 처리
+                                          )}
+
+                                          {Array.isArray(extraData[0]?.certificates) ? ( extraData[0].certificates.map((contentItem, index) => (
+                                            <SectionText key={index}>{contentItem}</SectionText> // 각 요소를 p 태그로 감쌈
+                                          ))
+                                          ) : (
+                                            <p>{extraData[0]?.important || "내용 없음"}</p> // 배열이 아닌 경우 처리
+                                          )}
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        <SectionTitle>작업물</SectionTitle>
+
+                                        <a href={extraData[0].fileUrl} target="_blank" style={({border:'none',textDecoration:'none'})}>
+                                        <BoxWrapper>
+                                        
+                                          <ImagePlaceholder>
+
+                                            <ImageStyle src={file} />
+                                            
+                                          </ImagePlaceholder>
+                                          <TextWrapper>
+                                            <FileName>
+                                              개인작업물.pdf</FileName>
+                                            <FileSize>1234KB</FileSize>
+                                          </TextWrapper>
+                                        </BoxWrapper>
+                                        </a>
+
+                                        <a href={extraData[0].url} target="_blank" style={({border:'none',textDecoration:'none'})}>
+                                        <BoxWrapper>
+                                        
+                                          <ImagePlaceholder>
+
+                                            <ImageStyle src={link} />
+                                            
+                                          </ImagePlaceholder>
+                                          <TextWrapper>
+                                            <FileName>
+                                            {result}</FileName>
+                                            <FileSize>1234KB</FileSize>
+                                          </TextWrapper>
+                                        </BoxWrapper>
+                                        </a>
+
+
                                     </SectionColumn>
+                                    
                                     <SectionColumn>
+                                      <div style={({marginTop:'87px'})}/>
+
+                                      <div style={({position:'relative'})}>
+                                      <div>
+                                    <SectionTitle>경력</SectionTitle>
+
+                                    {Array.isArray(extraData[0]?.awards) ? ( extraData[0].awards.map((contentItem, index) => (
+                                            <SectionText key={index}>{contentItem}</SectionText> // 각 요소를 p 태그로 감쌈
+                                          ))
+                                          ) : (
+                                            <p>{extraData[0]?.awards || "내용 없음"}</p> // 배열이 아닌 경우 처리
+                                          )}
+
+                                      </div>
+
+
+
+                                          <div style={({position:'absolute',top:'145px',left:'0'})}>
                                         <SectionTitle>기타사항</SectionTitle>
                                         <SectionArea>{extraData[0]?.additionalInfo}</SectionArea>
+                                        </div>
+                                        </div>
                                         
-                                        {/* <SectionArea>{extraData[userId]?.file}</SectionArea>
-                                         */}
+                                        {/* <SectionArea>{extraData[0]?.file}</SectionArea> */}
+                                        
                                     </SectionColumn>
                                 </AdditionalSection>
                             </ModalBody>
@@ -496,7 +582,7 @@ export default function DetailPage() {
                             </ModalHeader>
 
 
-                            <CardContainer>
+                            <CardContainer2>
                               <ImageWrapper>
                                 <ProfileImage src="" alt="Profile" style={{ width: '100px', height: '100px' }} />
                               </ImageWrapper>
@@ -511,7 +597,7 @@ export default function DetailPage() {
                                   <Email>{owner[0].email || "이메일 없음"}</Email>
                                 </div>
                               </TextWrapper2>
-                            </CardContainer>
+                            </CardContainer2>
                             <SectionStyle>작업 스타일</SectionStyle>
 
 
@@ -663,18 +749,91 @@ export default function DetailPage() {
 
                                 <AdditionalSection>
                                     <SectionColumn>
-                                        <SectionTitle>경력 / 경험</SectionTitle>
-                                        <SectionText>{owner[0]?.awards}</SectionText>
-                                        <SectionText>{owner[0]?.tools}</SectionText>
-                                        <SectionText>{owner[0]?.certificates}</SectionText>
-                                        <SectionText>{owner[0]?.url}</SectionText>
-                                        <SectionArea>PDF 자리</SectionArea>
-                                    </SectionColumn>
-                                    <SectionColumn>
-                                        <SectionTitle>기타사항</SectionTitle>
-                                        <SectionArea>{owner[userId]?.additionalInfo}</SectionArea>
+                                    <SectionTitle2>경력 / 경험</SectionTitle2>
+                                    
+                                    <SectionTitle>툴 / 자격증</SectionTitle>
+
+                                            {/* 툴 자격증 */}
+                                        {Array.isArray(owner[0]?.tools) ? ( owner[0].tools.map((contentItem, index) => (
+                                            <SectionText key={index}>{contentItem}</SectionText> // 각 요소를 p 태그로 감쌈
+                                          ))
+                                          ) : (
+                                            <p>{owner[0]?.important || "내용 없음"}</p> // 배열이 아닌 경우 처리
+                                          )}
+
+                                          {Array.isArray(owner[0]?.certificates) ? ( owner[0].certificates.map((contentItem, index) => (
+                                            <SectionText key={index}>{contentItem}</SectionText> // 각 요소를 p 태그로 감쌈
+                                          ))
+                                          ) : (
+                                            <p>{owner[0]?.important || "내용 없음"}</p> // 배열이 아닌 경우 처리
+                                          )}
                                         
-                                        {/* <SectionArea>{extraData[userId]?.file}</SectionArea> */}
+                                        
+                                        
+                                        
+                                        
+                                        <SectionTitle>작업물</SectionTitle>
+
+                                        <a href={owner[0].fileUrl} target="_blank" style={({border:'none',textDecoration:'none'})}>
+                                        <BoxWrapper>
+                                        
+                                          <ImagePlaceholder>
+
+                                            <ImageStyle src={file} />
+                                            
+                                          </ImagePlaceholder>
+                                          <TextWrapper>
+                                            <FileName>
+                                              개인작업물.pdf</FileName>
+                                            <FileSize>1234KB</FileSize>
+                                          </TextWrapper>
+                                        </BoxWrapper>
+                                        </a>
+
+                                        <a href={owner[0].url} target="_blank" style={({border:'none',textDecoration:'none'})}>
+                                        <BoxWrapper>
+                                        
+                                          <ImagePlaceholder>
+
+                                            <ImageStyle src={link} />
+                                            
+                                          </ImagePlaceholder>
+                                          <TextWrapper>
+                                            <FileName>
+                                            {result}</FileName>
+                                            <FileSize>1234KB</FileSize>
+                                          </TextWrapper>
+                                        </BoxWrapper>
+                                        </a>
+
+
+                                    </SectionColumn>
+                                    
+                                    <SectionColumn>
+                                      <div style={({marginTop:'87px'})}/>
+
+                                      <div style={({position:'relative'})}>
+                                      <div>
+                                    <SectionTitle>경력</SectionTitle>
+
+                                    {Array.isArray(owner[0]?.awards) ? ( owner[0].awards.map((contentItem, index) => (
+                                            <SectionText key={index}>{contentItem}</SectionText> // 각 요소를 p 태그로 감쌈
+                                          ))
+                                          ) : (
+                                            <p>{owner[0]?.awards || "내용 없음"}</p> // 배열이 아닌 경우 처리
+                                          )}
+
+                                      </div>
+
+
+
+                                          <div style={({position:'absolute',top:'145px',left:'0'})}>
+                                        <SectionTitle>기타사항</SectionTitle>
+                                        <SectionArea>{owner[0]?.additionalInfo}</SectionArea>
+                                        </div>
+                                        </div>
+                                        
+                                        {/* <SectionArea>{owner[0]?.file}</SectionArea> */}
                                         
                                     </SectionColumn>
                                 </AdditionalSection>
@@ -717,6 +876,8 @@ line-height: normal;
 margin-bottom: 20px;
 margin-top: 30px;
 `;
+
+
 const PageWrapper = styled.div `
   display: flex;
   padding: 0 247px 0 120px;
@@ -768,6 +929,7 @@ const MainContent = styled.div `
 
 const MainBox = styled.div `
   display: flex;
+  
   @media (max-width: 768px) {
     flex: 1;
   }
@@ -778,6 +940,7 @@ const Image = styled.img `
   max-height: 820px;
   border-radius: 8px;
   object-fit: contain;
+  
 `;
 
 const SideBox = styled.div `
@@ -1035,6 +1198,15 @@ const SectionColumn = styled.div `
 const SectionTitle = styled.h4 `
   color: #111;
 font-family: Pretendard;
+font-size: 18px;
+font-style: normal;
+font-weight: 600;
+line-height: normal;
+`;
+
+const SectionTitle2 = styled.h4 `
+ color: #6C54F7;
+font-family: Pretendard;
 font-size: 22px;
 font-style: normal;
 font-weight: 600;
@@ -1093,6 +1265,18 @@ const CardContainer = styled.div`
   margin-bottom: 42px;
 `;
 
+const CardContainer2 = styled.div`
+  width: 493px;
+  height: 109px;
+  display: flex;
+  align-items: center;
+  background-color: #ffffff;
+  border-radius: 8px;
+  padding: 10px;
+  
+  
+`;
+
 const ImageWrapper = styled.div`
   position: relative;
   margin-right: 24px;
@@ -1138,10 +1322,61 @@ const Email = styled.div`
   font-weight: 400;
 `;
 
-    {/* <ApplyButton 
-                            onClick={!isPostSubmitted ? handleFirstSubmit : undefined}
-                            disabled={isPostSubmitted} // 지원 완료 시 버튼 비활성화
-                            aria-disabled={isPostSubmitted}
-                          > */}
-                          {/* {isPostSubmitted ? "지원하기" : "지원하기"} */}
-                          {/* </ApplyButton> */}
+{/* <ApplyButton 
+  onClick={!isPostSubmitted ? handleFirstSubmit : undefined}
+  disabled={isPostSubmitted} // 지원 완료 시 버튼 비활성화
+  aria-disabled={isPostSubmitted}
+> */}
+{/* {isPostSubmitted ? "지원하기" : "지원하기"} */}
+{/* </ApplyButton> */}
+const BoxWrapper = styled.div`
+display: flex;
+align-items: center;
+width: 470px;
+height: 52px;
+border-radius: 8px;
+
+padding: 0 12px;
+margin-bottom: 8px;
+margin-top: 10px;
+border-radius: 8px;
+background: #F0F3FA;
+
+`;
+
+const ImagePlaceholder = styled.div`
+display: flex;
+align-items: center;
+justify-content: center;
+width: 20px;
+height: 20px;
+`;
+
+const ImageStyle = styled.img`
+  width: 18px;
+  height: 18px;
+`;
+
+const TextWrapper = styled.div`
+display: flex;
+align-items: center;
+
+flex: 1;
+margin-left: 10px;
+
+`;
+
+const FileName = styled.div`
+font-size: 18px;
+font-weight: 400;
+color: #111111;
+white-space: nowrap;
+overflow: hidden;
+text-overflow: ellipsis;
+`;
+
+const FileSize = styled.div`
+font-size: 12px;
+color: #767676;
+margin-left: 10px;
+`;
