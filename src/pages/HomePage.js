@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import styled from "styled-components";
 import bgsvg from "../assets/homepage/home2.svg";
@@ -706,7 +706,7 @@ const TeamAllowStateBoxWrapper = styled.div`
   &::-webkit-scrollbar {
     display: none; /* Chrome, Safari, Opera */
 
-
+  }
   margin-bottom: 80px;
 `;
 
