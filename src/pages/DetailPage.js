@@ -1,11 +1,12 @@
 //!!!!RecruitingPage랑 데이터 연결 성공
 
-import React from "react";
+import React, { useContext } from "react";
 import styled from "styled-components";
 import {useState, useEffect} from "react";
 import {useParams, useNavigate} from "react-router-dom";
 import axios from "axios";
 import DetailSVG from "../assets/detail.svg";
+import { AuthContext } from "../context/AuthContext";
 
 export default function DetailPage() {
     const [extraData, setExtraData] = useState([]);
@@ -23,6 +24,8 @@ export default function DetailPage() {
     const server = process.env.REACT_APP_SERVER;
 
     const { postId } = useParams();
+    const { userInfo, handleLogout } = useContext(AuthContext);
+    const userId = userInfo.token;  
     console.log(postId);
     
     
@@ -34,8 +37,8 @@ export default function DetailPage() {
         const fetchExtraData = async () => {
             try {
                 const response = await axios.get(
-                    // `http://${server}:8080/card/${userId}`
-                    `https://672819eb270bd0b975546065.mockapi.io/api/v1/register?page=1&limit=25`
+                    `${server}/card/${userId}`
+                    // `https://672819eb270bd0b975546065.mockapi.io/api/v1/register?page=1&limit=25`
                 );
                 setExtraData(Array.isArray(response.data) ? response.data : []);
                 console.log(response.data);
@@ -58,8 +61,8 @@ export default function DetailPage() {
     useEffect(() => {
         const fetchPostData = async () => {
             try {
-                const response = await axios.get(`https://676e83a3df5d7dac1ccae100.mockapi.io/post/${postId}`);
-                // const response = await axios.get(`http://${server}/post/${postId}`);
+                // const response = await axios.get(`https://676e83a3df5d7dac1ccae100.mockapi.io/post/${postId}`);
+                const response = await axios.get(`${server}/post/${postId}`);
                 setSelectedPostData(response.data);
                 console.log("HTTP Status Code:", response.status);
             } catch (err) {
@@ -176,7 +179,7 @@ export default function DetailPage() {
                         </InfoRow>
                         <InfoRow>
                             <InfoLabel>총 지원자</InfoLabel>
-                            <InfoValue>{selectedPostData.applicants.length}</InfoValue>
+                            <InfoValue>{selectedPostData.applicants?.length || 0}</InfoValue>
 
                             {/* !ERD applicants = 모집 지원자! */}
                             {/* <InfoValue>1,200 {selectedPostData.applicants}</InfoValue> */}

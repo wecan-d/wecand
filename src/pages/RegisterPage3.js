@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { postMemberAPI, useForm } from "../context/FormContext";
+import { PostMemberAPI, useForm } from "../context/FormContext";
 import SurveyIcon from "../assets/register.svg";
 import { Container, LeftPanel, LeftPanelImage, LeftPanelText, LeftPanelTextBox, LeftPanelTitle, mainColorPurple, NextButton, ProgressBar, ProgressStepOn, QuestionBox, QuestionLabel, QuestionRow, RightPanel, RightPanelTitle, TextArea, PreviousButton } from "../components/RegisterComponents";
 import styled from "styled-components";
 import { uploadFileToFirebase } from "../context/UploadFile"; // 파일 업로드 함수 임포트
+import { AuthContext } from "../context/AuthContext";
 
 
 const QuestionBox3 = styled(QuestionBox)`
@@ -87,7 +88,10 @@ const FileNameSpan = styled.span`
 `;
 
 const RegisterPage3 = () => {
-  const { formData, setFormData, userId } = useForm();
+  const { userInfo, handleLogout } = useContext(AuthContext);
+  const userId = userInfo.token;  
+
+  const { formData, setFormData } = useForm();
   useEffect(() => {
     setFormData((prevData) => ({
       ...prevData,
@@ -200,7 +204,8 @@ const RegisterPage3 = () => {
     try {
       console.log("POST 요청 데이터:", JSON.stringify(sanitizedData, null, 2));
       console.log("RegisterPage3 저장된 데이터:", sanitizedData);
-      const response = await postMemberAPI(sanitizedData);
+      const response = await PostMemberAPI(userId, sanitizedData);
+
       console.log("POST 응답 데이터:", response);
       navigate("/register/4");
     } catch (error) {

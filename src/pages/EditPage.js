@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import {
   useForm,
-  getMembersAPI,
+  GetMembersAPI,
   updateMemberAPI,
   deleteMemberAPI,
 } from "../context/FormContext";
@@ -18,7 +18,7 @@ const EditPage = () => {
     const fetchData = async () => {
       try {
         if (id) {
-          const data = await getMembersAPI(); // 서버에서 데이터 가져오기
+          const data = await GetMembersAPI(); // 서버에서 데이터 가져오기
           const targetData = data.find((item) => String(item.id) === id); // 해당 ID의 데이터 찾기
           if (targetData) {
             setUpdatedData(targetData);

@@ -1,15 +1,16 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import MaketeamSVG from "../assets/maketeam.svg";
 import { uploadFileToFirebase } from "../context/UploadFile";
+import { AuthContext } from "../context/AuthContext";
 
 
 const server = process.env.REACT_APP_SERVER;
-const userId = 15;
+
 // const server = "http://192.168.1.24:8080/post/2";
 // const server = "https://67625e5846efb373237455b0.mockapi.io/gemlense/post";
-export const postMemberAPI = async (data) => {
+export const postMemberAPI = async (userId, data) => {
   try {
     const response = await axios.post(`${server}/post/${userId}`, data);
 
@@ -34,6 +35,8 @@ const MakeTeam = () => {
     memo2: "",
     img: "",
   });
+  const { userInfo, handleLogout } = useContext(AuthContext);
+  const userId = userInfo.token;  
 
   const [imagePreview, setImagePreview] = useState(null);
   const [errors, setErrors] = useState({});
@@ -100,7 +103,7 @@ const MakeTeam = () => {
       
       console.log("Payload to POST:", payload);
   
-      const response = await postMemberAPI(payload);
+      const response = await postMemberAPI(userId, payload);
       console.log("Uploaded Data:", response.data);
   
       if (response.data) {
