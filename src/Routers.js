@@ -16,6 +16,7 @@ import Layout from './components/Layout'
 import MakeTeam from './pages/MakeTeam'
 import OwnerDetailPage from './pages/OwnerDetailPage'
 import { loginInfo } from './context/Auth'
+import { FormProvider } from './context/FormContext'
 
 const Routers = () => {  
   return (
