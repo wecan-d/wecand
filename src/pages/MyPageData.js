@@ -18,18 +18,18 @@ export const owner = [
       "ownerId": 2,
       "applicants": [
         {
-          "applicationId": 11,
-          "userId": 201,
+          "applicationId": 1,
+          "userId": 2,
           "userName": "김철수",
-          "userEmail": "chulsoo@example.com",
-          "status": "pending"
+          "userEmail": "chulsu@example.com",
+          "status": "수락"
         },
         {
-          "applicationId": 12,
-          "userId": 202,
+          "applicationId": 2,
+          "userId": 3,
           "userName": "박영희",
           "userEmail": "younghee@example.com",
-          "status": "approved"
+          "status": "대기중"
         }
       ],
       "imageUrl": "https://example.com/react-project-image.jpg",
@@ -102,31 +102,17 @@ export const applied = [
     "applicants": [
       {
         "applicationId": 1,
-        "userId": 2,
-        "userName": "박수민",
-        "userEmail": "sumin@example.com",
+        "userId": 1,
+        "userName": "김철수",
+        "userEmail": "chulsu@example.com",
         "status": "수락"
       },
       {
         "applicationId": 2,
         "userId": 3,
-        "userName": "박수지",
-        "userEmail": "sumin@example.com",
-        "status": "수락"
-      },
-      {
-        "applicationId": 3,
-        "userId": 4,
-        "userName": "박수빈",
-        "userEmail": "sumin@example.com",
-        "status": "수락"
-      },
-      {
-        "applicationId": 4,
-        "userId": 5,
-        "userName": "박수긴",
-        "userEmail": "sumin@example.com",
-        "status": "수락"
+        "userName": "박영희",
+        "userEmail": "younghee@example.com",
+        "status": "대기중"
       }
     ],
     "imageUrl": "https://example.com/react-project-image.jpg",
@@ -223,96 +209,83 @@ export const applied = [
         "userId": 2,
         "userName": "이수민",
         "userEmail": "sumin@example.com",
-        "status": "대기중"
+        "status": "대기중",
+        
       }
     ],
     "imageUrl": "https://example.com/python-tutorial-image.jpg",
-    "approvedCount": 1
+    "approvedCount": 1,
+    "status": "{\"status\":\"수락\"}"
+    
   }
 ];
 
-export const applicants = [
-  {
-    applicationId: 1,
-    userId: 2,
-    userName: "박수민",
-    userEmail: "sumin@example.com",
-    status: "수락",
-  },
-  {
-    applicationId: 2,
-    userId: 3,
-    userName: "박수지",
-    userEmail: "sumin@example.com",
-    status: "수락",
-  },
-  {
-    applicationId: 3,
-    userId: 4,
-    userName: "박수빈",
-    userEmail: "sumin@example.com",
-    status: "수락",
-  },
-  {
-    applicationId: 4,
-    userId: 5,
-    userName: "박수긴",
-    userEmail: "sumin@example.com",
-    status: "수락",
-  },
-];
+
 
 export const UserCard = [
-  {
-    "cardId": 1,
+  { 
+    "userId": 1,
+    "cardId": 101,
     "name": "김철수",
     "gender": "남성",
     "identity": "학생",
     "major": "컴퓨터공학",
     "age": 22,
-    "email": "kimcs@example.com",
-    "important": "팀워크",
-    "tools": ["Java", "Python"],
-    "certificates": ["정보처리기사"],
-    "additionalInfo": "AI 프로젝트 경험 있음."
-  },
-  {
-    "cardId": 2,
-    "name": "이영희",
-    "gender": "여성",
-    "identity": "디자이너",
-    "major": "시각디자인",
-    "age": 25,
-    "email": "leeyh@example.com",
-    "important": "창의성",
-    "tools": ["Photoshop", "Figma"],
-    "certificates": ["UI/UX 전문가"],
-    "additionalInfo": "스타트업 UX/UI 디자인 경험 있음."
-  },
-  {
-    "cardId": 3,
-    "name": "박민수",
-    "gender": "남성",
-    "identity": "프리랜서",
-    "major": "영상제작",
-    "age": 30,
-    "email": "parkms@example.com",
-    "important": "시간 엄수",
-    "tools": ["Premiere Pro", "After Effects"],
-    "certificates": ["영상편집 전문가"],
-    "additionalInfo": "다큐멘터리 제작 경력 5년."
-  },
-  {
-    "cardId": 4,
-    "name": "최수정",
-    "gender": "여성",
-    "identity": "개발자",
-    "major": "소프트웨어공학",
-    "age": 28,
-    "email": "choisj@example.com",
-    "important": "문제 해결 능력",
-    "tools": ["JavaScript", "React"],
-    "certificates": ["프론트엔드 개발자"],
-    "additionalInfo": "e-커머스 플랫폼 개발 경험 있음."
+    "phone": "010-1234-5678",
+    "email": "chulsu@example.com",
+    "communication": [
+      "대면 소통을 선호합니다.",
+      "그룹 토론을 좋아합니다."
+    ],
+    "teamwork": [
+      "팀 내에서 잘 협력합니다.",
+      "협업 프로젝트에서 주도적인 역할을 맡습니다."
+    ],
+    "thinking": [
+      "논리적인 문제 해결을 선호합니다.",
+      "창의적인 아이디어를 제시합니다."
+    ],
+    "role": [
+      "팀 리더 역할을 맡습니다.",
+      "아이디어 제안자로 활동합니다."
+    ],
+    "conflictResolution": [
+      "효과적으로 갈등을 중재합니다.",
+      "타협에 열려 있습니다."
+    ],
+    "timePreference": [
+      "오전 회의를 선호합니다.",
+      "기한을 엄격히 준수합니다."
+    ],
+    "restPreference": [
+      "짧은 휴식을 자주 취합니다.",
+      "조용한 환경에서 재충전을 선호합니다."
+    ],
+    "friendship": [
+      "장기적인 인간관계를 중요하게 여깁니다.",
+      "비공식적인 팀 활동을 즐깁니다."
+    ],
+    "important": "정직함과 명확한 의사소통",
+    "certificates": [
+      "Scrum Master 인증",
+      "AWS 솔루션 아키텍트 인증"
+    ],
+    "tools": [
+      "Jira",
+      "Figma",
+      "GitHub"
+    ],
+    "awards": [
+      "2022 학장 명단",
+      "2021 해커톤 우승"
+    ],
+    "portfolio": [
+      "https://portfolio.example.com/honggildong"
+    ],
+    "additionalInfo": "새로운 도구와 기술을 배우는 데 열려 있습니다.",
+    "url": [
+      "https://github.com/honggildong",
+      "https://linkedin.com/in/honggildong"
+    ]
   }
 ]

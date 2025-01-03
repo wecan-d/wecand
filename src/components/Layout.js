@@ -20,7 +20,7 @@ const Layout = () => {
         <Outlet />
       </MainContent>
 
-     <Footer />
+     {!isRegisterPage && <Footer />}
     </LayoutContainer>
   );
 };
