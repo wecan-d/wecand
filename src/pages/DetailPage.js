@@ -11,8 +11,13 @@ import DetailSVG from "../assets/detail.svg";
 import { AuthContext } from "../context/AuthContext";
 
 export default function DetailPage() {
+    const navigate = useNavigate();
+    // 지원자용 카드 관리 훅
     const [extraData, setExtraData] = useState([]);
-
+    
+    // 오너용 카드 관리 훅
+    const [ownerId, setOwnerId] = useState();
+    const [owner, setOwner] = useState([]);
     const [selectedPostData, setSelectedPostData] = useState(null);
     const [error, setError] = useState(null);
 
@@ -29,6 +34,7 @@ export default function DetailPage() {
     const { userInfo, handleLogout } = useContext(AuthContext);
     const userId = userInfo.token;
     console.log(postId);
+    // console.log(userId); // 이건 오너 아이디랑 상관 없음 그냥 유저따리
     
     
     
@@ -39,10 +45,11 @@ export default function DetailPage() {
         const fetchExtraData = async () => {
             try {
                 const response = await axios.get(
-                    // `${server}/card/${userId}` //이게 찐또 로그인 했을 때 야미하는 거
-                    `${server}/card/${postId}` // 이거 하면 로그인 안했을 때 테스트는 가능 별 쓸데 없음 근데
+                    `${server}/card/${userId}` //이게 찐또 로그인 했을 때 야미하는 거
+                    // `${server}/card/${postId}` // 이거 하면 로그인 안했을 때 테스트는 가능 별 쓸데 없음 근데
                 );
                 setExtraData(Array.isArray(response.data) ? response.data : []);
+
                 console.log(response.data);
                 console.log("HTTP Status Code:", response.status);
             } catch (err) {
@@ -54,65 +61,77 @@ export default function DetailPage() {
         fetchExtraData();
     }, [server, userId]);
 
+    const fetchPostData = async () => {
+      try {
+          const response = await axios.get(`${server}/post/${postId}`);
+          // 오너 아이디 값도 여기에 포함되어 있음
+          setSelectedPostData(response.data);
 
+          const owner = response.data.ownerId;
+          setOwnerId(owner);
+
+          console.log(owner);
+
+          console.log("HTTP Status Code:", response.status);
+          console.log(response.data);
+
+      } catch (err) {
+          console.error("Error fetching post data:", err.message);
+          console.error("Error fetching post data with status:", err.response?.status);
+          console.log(err.message);
+          setError(err);
+      }
+  };
 
 
 
 
     // GET 선택한 게시물[postId]에 대해서 정보 불러오기 !!완료!!
     useEffect(() => {
-        const fetchPostData = async () => {
-            try {
-                // const response = await axios.get(`https://676e83a3df5d7dac1ccae100.mockapi.io/post/${postId}`);
-                const response = await axios.get(`${server}/post/${postId}`);
-                setSelectedPostData(response.data);
-                console.log("HTTP Status Code:", response.status);
-            } catch (err) {
-                console.error("Error fetching post data:", err.message);
-                console.error("Error fetching post data with status:", err.response?.status);
-                console.log(err.message);
-                setError(err);
-            }
-        };
-        fetchPostData();
-    }, [server,postId]);
+      fetchPostData();
+    }, []);
 
     const handleFirstSubmit = () => {
       setIsModalOpen(true); // Open the first modal
       document.body.style.overflow = "hidden"; 
   };
 
-  const handleOwnerCard = () => {
+  const handleOwnerCard = async () => {
+    
+    const ownerResponse = await axios.get(`${server}/card/${ownerId}`);
+    console.log(ownerResponse.data);
+    setOwner(Array.isArray(ownerResponse.data)? ownerResponse.data : []); // 데이터가 배열이 아니면 배열로 변환
+
     setIsOwnerModalOpen(true);
     document.body.style.overflow = "hidden";
   };
 
-  // const handleSecondSubmit = async () => {
+  const handleSecondSubmit = async () => {
 
       
-  //     const userId = "2"; // Assuming you retrieve the user ID from authentication
-  //     try {
-  //         // Sending POST request to the server
-  //         await axios.post(
-  //             `http://${server}/applications/${userId}/${postId}`
-  //         );
-  //         setIsPostSubmitted(true);
-  //         setIsModalOpen(false); // Close first modal
+      
+      try {
+          // Sending POST request to the server
+          await axios.post(
+              `http://${server}/applications/${userId}/${postId}`
+          );
+          setIsPostSubmitted(true);
+          setIsModalOpen(false); // Close first modal
 
-  //         // Show second confirmation modal after 2 seconds
-  //         setModalTimer(setTimeout(() => {
-  //             setIsConfirmationVisible(true); // Show success confirmation modal
+          // Show second confirmation modal after 2 seconds
+          setModalTimer(setTimeout(() => {
+              setIsConfirmationVisible(true); // Show success confirmation modal
 
-  //             // Hide success modal after another 2 seconds
-  //             setTimeout(() => {
-  //                 setIsConfirmationVisible(false);
-  //                 navigate(`/detail/${postId}`); // Optionally navigate to another page after 2 seconds
-  //             }, 2000);
-  //         }));
-  //     } catch (err) {
-  //         alert("지원에 실패했습니다.");
-  //     }
-  // };
+              // Hide success modal after another 2 seconds
+              setTimeout(() => {
+                  setIsConfirmationVisible(false);
+                  navigate(`/detail/${postId}`); // Optionally navigate to another page after 2 seconds
+              }, 2000);
+          }));
+      } catch (err) {
+          alert("지원에 실패했습니다.");
+      }
+  };
 
   const closeModal = () => {
       clearTimeout(modalTimer);
@@ -226,7 +245,7 @@ export default function DetailPage() {
                       {/* 이거 제목 옆에 > 랑 같이 */}
                         
                         {/* 지원하기 완료되면 대기중 띄우기 (개발 / 진행상황) */}
-                        <ApplyButton onClick={handleFirstSubmit}>지원하기</ApplyButton>
+                        <ApplyButton onClick={handleFirstSubmit}>지원하기</ApplyButton> {/* detail 페이지에서 모달 띄우기 */}
                     </ActionButtons>
                 </SideBox>
 
@@ -246,7 +265,7 @@ export default function DetailPage() {
                                         <CloseButton onClick={closeModal}>×</CloseButton>
                                         <HeaderButtons>
 
-                                            {/* <SubmitButton onClick={handleSecondSubmit}>지원하기</SubmitButton> */}
+                                            <SubmitButton onClick={handleSecondSubmit}>지원하기</SubmitButton> {/* 모달에서 지원하기 */}
                                         </HeaderButtons>
                                     </div>
                                 </div>
@@ -265,11 +284,11 @@ export default function DetailPage() {
                                     <Card style={{ gridArea: "communication" }}>
                                         <CardTitle>소통</CardTitle>
                                         <CardContent>
-                                          {Array.isArray(extraData[userId]?.communication) ? ( extraData[userId].communication.map((contentItem, index) => (
+                                          {Array.isArray(extraData[0]?.communication) ? ( extraData[0].communication.map((contentItem, index) => (
                                             <p key={index}>{contentItem}</p> // 각 요소를 p 태그로 감쌈
                                           ))
                                           ) : (
-                                            <p>{extraData[userId]?.communication || "내용 없음"}</p> // 배열이 아닌 경우 처리
+                                            <p>{extraData[0]?.communication || "내용 없음"}</p> // 배열이 아닌 경우 처리
                                 )}
                                 </CardContent>
                                     </Card>
@@ -279,11 +298,11 @@ export default function DetailPage() {
                                         }}>
                                         <CardTitle>작업</CardTitle>
                                         <CardContent>
-                                          {Array.isArray(extraData[userId]?.teamwork) ? ( extraData[userId].teamwork.map((contentItem, index) => (
+                                          {Array.isArray(extraData[0]?.teamwork) ? ( extraData[0].teamwork.map((contentItem, index) => (
                                             <p key={index}>{contentItem}</p> // 각 요소를 p 태그로 감쌈
                                           ))
                                           ) : (
-                                            <p>{extraData[userId]?.teamwork || "내용 없음"}</p> // 배열이 아닌 경우 처리
+                                            <p>{extraData[0]?.teamwork || "내용 없음"}</p> // 배열이 아닌 경우 처리
                                 )}
                                 </CardContent>
                                     </Card>
@@ -293,11 +312,11 @@ export default function DetailPage() {
                                         }}>
                                         <CardTitle>사고</CardTitle>
                                         <CardContent>
-                                          {Array.isArray(extraData[userId]?.thinking) ? ( extraData[userId].thinking.map((contentItem, index) => (
+                                          {Array.isArray(extraData[0]?.thinking) ? ( extraData[0].thinking.map((contentItem, index) => (
                                             <p key={index}>{contentItem}</p> // 각 요소를 p 태그로 감쌈
                                           ))
                                           ) : (
-                                            <p>{extraData[userId]?.thinking || "내용 없음"}</p> // 배열이 아닌 경우 처리
+                                            <p>{extraData[0]?.thinking || "내용 없음"}</p> // 배열이 아닌 경우 처리
                                 )}
                                 </CardContent>
                                     </Card>
@@ -307,11 +326,11 @@ export default function DetailPage() {
                                         }}>
                                         <CardTitle>역할</CardTitle>
                                         <CardContent>
-                                          {Array.isArray(extraData[userId]?.role) ? ( extraData[userId].role.map((contentItem, index) => (
+                                          {Array.isArray(extraData[0]?.role) ? ( extraData[0].role.map((contentItem, index) => (
                                             <p key={index}>{contentItem}</p> // 각 요소를 p 태그로 감쌈
                                           ))
                                           ) : (
-                                            <p>{extraData[userId]?.role || "내용 없음"}</p> // 배열이 아닌 경우 처리
+                                            <p>{extraData[0]?.role || "내용 없음"}</p> // 배열이 아닌 경우 처리
                                 )}
                                 </CardContent>
                                     </Card>
@@ -321,11 +340,11 @@ export default function DetailPage() {
                                         }}>
                                         <CardTitle>갈등 해결</CardTitle>
                                         <CardContent>
-                                          {Array.isArray(extraData[userId]?.conflictResolution) ? ( extraData[userId].conflictResolution.map((contentItem, index) => (
+                                          {Array.isArray(extraData[0]?.conflictResolution) ? ( extraData[0].conflictResolution.map((contentItem, index) => (
                                             <p key={index}>{contentItem}</p> // 각 요소를 p 태그로 감쌈
                                           ))
                                           ) : (
-                                            <p>{extraData[userId]?.conflictResolution || "내용 없음"}</p> // 배열이 아닌 경우 처리
+                                            <p>{extraData[0]?.conflictResolution || "내용 없음"}</p> // 배열이 아닌 경우 처리
                                 )}
                                 </CardContent>
                                     </Card>
@@ -335,11 +354,11 @@ export default function DetailPage() {
                                         }}>
                                         <CardTitle>시간</CardTitle>
                                         <CardContent>
-                                          {Array.isArray(extraData[userId]?.timePreference) ? ( extraData[userId].timePreference.map((contentItem, index) => (
+                                          {Array.isArray(extraData[0]?.timePreference) ? ( extraData[0].timePreference.map((contentItem, index) => (
                                             <p key={index}>{contentItem}</p> // 각 요소를 p 태그로 감쌈
                                           ))
                                           ) : (
-                                            <p>{extraData[userId]?.timePreference || "내용 없음"}</p> // 배열이 아닌 경우 처리
+                                            <p>{extraData[0]?.timePreference || "내용 없음"}</p> // 배열이 아닌 경우 처리
                                 )}
                                 </CardContent>
                                     </Card>
@@ -349,11 +368,11 @@ export default function DetailPage() {
                                         }}>
                                         <CardTitle>휴식</CardTitle>
                                         <CardContent>
-                                          {Array.isArray(extraData[userId]?.restPreference) ? ( extraData[userId].restPreference.map((contentItem, index) => (
+                                          {Array.isArray(extraData[0]?.restPreference) ? ( extraData[0].restPreference.map((contentItem, index) => (
                                             <p key={index}>{contentItem}</p> // 각 요소를 p 태그로 감쌈
                                           ))
                                           ) : (
-                                            <p>{extraData[userId]?.restPreference || "내용 없음"}</p> // 배열이 아닌 경우 처리
+                                            <p>{extraData[0]?.restPreference || "내용 없음"}</p> // 배열이 아닌 경우 처리
                                 )}
                                 </CardContent>
                                     </Card>
@@ -363,11 +382,11 @@ export default function DetailPage() {
                                         }}>
                                         <CardTitle>친목</CardTitle>
                                         <CardContent>
-                                          {Array.isArray(extraData[userId]?.goal) ? ( extraData[userId].goal.map((contentItem, index) => (
+                                          {Array.isArray(extraData[0]?.goal) ? ( extraData[0].goal.map((contentItem, index) => (
                                             <p key={index}>{contentItem}</p> // 각 요소를 p 태그로 감쌈
                                           ))
                                           ) : (
-                                            <p>{extraData[userId]?.goal || "내용 없음"}</p> // 배열이 아닌 경우 처리
+                                            <p>{extraData[0]?.goal || "내용 없음"}</p> // 배열이 아닌 경우 처리
                                 )}
                                 </CardContent>
                                     </Card>
@@ -377,11 +396,11 @@ export default function DetailPage() {
                                         }}>
                                         <CardTitle>중요하게 생각해요</CardTitle>
                                         <CardContent>
-                                          {Array.isArray(extraData[userId]?.important) ? ( extraData[userId].important.map((contentItem, index) => (
+                                          {Array.isArray(extraData[0]?.important) ? ( extraData[0].important.map((contentItem, index) => (
                                             <p key={index}>{contentItem}</p> // 각 요소를 p 태그로 감쌈
                                           ))
                                           ) : (
-                                            <p>{extraData[userId]?.important || "내용 없음"}</p> // 배열이 아닌 경우 처리
+                                            <p>{extraData[0]?.important || "내용 없음"}</p> // 배열이 아닌 경우 처리
                                 )}
                                 </CardContent>
                                     </Card>
@@ -393,15 +412,15 @@ export default function DetailPage() {
                                 <AdditionalSection>
                                     <SectionColumn>
                                         <SectionTitle>경력 / 경험</SectionTitle>
-                                        <SectionText>{extraData[userId]?.awards}</SectionText>
-                                        <SectionText>{extraData[userId]?.tools}</SectionText>
-                                        <SectionText>{extraData[userId]?.certificates}</SectionText>
-                                        <SectionText>{extraData[userId]?.url}</SectionText>
+                                        <SectionText>{extraData[0]?.awards}</SectionText>
+                                        <SectionText>{extraData[0]?.tools}</SectionText>
+                                        <SectionText>{extraData[0]?.certificates}</SectionText>
+                                        <SectionText>{extraData[0]?.url}</SectionText>
                                         <SectionArea>PDF 자리</SectionArea>
                                     </SectionColumn>
                                     <SectionColumn>
                                         <SectionTitle>기타사항</SectionTitle>
-                                        <SectionArea>{extraData[userId]?.additionalInfo}</SectionArea>
+                                        <SectionArea>{extraData[0]?.additionalInfo}</SectionArea>
                                         
                                         {/* <SectionArea>{extraData[userId]?.file}</SectionArea>
                                          */}
@@ -448,21 +467,20 @@ export default function DetailPage() {
                             <ModalBody>
                                 <SectionStyle>작업 스타일</SectionStyle>
 
-                                {/* 카드 그리드 카드 그리드 카드 그리드 */}
-                                {/* extraData[userId] */}
+                                {/* 오너카드 그리드 */}
                                 <CardGrid>
                                   
                                     
 
-
+                                    
                                     <Card style={{ gridArea: "communication" }}>
                                         <CardTitle>소통</CardTitle>
                                         <CardContent>
-                                          {Array.isArray(extraData[userId]?.communication) ? ( extraData[userId].communication.map((contentItem, index) => (
+                                          {Array.isArray(owner[0]?.communication) ? ( owner[0].communication.map((contentItem, index) => (
                                             <p key={index}>{contentItem}</p> // 각 요소를 p 태그로 감쌈
                                           ))
                                           ) : (
-                                            <p>{extraData[18]?.communication || "내용 없음"}</p> // 배열이 아닌 경우 처리
+                                            <p>{owner[0]?.communication || "내용 없음"}</p> // 배열이 아닌 경우 처리
                                 )}
                                 </CardContent>
                                     </Card>
@@ -472,11 +490,11 @@ export default function DetailPage() {
                                         }}>
                                         <CardTitle>작업</CardTitle>
                                         <CardContent>
-                                          {Array.isArray(extraData[userId]?.teamwork) ? ( extraData[userId].teamwork.map((contentItem, index) => (
+                                          {Array.isArray(owner[0]?.teamwork) ? ( owner[0].teamwork.map((contentItem, index) => (
                                             <p key={index}>{contentItem}</p> // 각 요소를 p 태그로 감쌈
                                           ))
                                           ) : (
-                                            <p>{extraData[userId]?.teamwork || "내용 없음"}</p> // 배열이 아닌 경우 처리
+                                            <p>{extraData[0]?.teamwork || "내용 없음"}</p> // 배열이 아닌 경우 처리
                                 )}
                                 </CardContent>
                                     </Card>
@@ -486,11 +504,11 @@ export default function DetailPage() {
                                         }}>
                                         <CardTitle>사고</CardTitle>
                                         <CardContent>
-                                          {Array.isArray(extraData[userId]?.thinking) ? ( extraData[userId].thinking.map((contentItem, index) => (
+                                          {Array.isArray(owner[0]?.thinking) ? ( owner[0].thinking.map((contentItem, index) => (
                                             <p key={index}>{contentItem}</p> // 각 요소를 p 태그로 감쌈
                                           ))
                                           ) : (
-                                            <p>{extraData[userId]?.thinking || "내용 없음"}</p> // 배열이 아닌 경우 처리
+                                            <p>{extraData[0]?.thinking || "내용 없음"}</p> // 배열이 아닌 경우 처리
                                 )}
                                 </CardContent>
                                     </Card>
@@ -500,11 +518,11 @@ export default function DetailPage() {
                                         }}>
                                         <CardTitle>역할</CardTitle>
                                         <CardContent>
-                                          {Array.isArray(extraData[userId]?.role) ? ( extraData[userId].role.map((contentItem, index) => (
+                                          {Array.isArray(owner[0]?.role) ? ( owner[0].role.map((contentItem, index) => (
                                             <p key={index}>{contentItem}</p> // 각 요소를 p 태그로 감쌈
                                           ))
                                           ) : (
-                                            <p>{extraData[userId]?.role || "내용 없음"}</p> // 배열이 아닌 경우 처리
+                                            <p>{owner[0]?.role || "내용 없음"}</p> // 배열이 아닌 경우 처리
                                 )}
                                 </CardContent>
                                     </Card>
@@ -514,11 +532,11 @@ export default function DetailPage() {
                                         }}>
                                         <CardTitle>갈등 해결</CardTitle>
                                         <CardContent>
-                                          {Array.isArray(extraData[userId]?.conflictResolution) ? ( extraData[userId].conflictResolution.map((contentItem, index) => (
+                                          {Array.isArray(owner[0]?.conflictResolution) ? ( owner[0].conflictResolution.map((contentItem, index) => (
                                             <p key={index}>{contentItem}</p> // 각 요소를 p 태그로 감쌈
                                           ))
                                           ) : (
-                                            <p>{extraData[userId]?.conflictResolution || "내용 없음"}</p> // 배열이 아닌 경우 처리
+                                            <p>{owner[0]?.conflictResolution || "내용 없음"}</p> // 배열이 아닌 경우 처리
                                 )}
                                 </CardContent>
                                     </Card>
@@ -528,11 +546,11 @@ export default function DetailPage() {
                                         }}>
                                         <CardTitle>시간</CardTitle>
                                         <CardContent>
-                                          {Array.isArray(extraData[userId]?.timePreference) ? ( extraData[userId].timePreference.map((contentItem, index) => (
+                                          {Array.isArray(owner[0]?.timePreference) ? ( owner[0].timePreference.map((contentItem, index) => (
                                             <p key={index}>{contentItem}</p> // 각 요소를 p 태그로 감쌈
                                           ))
                                           ) : (
-                                            <p>{extraData[userId]?.timePreference || "내용 없음"}</p> // 배열이 아닌 경우 처리
+                                            <p>{owner[0]?.timePreference || "내용 없음"}</p> // 배열이 아닌 경우 처리
                                 )}
                                 </CardContent>
                                     </Card>
@@ -542,11 +560,11 @@ export default function DetailPage() {
                                         }}>
                                         <CardTitle>휴식</CardTitle>
                                         <CardContent>
-                                          {Array.isArray(extraData[userId]?.restPreference) ? ( extraData[userId].restPreference.map((contentItem, index) => (
+                                          {Array.isArray(owner[0]?.restPreference) ? ( owner[0].restPreference.map((contentItem, index) => (
                                             <p key={index}>{contentItem}</p> // 각 요소를 p 태그로 감쌈
                                           ))
                                           ) : (
-                                            <p>{extraData[18]?.restPreference || "내용 없음"}</p> // 배열이 아닌 경우 처리
+                                            <p>{owner[18]?.restPreference || "내용 없음"}</p> // 배열이 아닌 경우 처리
                                 )}
                                 </CardContent>
                                     </Card>
@@ -556,11 +574,11 @@ export default function DetailPage() {
                                         }}>
                                         <CardTitle>친목</CardTitle>
                                         <CardContent>
-                                          {Array.isArray(extraData[userId]?.goal) ? ( extraData[userId].goal.map((contentItem, index) => (
+                                          {Array.isArray(owner[0]?.goal) ? ( owner[0].goal.map((contentItem, index) => (
                                             <p key={index}>{contentItem}</p> // 각 요소를 p 태그로 감쌈
                                           ))
                                           ) : (
-                                            <p>{extraData[userId]?.goal || "내용 없음"}</p> // 배열이 아닌 경우 처리
+                                            <p>{owner[0]?.goal || "내용 없음"}</p> // 배열이 아닌 경우 처리
                                 )}
                                 </CardContent>
                                     </Card>
@@ -570,11 +588,11 @@ export default function DetailPage() {
                                         }}>
                                         <CardTitle>중요하게 생각해요</CardTitle>
                                         <CardContent>
-                                          {Array.isArray(extraData[userId]?.important) ? ( extraData[userId].important.map((contentItem, index) => (
+                                          {Array.isArray(owner[0]?.important) ? ( owner[0].important.map((contentItem, index) => (
                                             <p key={index}>{contentItem}</p> // 각 요소를 p 태그로 감쌈
                                           ))
                                           ) : (
-                                            <p>{extraData[userId]?.important || "내용 없음"}</p> // 배열이 아닌 경우 처리
+                                            <p>{owner[0]?.important || "내용 없음"}</p> // 배열이 아닌 경우 처리
                                 )}
                                 </CardContent>
                                     </Card>
@@ -586,15 +604,15 @@ export default function DetailPage() {
                                 <AdditionalSection>
                                     <SectionColumn>
                                         <SectionTitle>경력 / 경험</SectionTitle>
-                                        <SectionText>{extraData[userId]?.awards}</SectionText>
-                                        <SectionText>{extraData[userId]?.tools}</SectionText>
-                                        <SectionText>{extraData[userId]?.certificates}</SectionText>
-                                        <SectionText>{extraData[userId]?.url}</SectionText>
+                                        <SectionText>{owner[0]?.awards}</SectionText>
+                                        <SectionText>{owner[0]?.tools}</SectionText>
+                                        <SectionText>{owner[0]?.certificates}</SectionText>
+                                        <SectionText>{owner[0]?.url}</SectionText>
                                         <SectionArea>PDF 자리</SectionArea>
                                     </SectionColumn>
                                     <SectionColumn>
                                         <SectionTitle>기타사항</SectionTitle>
-                                        <SectionArea>{extraData[userId]?.additionalInfo}</SectionArea>
+                                        <SectionArea>{owner[userId]?.additionalInfo}</SectionArea>
                                         
                                         {/* <SectionArea>{extraData[userId]?.file}</SectionArea> */}
                                         
