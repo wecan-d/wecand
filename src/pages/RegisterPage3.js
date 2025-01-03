@@ -207,6 +207,7 @@ const RegisterPage3 = () => {
       const response = await PostMemberAPI(userId, sanitizedData);
 
       console.log("POST 응답 데이터:", response);
+      localStorage.removeItem('formData');
       navigate("/register/4");
     } catch (error) {
       console.error("POST 요청 실패:", error);
@@ -359,7 +360,7 @@ const RegisterPage3 = () => {
 
         <ButtonWrapper>
           <PreviousButton onClick={handlePrevious}>이전</PreviousButton>
-          <NextButton onClick={handleNext}>다음</NextButton>
+          <NextButton onClick={handleNext}>제출</NextButton>
         </ButtonWrapper>
       </RightPanel>
     </Container>
