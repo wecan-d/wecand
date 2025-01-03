@@ -6,10 +6,10 @@ import whitelogo from "../assets/homepage/whitelogo.svg";
 import userProfile from "../assets/profile.png";
 import landsec from "../assets/homepage/landsec.svg";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import landcard1 from "../assets/homepage/landcard1.svg";
-import landcard2 from "../assets/homepage/landcard2.svg";
-import landcard3 from "../assets/homepage/landcard3.svg";
-import landcard4 from "../assets/homepage/landcard4.svg";
+// import landcard1 from "../assets/homepage/landcard1.svg";
+// import landcard2 from "../assets/homepage/landcard2.svg";
+// import landcard3 from "../assets/homepage/landcard3.svg";
+// import landcard4 from "../assets/homepage/landcard4.svg";
 import { loginInfo } from "../context/Auth";
 import { useGoogleLogin } from "./Login";
 

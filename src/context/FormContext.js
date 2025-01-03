@@ -206,11 +206,6 @@ export const FormProvider = ({ children }) => {
 export const useForm = () => useContext(FormContext);
 
 
-// ---------------------- 서버 주소 & API ----------------------
-// const server = "http://172.30.1.32:8080/card/3";
-// const server = process.env.REACT_APP_SERVER;
-// const server = "https://672819eb270bd0b975546065.mockapi.io/api/v1/register";
-
 // // (1) 생성(POST)
 // export const postMemberAPI = async (data) => {
 //   try {
