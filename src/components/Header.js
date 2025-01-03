@@ -49,7 +49,11 @@ const Header = () => {
           value={searchWord}
           onChange={(e) => setSearchWord(e.target.value)}
         />
-        <SearchIcon src={searchicon} onClick={() => handleSubmit()} />
+        <SearchIcon 
+          src={searchicon} 
+          onClick={() => handleSubmit()} 
+          style={{"zIndex": 10}}
+        />
       </SearchWrapper>
 
       {/* 로그인/프로필 영역 */}
@@ -60,7 +64,7 @@ const Header = () => {
         ) : (
           // 로그인 된 경우
           <>
-            <UserNameP>{userInfo.userName} 님</UserNameP>
+            <UserNameP>{userInfo.userName}님</UserNameP>
             <LoginButton onClick={handleLogout}>로그아웃</LoginButton>
           </>
         )}
@@ -90,9 +94,9 @@ const HeaderContainer = styled.div`
 `;
 
 const UserNameP = styled.p`
-  font-size: 18px;
+  font-size: 24px;
   color: #111;
-  font-size: 24px,
+  font-weight: 600;
 `;
 
 export const LoginButton = styled.button`
@@ -127,7 +131,7 @@ export const SearchWrapper = styled.form`
   justify-content: space-between;
   padding: 15px;
 
-  margin-right: 15px;
+  margin-right: 25px;
 `;
 
 export const SearchInput = styled.input`
@@ -143,10 +147,11 @@ export const SearchInput = styled.input`
   }
 `;
 
-export const SearchIcon = styled.span`
-  font-size: 1.2rem;
+export const SearchIcon = styled.img`
+  font-size: 15px;
   color: white;
   cursor: pointer;
+  z-index: 10;
 `;
 
 export const UserProfile = styled.img`
