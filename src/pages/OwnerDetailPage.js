@@ -65,10 +65,8 @@ export default function OwnerDetailPage() {
     }, [focusedId, server]);
 
     const createLand = async () => {
-      const response = await axios.post(`${server}/land/${postId}/create`, {
-        postId: postId,
-        userId: userId,
-      });
+      console.log(postId, userId);
+      const response = await axios.post(`${server}/land/${postId}/create?userId=${userId}`);
 
       console.log(`server/land/${postId}/create`, response);
 
@@ -77,11 +75,14 @@ export default function OwnerDetailPage() {
     // 신청자 상태 업데이트
     const handleStatusUpdate = async (applicantId, status) => {
       try {
+        console.log(status);
           const response = await axios.patch(
-              `${server}/applications/${postId}/${focusedId}`, status
+              `${server}/applications/${postId}/${focusedId}`, status, {
+                headers: { "Content-Type" : "text/plain" }
+              }
             );
           // setError2(response.data, status);
-          console.log(response)
+          console.log(status, response);
           console.log('Status updated:', response.data);
       } catch (error) {
           console.error("Error updating status:", error);
