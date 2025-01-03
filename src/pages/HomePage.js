@@ -559,7 +559,8 @@ const BoxWrapper = styled.div`
 `;
 
 const LeftSection = styled.div`
-  width: 627px;
+  /* width: 627px; */
+  width: 700px;
   height: 100%;
   padding: 29px 30px;
   background-color: #f0f3fa;
@@ -572,15 +573,14 @@ const GridLeft = styled.div`
   
 `;
 
-
 const TagContainer = styled.div`
   display: flex;
   align-items: center;
-  width: 457px;
+  width: 100%; /* 부모 요소의 너비를 채움 */
   height: 50px;
-  
   border-radius: 8px;
-  
+  margin-bottom: 8px; /* 항목 간의 간격 추가 */
+  flex-shrink: 0; /* 컨테이너 크기가 작아도 내부 요소 줄어들지 않음 */
 `;
 
 const Category = styled.div`
@@ -588,19 +588,55 @@ const Category = styled.div`
   font-weight: 600;
   font-size: 22px;
   padding: 0 10px;
-  width: 123px;
-  white-space: nowrap;
-  margin-right: 22px;
+  width: 150px; /* 고정된 너비로 설정 */
+  flex-shrink: 0; /* 크기가 줄어들지 않음 */
+  text-align: left; /* 텍스트를 왼쪽 정렬 */
+  white-space: nowrap; /* 텍스트 줄바꿈 방지 */
+  overflow: hidden; /* 넘치는 텍스트 숨김 */
+  text-overflow: ellipsis; /* 말줄임 표시 */
 `;
-
-
 
 const Title = styled.div`
   font-size: 22px;
   font-weight: 400;
   color: #000000; /* 텍스트 색상 */
-  white-space: nowrap;
+  text-align: left; /* 텍스트를 왼쪽 정렬 */
+  flex-grow: 1; /* 나머지 공간을 차지 */
+  white-space: nowrap; /* 텍스트 줄바꿈 방지 */
+  overflow: visible; /* 넘치는 텍스트 숨김 */
+  text-overflow: ellipsis; /* 말줄임 표시 */
+  max-width: calc(100% - 160px); /* Category 너비를 제외한 영역만 사용 */
+  /* max-width: 500px; 최대 너비를 지정하여 레이아웃을 고정 */
 `;
+
+// const TagContainer = styled.div`
+//   display: flex;
+//   align-items: center;
+//   width: 457px;
+//   height: 50px;
+  
+//   border-radius: 8px;
+  
+// `;
+
+// const Category = styled.div`
+//   color: #6c54f7; /* 텍스트 색상 */
+//   font-weight: 600;
+//   font-size: 22px;
+//   padding: 0 10px;
+//   width: 123px;
+//   white-space: nowrap;
+//   margin-right: 22px;
+// `;
+
+
+
+// const Title = styled.div`
+//   font-size: 22px;
+//   font-weight: 400;
+//   color: #000000; /* 텍스트 색상 */
+//   white-space: nowrap;
+// `;
 
 
 const RightSection = styled.div`
