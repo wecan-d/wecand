@@ -1,15 +1,16 @@
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { auth } from "../firebaseConfig";
 import { loginInfo } from "../context/Auth";
-import { useSetRecoilState } from "recoil";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { useContext } from "react";
+import { AuthContext } from "../context/AuthContext";
+import axios from "axios";
 
 const server = process.env.REACT_APP_SERVER;
 
 export const useGoogleLogin = () => {
-  const setLoginInfoState = useSetRecoilState(loginInfo);
   const navigate = useNavigate();
+  const { handleLogin } = useContext(AuthContext);
 
   const googleLogin = async () => {
     const provider = new GoogleAuthProvider();
@@ -18,8 +19,7 @@ export const useGoogleLogin = () => {
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
       const isNewUser = result._tokenResponse?.isNewUser;
-      let token = 1;
-      console.log("로그인 성공", result);
+      let token = 0;
 
       // 서버에서 토큰 받아오기
       if(!isNewUser) {
@@ -27,16 +27,14 @@ export const useGoogleLogin = () => {
           params: { email: user.email }
         });
         console.log("기존 유저", response);
-        token = response.data.token; // TODO: 응답 구조 보고 수정
-
+        token = response.data; // TODO: 응답 구조 보고 수정
       } else {
         const response = await axios.post(`${server}/user/name-email`, {
           "name": user.displayName,
           "email": user.email,
         });
         console.log("신규 유저", response);
-        token = response.data.token; // TODO: 응답 구조 보고 수정
-
+        token = response.data; // TODO: 응답 구조 보고 수정
       }
 
       const newUserData = {
@@ -46,8 +44,8 @@ export const useGoogleLogin = () => {
         t: token,   // 서버 토큰
       };
 
-      setLoginInfoState(newUserData);
-      localStorage.setItem('loginInfo', JSON.stringify(newUserData));
+      handleLogin(newUserData);
+      // localStorage.setItem('loginInfo', JSON.stringify(newUserData));
 
       console.log('로그인 성공', newUserData);
 
