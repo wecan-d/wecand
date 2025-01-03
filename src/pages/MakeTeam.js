@@ -8,7 +8,6 @@ import { AuthContext } from "../context/AuthContext";
 
 const server = process.env.REACT_APP_SERVER;
 
-
 export const postMemberAPI = async (userId, data) => {
   try {
     const response = await axios.post(`${server}/post/${userId}`, data);
@@ -37,6 +36,7 @@ const MakeTeam = () => {
     memo2: "",
     img: "",
   });
+  
 
   const [imagePreview, setImagePreview] = useState(null);
   const [errors, setErrors] = useState({});

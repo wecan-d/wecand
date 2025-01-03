@@ -222,7 +222,6 @@ const RecruitmentPage = () => {
             )}
           </DropdownContainer>
         </>
-
         <SearchWrapper>
           <SearchInput
             type="text"
@@ -264,7 +263,10 @@ const RecruitmentPage = () => {
                     <PostCardText>마감날짜</PostCardText>
                     <PostInfo>{user.date}</PostInfo>
                     <PostCardText>
-                      현재 모집 현황<PostInfo>2/3</PostInfo>
+                      현재 모집 현황
+                      <PostInfo>
+                        {user.approvedCount}/{user.member}
+                    </PostInfo>
                     </PostCardText>
                   </PostRight>
                 </div>
@@ -411,16 +413,25 @@ const SearchWrapper = styled.div`
   border-radius: 8px;
   justify-content: space-between;
   padding: 15px;
-  position: absolute;
-  top: 354px;
-  right: 335px;
+  margin-left: 594px;
+  /* position: absolute; */
+  /* top: 354px;
+  right: 335px; */
 `;
 const SearchInput = styled.input`
+  font-family: Pretendard;
+  font-size: 20px;
+  font-weight: 500;
+  line-height: 28px;
+  letter-spacing: -0.02em;
+  text-align: left;
+  text-underline-position: from-font;
+  text-decoration-skip-ink: none;
   flex: 1;
   border: none;
   outline: none;
   background: transparent;
-  font-size: 1rem;
+  /* font-size: 1rem; */
   color: #6c6c6c;
   &::placeholder {
     color: #767676;
