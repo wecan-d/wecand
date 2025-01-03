@@ -42,10 +42,11 @@
 
 ### **기술 스택**
 
-1. **Frontend**: React.js + Styled-components + Context API
-2. **Backend**: FireBase + JAVASpring 
+1. **Frontend**: React.js (상태 관리: Context API) 
+2. **Backend**: FireBase + Spring Boot (JAVA)
 3. **Database**: MYSQL + FireBase Storage
 4. **Version-Control**: Git + Github
+5. **Deploy**: Firebase hosting
 ---
 
 ## 기능
@@ -54,7 +55,7 @@
 |:---:|:---:|:---:|
 |역량카드 만들기|지원 및 랜드생성|랜드 화면|
 
-공모전 팀을 구하고 싶은 사람, 그리고 같이 팀활동을 하면서 서로의 역량을 파악하기 힘들기 때문에 이를 해결해주려고 합니다.<br>
+공모전 팀을 구하고 싶은 사람들이 서로의 역량을 파악하기 힘들기 때문에 이를 해결해주려고 합니다.<br>
 - 개인 역량카드 만들기 ⚔️<br>
 개인의 역량카드를 만들고 그 안에 기본정보, 작업스타일, 경험/경력을 넣어 자기만의 역량카드를 만듭니다.
 - 원하는 공모전 팀을 구하고 신청하기 🎯<br>
@@ -66,16 +67,13 @@
 ### **주요 기능**
 
 1. **역량카드 작성**: 사용자가 기본 정보, 소프트스킬, 하드스킬을 작성하여 공유합니다.
-2. **팀원 지원**: 공모전 모집글에 자신이 작성한 역량카드를 첨부하여 지원합니다.
-3. **팀원 모집**: 공모전 팀원을 모집하는 기능으로, 지원자들의 역량카드를 열람하고 팀을 구성합니다.
-4. **랜드 생성**: 팀원들의 합류 상황과 역량카드를 열람할 수 있는 랜드를 생성하여 협업을 촉진합니다.
-5. **피드백 기능**: 팀원 간 역량카드에 대한 피드백을 통해 지속적인 개선과 협업을 강화합니다.
+2. **팀원 지원**: 공모전 모집글을 보고, 자신이 작성한 역량카드를 첨부하여 지원합니다.
+3. **팀원 모집**: 공모전 팀원을 모집하는 기능으로, 팀장은 지원자들의 역량카드를 열람하고 팀원을 선발합니다.
+4. **랜드 생성**: 팀원들의 합류 상황을 파악하고 서로의 역량카드를 열람할 수 있는 랜드를 생성합니다.
 
 ---
-### GemLense-BE ReadMe Url
-: https://github.com/Club-PARD/GemLense-BE/blob/main/README.md
+### GemLense-BE Url
+: [https://github.com/Club-PARD/GemLense-BE/blob/main/README.md](https://github.com/Club-PARD/GemLense-BE?tab=readme-ov-file)
 
 </br>
 </br>
-</br>
-끝!!!
