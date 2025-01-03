@@ -6,11 +6,13 @@ import { uploadFileToFirebase } from "../context/UploadFile";
 import { AuthContext } from "../context/AuthContext";
 
 
-const server = process.env.REACT_APP_SERVER;
+// const server = process.env.REACT_APP_SERVER;
+const userId = 2;
 
 
 const server = "https://67625e5846efb373237455b0.mockapi.io/gemlense/post";
 export const postMemberAPI = async (data) => {
+  
   try {
     const response = await axios.post(`${server}/post/${userId}`, data);
 
@@ -20,6 +22,7 @@ export const postMemberAPI = async (data) => {
     throw error;
   }
 };
+
 
 
 
@@ -35,8 +38,6 @@ const MakeTeam = () => {
     memo2: "",
     img: "",
   });
-  const { userInfo, handleLogout } = useContext(AuthContext);
-  const userId = userInfo.token;  
 
   const [imagePreview, setImagePreview] = useState(null);
   const [errors, setErrors] = useState({});
@@ -72,6 +73,8 @@ const MakeTeam = () => {
       setImagePreview(URL.createObjectURL(file));
     }
   };
+
+  
 
   const validateForm = () => {
     const newErrors = {};
@@ -171,7 +174,7 @@ const MakeTeam = () => {
             <input
               type="text"
               name="title"
-              placeholder="공모전 이름을 입력해주세요."
+              placeholder="공모전 이름을 정확하게 입력해 주세요"
               value={formData.title}
               onChange={handleInputChange}
               style={errors.title ? { ...styles.input, ...styles.inputError } : styles.input}
@@ -190,7 +193,7 @@ const MakeTeam = () => {
                 onChange={handleInputChange}
                 style={errors.category ? { ...styles.select, ...styles.inputError } : styles.select}
               >
-                <option value="">카테고리를 선택해주세요</option>
+                <option value="">공모전 카테고리</option>
                 {categories.map((cat) => (
                   <option key={cat} value={cat}>
                     {cat}
@@ -208,6 +211,7 @@ const MakeTeam = () => {
                 type="date"
                 name="date"
                 value={formData.date}
+                
                 onChange={handleInputChange}
                 style={errors.date ? { ...styles.input, ...styles.inputError } : styles.input}
               />
@@ -221,7 +225,7 @@ const MakeTeam = () => {
               <input
                 type="number"
                 name="member"
-                placeholder="모집 인원을 입력해주세요."
+                
                 value={formData.member}
                 onChange={handleInputChange}
                 style={errors.member ? { ...styles.input, ...styles.inputError } : styles.input}

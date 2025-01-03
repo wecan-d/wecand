@@ -71,9 +71,6 @@
 3. **팀원 모집**: 공모전 팀원을 모집하는 기능으로, 팀장은 지원자들의 역량카드를 열람하고 팀원을 선발합니다.
 4. **랜드 생성**: 팀원들의 합류 상황을 파악하고 서로의 역량카드를 열람할 수 있는 랜드를 생성합니다.
 
----
+—
 ### GemLense-BE Url
-: [https://github.com/Club-PARD/GemLense-BE/blob/main/README.md](https://github.com/Club-PARD/GemLense-BE?tab=readme-ov-file)
-
-</br>
-</br>
+: [https://github.com/Club-PARD/GemLense-BE/blob/main/README.md](https://github.com/Club-PARD/GemLense-BE?tab=readme-ov-fi
