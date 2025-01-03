@@ -17,7 +17,7 @@ const LandCardWrapper = styled.div`
   border-radius: 10px;
   overflow: hidden;
   cursor: pointer;
-  background-color: ${({ isEmpty }) => (isEmpty ? '#F0F3FA' : 'transparent')};
+  background-color: ${( isempty ) => (isempty ? '#F0F3FA' : '#F0F3FA')};
 `;
 
 const LandCardImage = styled.img`
@@ -26,16 +26,6 @@ const LandCardImage = styled.img`
   object-fit: cover;
 `;
 
-const CardInfo = styled.div`
-  position: absolute;
-  bottom: 20px;
-  left: 20px;
-  color: white;
-  font-size: 16px;
-  background-color: rgba(0, 0, 0, 0.5);
-  padding: 10px;
-  border-radius: 5px;
-`;
 
 const Title = styled.p`
   position: absolute;
@@ -83,6 +73,28 @@ const Num = styled.p`
   /* transform: translate(-50%, -50%); */
 `;
 
+const JoinNewLand = styled.div`
+  position: absolute;
+  top: 50%;
+  left: 50%;
+
+  text-align: center;
+  color: #111;
+
+  background-color: #FFF; // TODO: 투명도 70%
+  z-index: 10;
+  font-weight: 500;
+
+  border-radius: 16px;
+  transform: translate(-50%, -50%);
+  opacity: 0.7;
+  
+  font-size: 16px;
+  padding: 10px 15px;
+
+  width: 250px;
+`;
+
 const Status = styled.p`
   position: absolute;
   top: 30px;
@@ -114,18 +126,42 @@ const LandCard = ({ id, title, role, mem, imageKey }) => {
     }
   };
 
+  // console.log("아일랜드 찍는 중", "mem:", mem, "imageKey", imageKey);
   return (
     <LandCardWrapper 
-      isEmpty={id === 0} 
+      isempty={ ((imageKey!==1) && (mem === 0))? 0 : 1 } 
       onClick={handleCardClick}
     >
-      {id !== 0 && imageSrc && <LandCardImage src={imageSrc} alt={title} />}
+      { ((imageKey!==1) && (mem === 0)) ? 
+          (<></>) : 
+          (
+            (id===0)? (
+              <React.Fragment>
+                <LandCardImage src={landcard1} alt={title} />
+                <JoinNewLand>새로운 공모전에 참여해보세요</JoinNewLand>
+              </React.Fragment>
+            ) : (
+                <React.Fragment>
+                  <LandCardImage src={imageSrc} alt={title} />
+                  <Num>{imageKey}</Num>
+                  <Title>{title}</Title>
+                  <Role>{roleLabel}</Role>
+                  <Status>종료</Status>
+                  <MemberCount src={profile} />
+                </React.Fragment>
+            )
+          )
+      }
+
+      {/* {id !== 0 && imageSrc && <LandCardImage src={imageSrc} alt={title} />} */}
       {/* <CardInfo> */}
+      {/*
         <Num>{imageKey}</Num>
         <Title>{title}</Title>
         <Role>{roleLabel}</Role>
         <Status>종료</Status>
-        <MemberCount src={profile} />
+        <MemberCount src={profile} /> 
+      */}
       {/* </CardInfo> */}
     </LandCardWrapper>
   );

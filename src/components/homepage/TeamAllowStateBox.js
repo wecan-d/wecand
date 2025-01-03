@@ -74,7 +74,7 @@ export const TeamAllowStateBox = ({ id, title, status }) => {
   }
 
   const handleClick = () => {
-    navigate(`/details/${id}`);
+    if(id !== 0) navigate(`/details/${id}`);
   };
 
     /* <Box onClick={handleClick} titleLength={title.length * 10}> */
