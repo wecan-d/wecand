@@ -120,7 +120,7 @@ const AddTeamPageModal = ({
     return (
       <Overlay onClick={handleOverlayClick}>
         <ModalContent onClick={(e) => e.stopPropagation()}>
-          <ModalTitle>팀 페이지</ModalTitle>
+          <ModalTitle>팀 페이지 등록하기</ModalTitle>
           <InputLabel>팀 페이지에 등록 할 URL을 입력해주세요</InputLabel>
           <InputField
             type="text"

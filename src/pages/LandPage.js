@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { TransformWrapper, TransformComponent, KeepScale } from "react-zoom-pan-pinch";
 import { MdExpandMore, MdExpandLess } from "react-icons/md";
 import styled from "styled-components";
@@ -24,8 +24,9 @@ import { urls, urlnames, card, card2, members, card1, card4, card3, card5 } from
 
 import { GetMembersAPI } from "../context/FormContext";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import AddTeamPageModal from "../components/modals/AddTeamPageModal";
+import { AuthContext } from "../context/AuthContext";
 
 const SCR_HEIGHT = window.screen.height - (window.outerHeight - window.innerHeight);
 const SCR_WIDTH = window.screen.width - (window.outerWidth - window.innerWidth);
@@ -34,6 +35,8 @@ const BG_RATIO = 1.82;
 const MARGIN_FROM_RIGHT = 50;
 
 const bubbleArr = [bubble1, bubble2, bubble3, bubble4, bubble5, bubble6, bubble7, bubble8, bubble9, bubble10];
+
+const server = process.env.REACT_APP_SERVER;
 
 const Land = ({ teamMembers, hoveredMemberIds, onHover, onOpenSkillCard }) => {
   
@@ -196,7 +199,7 @@ const SkillButton = styled.button`
   padding: 5px 10px;
   cursor: pointer;
   font-size: 17px;
-  width: 79px;
+  width: 82px;
 
 `;
 
@@ -475,18 +478,21 @@ const RightBottomButton = styled.button`
 `;
 
 const Name = styled.p`
-  z-index: 10;
+  z-index: 5;
   font-size: 20px;
+  font-weight: 600;
   color: white;
   
   position: absolute;
-  top: 42px;
-  right: 50px;
+  top: 30px;
+  right: 45px;
 
-  transform: translate(-100%, -100%);
+  transform: translate(-50%, -50%);
 `;
 
 const LandPage = () => {
+
+  const { userInfo, handleLogout } = useContext(AuthContext);
 
   const [isAddTeamPageOpen, setIsAddTeamPageOpen] = useState(false);
   const [isSkillCardOpen, setIsSkillCardOpen] = useState(false);
@@ -494,6 +500,16 @@ const LandPage = () => {
   const [isTeamListExpanded, setIsTeamListExpanded] = useState(false);
   const [selectedUserInfo, setSelectedUserInfo] = useState(null);
   const [teamPage, setTeamPage] = useState([]);
+  const [members, setMembers] = useState([]);
+
+  const { landId } = useParams();
+
+  const getMembers = async () => {
+    const memlist = await axios.get(`${server}/land/${landId}/members`);
+    setMembers(memlist.data);
+  }
+
+
 
   const handleOpenAddTeamPage = () => {
     setIsAddTeamPageOpen(true);
@@ -514,15 +530,10 @@ const LandPage = () => {
     return {name: urlnames[index], url: url};
   });
 
-  const handleOpenSkillCard = (userId) => {
-    const cardMap = {
-      1: card1,
-      2: card2,
-      3: card3,
-      4: card4,
-      5: card5,
-    };
-    setSelectedUserInfo(cardMap[userId]);
+  const handleOpenSkillCard = async (userId) => {
+    const ucard = await axios.get(`${server}/card/${userId}`);
+    setSelectedUserInfo(ucard.data[0]);
+    console.log(ucard.data[0]);
     
     setIsSkillCardOpen(true);
   }
@@ -553,6 +564,14 @@ const LandPage = () => {
     navigate('/mypage');
   }
 
+
+  // const 
+
+  useEffect(() => {
+    if(userInfo.isLoggedIn) getMembers();
+
+  }, [userInfo.isLoggedIn]);
+
   return (
     <div style={{ position: "relative", width: "100vw", height: "100vh", overflow: "hidden", backgroundColor: "#6C54F7" }}>
       <Land 
@@ -566,7 +585,7 @@ const LandPage = () => {
         <LandTitle>PARD</LandTitle>
       </LandTitleDiv>
 
-      <Name>김규리님</Name>
+      <Name>{userInfo.userName}</Name>
       <RightTopButton src={profile} onClick={handleRightTopButtonClick} />
       
       <TeamListFloating
