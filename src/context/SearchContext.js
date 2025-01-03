@@ -3,6 +3,7 @@ import { useSearchParams } from "react-router-dom";
 import axios from "axios";
 
 export const SearchContext = createContext();
+
 const server = process.env.REACT_APP_SERVER;
 
 
