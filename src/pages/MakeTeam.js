@@ -8,9 +8,7 @@ import { AuthContext } from "../context/AuthContext";
 
 const server = process.env.REACT_APP_SERVER;
 
-
-const server = "https://67625e5846efb373237455b0.mockapi.io/gemlense/post";
-export const postMemberAPI = async (data) => {
+export const postMemberAPI = async (userId, data) => {
   try {
     const response = await axios.post(`${server}/post/${userId}`, data);
 
