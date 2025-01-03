@@ -170,7 +170,7 @@ const HomePage = () => {
         <SVGImage src={bgsvg} alt="Main Banner" />
         <MainText>
           <RotatingTextContainer>
-            {/* <StaticText>D</StaticText> */}
+            {/* <StaticText>D</StaticText> 이스터에그 */}
             <HighlightBox>
               <RotatingText>{words[currentWordIndex]}</RotatingText>
             </HighlightBox>
@@ -571,14 +571,14 @@ const LeftSection = styled.div`
 const GridLeft = styled.div`
   display: flex;
   flex-direction: column;
-  
+
 `;
 
 const TagContainer = styled.div`
   display: flex;
   align-items: center;
   width: 100%; /* 부모 요소의 너비를 채움 */
-  height: 50px;
+  height: 44px;
   border-radius: 8px;
   margin-bottom: 8px; /* 항목 간의 간격 추가 */
   flex-shrink: 0; /* 컨테이너 크기가 작아도 내부 요소 줄어들지 않음 */

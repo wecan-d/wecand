@@ -5,6 +5,7 @@ import file from "../assets/mypage/File.svg";
 import link from "../assets/mypage/Link.svg";
 import { AuthContext } from "../context/AuthContext";
 import { useParams } from "react-router-dom";
+import profile from "../assets/profile.png"
 
 // 오우너의 공모전 제목을 불러와야하는데 이거 은근 짜증남 일단 보류
 
@@ -14,6 +15,11 @@ export default function OwnerDetailPage() {
     const { userInfo, handleLogout } = useContext(AuthContext);
     const userId = userInfo.token;
     const server = process.env.REACT_APP_SERVER;
+    
+      // 마지막으로 누른 버튼 상태 ("APPROVED" or "DECLINED" or null)
+    const [lastClickedStatus, setLastClickedStatus] = useState(null);
+    
+
 
 
     // 포커스한 아이디에 대하여 관리하는 훅
@@ -110,9 +116,21 @@ export default function OwnerDetailPage() {
                   >
                     <UserName>{applicant.userName}</UserName>
                     <StatusButtons>
-                      <StatusButton>수락</StatusButton>
+                      <StatusButton
+                      style={{
+                        color:
+                          lastClickedStatus === "APPROVED"
+                            ? "#5020D3A3"
+                            : "#111111", // 기본 색
+                      }}>수락</StatusButton>
                       <StatusDivider />
-                      <StatusButton2>거절</StatusButton2>
+                      <StatusButton2
+                      style={{
+                        color:
+                          lastClickedStatus === "APPROVED"
+                            ? "#5020D3A3"
+                            : "#111111", // 기본 색
+                      }}>거절</StatusButton2>
                     </StatusButtons>
                   </UserContainer>
                 ))
@@ -129,7 +147,7 @@ export default function OwnerDetailPage() {
             <div key={index}>
               <CardContainer>
                 <ImageWrapper>
-                  <ProfileImage src="" alt="Profile" />
+                  <ProfileImage src={profile} alt="Profile" />
                   </ImageWrapper>
                   <TextWrapper2>
                     <div style={({display:'flex', flexDirection:'row', alignItems: 'center', gap:'12px'})}>
@@ -143,8 +161,15 @@ export default function OwnerDetailPage() {
                   </TextWrapper2>
                 </CardContainer>
                 <ButtonContainer>
-                  <Button onClick={() => handleStatusUpdate(cardItem.userId, "DECLINED")}>거절하기</Button>
-                  <Button onClick={() => handleStatusUpdate(cardItem.userId, "APPROVED")}>수락하기</Button>
+                  <Button style={{
+                      color:
+                        lastClickedStatus === "DECLINED"
+                          ? "#5020D3A3"
+                          : "#111111", // 기본 색
+                    }}
+                    onClick={() => handleStatusUpdate(cardItem.userId, "DECLINED")}>거절하기</Button>
+                  <Button 
+                    onClick={() => handleStatusUpdate(cardItem.userId, "APPROVED")}>수락하기</Button>
                 </ButtonContainer>
                 <Text>작업 스타일</Text>
 
@@ -262,19 +287,95 @@ export default function OwnerDetailPage() {
         <Divider />
 
         <AdditionalSection>
-          <SectionColumn>
-            <SectionTitle>경력 / 경험</SectionTitle>
-          </SectionColumn>
-          <SectionColumn>
-            <HeaderText>경력</HeaderText>
-            {Array.isArray(cardItem.awards) &&
-              cardItem.awards.map((award, idx) => (
-                <ContentItem key={idx}>{award}</ContentItem>
-              ))}
-            <HeaderText>기타사항</HeaderText>
-            <SectionArea>{cardItem.additionalInfo || "없음"}</SectionArea>
-          </SectionColumn>
-        </AdditionalSection>
+                                    <SectionColumn>
+                                    <SectionTitle>경력 / 경험</SectionTitle>
+                                    
+                                    <SectionTitle2>툴 / 자격증</SectionTitle2>
+
+                                            {/* 툴 자격증 */}
+                                        {Array.isArray(cardItem?.tools) ? ( cardItem.tools.map((contentItem, index) => (
+                                            <SectionText key={index}>{contentItem}</SectionText> // 각 요소를 p 태그로 감쌈
+                                          ))
+                                          ) : (
+                                            <p>{cardItem?.important || "내용 없음"}</p> // 배열이 아닌 경우 처리
+                                          )}
+
+                                          {Array.isArray(cardItem?.certificates) ? ( cardItem.certificates.map((contentItem, index) => (
+                                            <SectionText key={index}>{contentItem}</SectionText> // 각 요소를 p 태그로 감쌈
+                                          ))
+                                          ) : (
+                                            <p>{cardItem?.important || "내용 없음"}</p> // 배열이 아닌 경우 처리
+                                          )}
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        <SectionTitle2>작업물</SectionTitle2>
+
+                                        <a href={cardItem.fileUrl} target="_blank" style={({border:'none',textDecoration:'none'})}>
+                                        <BoxWrapper>
+                                        
+                                          <ImagePlaceholder>
+
+                                            <ImageStyle src={file} />
+                                            
+                                          </ImagePlaceholder>
+                                          <TextWrapper>
+                                            <FileName>
+                                              개인작업물.pdf</FileName>
+                                            <FileSize>1234KB</FileSize>
+                                          </TextWrapper>
+                                        </BoxWrapper>
+                                        </a>
+
+                                        <a href={cardItem.url} target="_blank" style={({border:'none',textDecoration:'none'})}>
+                                        <BoxWrapper>
+                                        
+                                          <ImagePlaceholder>
+
+                                            <ImageStyle src={link} />
+                                            
+                                          </ImagePlaceholder>
+                                          <TextWrapper>
+                                            <FileName>
+                                            첨부 링크</FileName>
+                                            <FileSize></FileSize>
+                                          </TextWrapper>
+                                        </BoxWrapper>
+                                        </a>
+
+
+                                    </SectionColumn>
+                                    
+                                    <SectionColumn>
+                                      <div style={({marginTop:'87px'})}/>
+
+                                      <div style={({position:'relative'})}>
+                                      <div>
+                                    <SectionTitle2>경력</SectionTitle2>
+
+                                    {Array.isArray(cardItem?.awards) ? ( cardItem.awards.map((contentItem, index) => (
+                                            <SectionText key={index}>{contentItem}</SectionText> // 각 요소를 p 태그로 감쌈
+                                          ))
+                                          ) : (
+                                            <p>{cardItem?.awards || "내용 없음"}</p> // 배열이 아닌 경우 처리
+                                          )}
+
+                                      </div>
+
+
+
+                                          <div style={({position:'absolute',top:'145px',left:'0'})}>
+                                        <SectionTitle2>기타사항</SectionTitle2>
+                                        <SectionArea>{cardItem?.additionalInfo}</SectionArea>
+                                        </div>
+                                        </div>
+                                        
+                                        {/* <SectionArea>{cardItem?.file}</SectionArea> */}
+                                        
+                                    </SectionColumn>
+                                </AdditionalSection>
       </div>
     ))
   ) : (
@@ -682,6 +783,20 @@ const SectionTitle = styled.h4 `
   line-height: normal;
 
 `;
+
+const SectionTitle2 = styled.h4 `
+  color: #111;
+  font-family: Pretendard;
+  font-size: 22px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: normal;
+
+`;
+
+
+
+
 
 const AdditionalSection = styled.div `
   display: flex;
