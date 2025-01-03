@@ -303,7 +303,9 @@ const ButtonContainer = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
+  justify-content: flex-end;
   gap:16px;
+
 `;
 
 const Button = styled.button`

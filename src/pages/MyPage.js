@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import styled from "styled-components";
 import axios from "axios";
 import file from "../assets/mypage/File.svg";
@@ -11,8 +11,11 @@ import wait from "../assets/common/wait.svg"
 
 //임시 데이터
 import { owner, applied } from "./MyPageData"
+import { AuthContext } from "../context/AuthContext";
 
 export default function MyPage() {
+
+    const { userInfo, handleLogout } = useContext(AuthContext);
     // 서버 url 관리 변수
     const server = process.env.REACT_APP_SERVER;
 
@@ -24,7 +27,7 @@ export default function MyPage() {
       const fetchUsers = async () => {
           try {
               // 사용자 카드 데이터 가져와버렸어
-                  const cardResponse = await axios.get(`${server}/card/2`);
+                  const cardResponse = await axios.get(`${server}/card/${userInfo.token}`);
                   const cardData = Array.isArray(cardResponse.data)
                 ? cardResponse.data
                 : [cardResponse.data];
