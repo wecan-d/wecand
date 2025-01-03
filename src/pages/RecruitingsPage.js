@@ -504,15 +504,16 @@ const PostCenter = styled.div`
   padding-left: 19px;
   height: 350px;
   justify-content: space-between;
+  position: relative;
 `;
 
 const ProfileSection = styled.div`
   display: flex;
   align-items: center;
   margin-top: auto;
-  /* position: absolute;
-  top: 140px;
-  left: 0; */
+  position: absolute;
+  top: 299px;
+  left: 20px;
 `;
 
 const ProfileImage = styled.img`
@@ -524,7 +525,7 @@ const ProfileImage = styled.img`
 `;
 
 const OwnerName = styled.span`
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 500;
   color: #4e5968;
 `;
