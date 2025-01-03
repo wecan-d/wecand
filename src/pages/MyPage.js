@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import styled from "styled-components";
 import axios from "axios";
 import file from "../assets/mypage/File.svg";
@@ -11,10 +11,13 @@ import wait from "../assets/common/wait.svg"
 
 //임시 데이터
 import { owner, applied } from "./MyPageData"
+import { AuthContext } from "../context/AuthContext";
 
 export default function MyPage() {
     // 서버 url 관리 변수
     const server = process.env.REACT_APP_SERVER;
+    const { userInfo, handleLogout } = useContext(AuthContext);
+    const userId = userInfo.token;  
 
     // 유저 역량 카드 겟또 /card/{userId}
     const [card, setCard] = useState([{}]);
@@ -24,7 +27,7 @@ export default function MyPage() {
       const fetchUsers = async () => {
           try {
               // 사용자 카드 데이터 가져와버렸어
-                  const cardResponse = await axios.get(`${server}/card/2`);
+                  const cardResponse = await axios.get(`${server}/card/${userId}`);
                   const cardData = Array.isArray(cardResponse.data)
                 ? cardResponse.data
                 : [cardResponse.data];
@@ -37,9 +40,7 @@ export default function MyPage() {
       fetchUsers();
     }, [server]);
 
-    // 테스트 용
-    const userId = 2;
-    
+    // 테스트 용    
     const [userPosts, setUserPosts] = useState([]);
 
     const [applyPosts, setApplyPosts] = useState([]);
@@ -49,7 +50,7 @@ export default function MyPage() {
       const fetchPosts = async () => {
         try{
           const posts = await axios.get(
-            `${server}/post/applied/2`
+            `${server}/post/applied/${userId}`
           )
           console.log(posts.data);
           

@@ -1,10 +1,11 @@
-import React from "react";
+import React, { useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { postMemberAPI, useForm } from "../context/FormContext";
 import "../styles/CommonStyles.css";
 import SurveyIcon from "../assets/register.svg";
 import { Container, LeftPanel, LeftPanelImage, LeftPanelText, LeftPanelTextBox, LeftPanelTitle, NextButton, ProgressBar, ProgressStepOff, ProgressStepOn, PurpleText, QuestionBox, QuestionInput, QuestionLabel, QuestionRadioDiv, QuestionRadioInput, QuestionRadioLabel, QuestionRow, RightPanel, RightPanelText, RightPanelTitle } from "../components/RegisterComponents";
 import styled from "styled-components";
+import { AuthContext } from "../context/AuthContext";
 
 const RightPanel1 = styled(RightPanel)`
   margin-right: 50px;
@@ -15,7 +16,10 @@ const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
 
 const RegisterPage1 = () => {
-  const { formData, setFormData, userId} = useForm();
+  const { userInfo, handleLogout } = useContext(AuthContext);
+  const userId = userInfo.token;
+
+  const { formData, setFormData } = useForm();
   const navigate = useNavigate();
 
   const handleInputChange = (e) => {
@@ -24,6 +28,7 @@ const RegisterPage1 = () => {
   };
   
   const handleNext = async () => {
+
     console.log("RegisterPage1 - 현재 userId:", userId);
     const { cardName, gender, identity, major, age, phone, email } = formData;
 
