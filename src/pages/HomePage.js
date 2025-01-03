@@ -705,6 +705,7 @@ const TeamAllowStateBoxWrapper = styled.div`
   scrollbar-width: none; /* Firefox */
   &::-webkit-scrollbar {
     display: none; /* Chrome, Safari, Opera */
+
   }
   margin-bottom: 80px;
 `;
