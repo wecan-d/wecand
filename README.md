@@ -50,9 +50,9 @@
 
 ## 기능
 
-|![image](https://github.com/user-attachments/assets/da25b0a5-56e6-4d0c-a4da-d6c3fbd90acb)|
-|:---:|
-|랜드 화면|
+|![image](https://github.com/user-attachments/assets/9d5be364-fe27-4d46-9d5e-f8b3bb16b74d)|![image](https://github.com/user-attachments/assets/5affe811-055a-41df-ab7c-fa4d91112d8c)|![image](https://github.com/user-attachments/assets/da25b0a5-56e6-4d0c-a4da-d6c3fbd90acb)|
+|:---:|:---:|:---:|
+|역량카드 만들기|지원 및 랜드생성|랜드 화면|
 
 공모전 팀을 구하고 싶은 사람, 그리고 같이 팀활동을 하면서 서로의 역량을 파악하기 힘들기 때문에 이를 해결해주려고 합니다.<br>
 - 개인 역량카드 만들기 ⚔️<br>
@@ -72,3 +72,10 @@
 5. **피드백 기능**: 팀원 간 역량카드에 대한 피드백을 통해 지속적인 개선과 협업을 강화합니다.
 
 ---
+### GemLense-BE ReadMe Url
+: https://github.com/Club-PARD/GemLense-BE/blob/main/README.md
+
+</br>
+</br>
+</br>
+끝!!!
