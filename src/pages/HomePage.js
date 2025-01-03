@@ -708,6 +708,7 @@ const TeamAllowStateBoxWrapper = styled.div`
 
   }
   margin-bottom: 80px;
+  }
 `;
 
 const Item = styled.div`

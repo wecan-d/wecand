@@ -14,6 +14,7 @@ import { owner, applied } from "./MyPageData"
 import { AuthContext } from "../context/AuthContext";
 
 export default function MyPage() {
+
     // 서버 url 관리 변수
     const server = process.env.REACT_APP_SERVER;
     const { userInfo, handleLogout } = useContext(AuthContext);
@@ -27,7 +28,7 @@ export default function MyPage() {
       const fetchUsers = async () => {
           try {
               // 사용자 카드 데이터 가져와버렸어
-                  const cardResponse = await axios.get(`${server}/card/${userId}`);
+                  const cardResponse = await axios.get(`${server}/card/${userInfo.token}`);
                   const cardData = Array.isArray(cardResponse.data)
                 ? cardResponse.data
                 : [cardResponse.data];
