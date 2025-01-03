@@ -90,10 +90,10 @@ export default function OwnerDetailPage() {
 
 
     return (
-      <> 
-      <div>지원자들의 역량카드를 읽은 후 거절, 수락을 눌러주세요</div>
+      <OutSidePageContainer> 
+      <PageH1>지원자들의 역량카드를 읽은 후 거절, 수락을 눌러주세요</PageH1>
       {/* 이거 공모전 타이틀 */}
-       <div>{apply.title}</div>
+       <PageH2>{apply.title}</PageH2>
         <PageContainer>
           
 
@@ -279,25 +279,49 @@ export default function OwnerDetailPage() {
   ) : (
     <div>지원자를 선택하면 정보가 표시됩니다.</div>
   )}
-  <Button onClick={createLand}>확인하기</Button>
+  
 </PageWrapperRight>
 
-
       </PageContainer>
+        <Button style={{"margin": "20px 120px 150px 0", "alignSelf": "flex-end"}} onClick={createLand}>확인하기</Button>
 
-
-
-                          {/* 현재 참여중인 공모전 */}
-        
-
-
-
-        
-        </>
+      </OutSidePageContainer>
     );
 }
 
 // 개인정보
+
+const PageH1 = styled.h1`
+  margin-left: 120px;
+  font-size: 30px;
+  font-weight: 600;
+  margin-bottom: 5px;
+`;
+
+const PageH2 = styled.h2`
+  margin-left: 120px;
+  font-size: 26px;
+  font-weight: 500;
+  color: #767676;
+  margin-top: 7px;
+  margin-bottom: 20px;
+
+`;
+
+const OutSidePageContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+`;
+
+const PageContainer = styled.div`
+  width: 100%;
+  height: auto;
+  display: flex;
+  justify-content: center;
+  
+`;
 
 const CardContainer = styled.div`
   width: 493px;
@@ -333,6 +357,8 @@ const Button = styled.button`
   border-radius: 8px;
   
 `;
+
+
 const ImageWrapper = styled.div`
   position: relative;
   margin-right: 24px;
@@ -380,20 +406,12 @@ const Email = styled.div`
 
 // 역량카드
 
-const PageContainer = styled.div`
-  width: 1726px;
-  height: auto;
-  display: flex;
-  justify-content: center;
-  margin-bottom: 120px;
-  
-`;
+
 
 const PageWrapperLeft = styled.div`
     width: 428px;
     height: auto;
     
-    margin-left: 76px;
     background: #6C54F7;
     border-radius: 16px;
     /* overflow: auto; */
