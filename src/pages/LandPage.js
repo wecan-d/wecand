@@ -176,8 +176,8 @@ const ProfileWrapper = styled.div`
 `;
 
 const ProfileImage = styled.img`
-  width: 32px;
-  height: 32px;
+  width: 35px;
+  height: 35px;
   border-radius: 50%;
   object-fit: cover;
   margin-right: 10px;
@@ -196,11 +196,13 @@ const SkillButton = styled.button`
   padding: 5px 10px;
   cursor: pointer;
   font-size: 17px;
+  width: 79px;
+
 `;
 
 const ExpandButton = styled.button`
   margin-top: 8px;
-  margin-bottom: 0;
+  margin-bottom: 8px;
   padding: 0;
   background-color: rgba(0, 0, 0, 0);
   color: white;
@@ -319,9 +321,9 @@ const TeamListFloating = ({ members, onHover, onOpenSkillCard, onToggleExpand })
       {members.length > 4 && (
         <ExpandButton onClick={() => {onToggleExpand(!expanded); setExpanded(!expanded); }}>
           {expanded ? (
-              <MdExpandLess />
+              <MdExpandLess size="24" />
           ) : (
-              <MdExpandMore />
+              <MdExpandMore size="24" />
           )}
         </ExpandButton>
       )}
@@ -334,7 +336,7 @@ const TeamPageFloatingContainer = styled.div`
   left: calc(100vw - ${MARGIN_FROM_RIGHT}px);
   transform: translateX(-100%);
   width: 280px;
-  padding: 16px;
+  padding: 22px 24px 28px 24px;
   background-color: rgba(0, 0, 0, 0.5);
   border-radius: 12px;
   z-index: 5;
@@ -351,6 +353,7 @@ const AddButton = styled.button`
   background-color: rgba(0, 0, 0, 0);
   border: none;
   padding: 0;
+  font-size: 18px;
   cursor: pointer;
 `;
 
@@ -379,6 +382,7 @@ const ShortcutName = styled.span`
   color: white;
   cursor: pointer;
   text-decoration: underline;
+  padding-left: 0;
 `;
 
 const TeamPageFloating = ({ memberNum, isTeamListExpanded, teamPages, handleOpenAddTeamPage }) => {
@@ -389,7 +393,7 @@ const TeamPageFloating = ({ memberNum, isTeamListExpanded, teamPages, handleOpen
 
   return (
     <TeamPageFloatingContainer 
-      style={{ top: `calc(111px + 32.5px + ${(memberNum > 4 && (!isTeamListExpanded))? 176: (memberNum <= 4)? 45 * memberNum - 24.5 : 45*memberNum}px + 24.5px + 40px)` }}
+      style={{ top: `calc(111px + 32.5px + ${(memberNum > 4 && (!isTeamListExpanded))? 190: (memberNum <= 4)? 47 * memberNum - 24.5 : 47 * memberNum}px + 24.5px + 40px)` }}
     >
       <TeamPageTitleWrapper>
         <Title>팀 페이지</Title>
@@ -470,6 +474,11 @@ const RightBottomButton = styled.button`
   }
 `;
 
+const Name = styled.p`
+  z-index: 10;
+  font-size: 20px;
+  color: white;
+`;
 
 const LandPage = () => {
 
@@ -555,7 +564,7 @@ const LandPage = () => {
         <LandTitle>PARD</LandTitle>
       </LandTitleDiv>
 
-      
+      <Name>김규리 님</Name>
       <RightTopButton src={profile} onClick={handleRightTopButtonClick} />
       
       <TeamListFloating

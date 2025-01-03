@@ -3,6 +3,7 @@ import { useSearchParams } from "react-router-dom";
 import axios from "axios";
 
 export const SearchContext = createContext();
+const server = process.env.REACT_APP_SERVER;
 
 const server = process.env.REACT_APP_SERVER;
 
@@ -17,7 +18,7 @@ export const SearchProvider = ({ children }) => {
 
     const fetchData = async () => {
       try {
-        const response = await axios.get(`${server}/`)
+        const response = await axios.get(`${server}/post`);
         // const response = await axios.get("https://676e83a3df5d7dac1ccae100.mockapi.io/post");
         setData(response.data); // 전체 데이터 저장
       } catch (error) {

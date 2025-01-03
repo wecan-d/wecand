@@ -3,16 +3,16 @@ import { useParams, useSearchParams, useNavigate, useLocation } from "react-rout
 import styled from "styled-components";
 import axios from "axios";
 // 이미지 import
-import design from "../assets/homepage/디자인.svg"
-import idea from "../assets/homepage/기획아이디어.svg"
-import munhak from "../assets/homepage/문학에세이.svg"
-import photo1 from "../assets/homepage/사진.svg"
-import social from "../assets/homepage/사회공헌봉사.svg"
-import media from "../assets/homepage/영상미디어.svg"
-import music from "../assets/homepage/음악공연.svg"
-import business from "../assets/homepage/창업비즈니스.svg"
-import nonmun from "../assets/homepage/학술논문.svg"
-import programming from "../assets/homepage/IT프로그래밍.svg"
+import design from "../assets/homepage/design.svg"
+import idea from "../assets/homepage/idea.svg"
+import munhak from "../assets/homepage/essay.svg"
+import photo1 from "../assets/homepage/photo.svg"
+import social from "../assets/homepage/social.svg"
+import media from "../assets/homepage/media.svg"
+import music from "../assets/homepage/music.svg"
+import business from "../assets/homepage/business.svg"
+import nonmun from "../assets/homepage/nonmun.svg"
+import programming from "../assets/homepage/programming.svg"
 import searchicon from "../assets/homepage/search.svg"
 
 const server = process.env.REACT_APP_SERVER;
