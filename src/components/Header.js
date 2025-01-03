@@ -1,5 +1,5 @@
 import React, { useState, useContext } from "react";
-import { useNavigate, location } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
 import { AuthContext } from "../context/AuthContext";
@@ -11,6 +11,7 @@ import userProfile from "../assets/profile.png";
 
 const Header = () => {
   const { userInfo, handleLogout } = useContext(AuthContext);
+  const location = useLocation();
   const navigate = useNavigate();
   const googleLogin = useGoogleLogin();
   
@@ -30,7 +31,7 @@ const Header = () => {
   };
 
   // recruitingPage 경로를 확인
-  // const isRecruitingPage = location.pathname.including("/recruiting");
+  const isRecruitingPage = location.pathname.includes("/recruiting");
 
   return (
     <HeaderContainer>
@@ -38,24 +39,25 @@ const Header = () => {
       <Logo src={logo} alt="Wecand Logo" onClick={() => navigate("/home")} />
 
       {/* 검색창 */}
-      <SearchWrapper onSubmit={(e) => {
-        e.preventDefault();
-        handleSubmit();
+      {!isRecruitingPage && 
+        <SearchWrapper onSubmit={(e) => {
+          e.preventDefault();
+          handleSubmit();
 
-      }}>
-        <SearchInput
-          type="text"
-          placeholder="검색어를 입력하세요"
-          value={searchWord}
-          onChange={(e) => setSearchWord(e.target.value)}
-        />
-        <SearchIcon 
-          src={searchicon} 
-          onClick={() => handleSubmit()} 
-          style={{"zIndex": 10}}
-        />
-      </SearchWrapper>
-
+        }}>
+          <SearchInput
+            type="text"
+            placeholder="검색어를 입력하세요"
+            value={searchWord}
+            onChange={(e) => setSearchWord(e.target.value)}
+          />
+          <SearchIcon 
+            src={searchicon} 
+            onClick={() => handleSubmit()} 
+            style={{"zIndex": 10}}
+          />
+        </SearchWrapper>
+      }
       {/* 로그인/프로필 영역 */}
       <LoginWrapper>
         {!userInfo.isLoggedIn ? (

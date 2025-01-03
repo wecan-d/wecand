@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 
+import landcard0 from '../../assets/homepage/landcard0.svg';
 import landcard1 from '../../assets/homepage/landcard1.svg';
 import landcard2 from '../../assets/homepage/landcard2.svg';
 import landcard3 from '../../assets/homepage/landcard3.svg';
@@ -58,21 +59,6 @@ const MemberCount = styled.img`
 
 `;
 
-const Num = styled.p`
-  position: absolute;
-  width: 35px;
-  height: 35px;
-  top: 20px;
-  left: 30px;
-
-  border-radius: 20px;
-  background-color: white;
-
-  text-align: center;
-
-  /* transform: translate(-50%, -50%); */
-`;
-
 const JoinNewLand = styled.div`
   position: absolute;
   top: 50%;
@@ -111,6 +97,7 @@ const LandCard = ({ id, title, role, mem, imageKey }) => {
   const roleLabel = role === 'owner' ? '팀장' : '팀원';
 
   const imageMapping = {
+    0: landcard0,
     1: landcard1,
     2: landcard2,
     3: landcard3,
@@ -137,13 +124,12 @@ const LandCard = ({ id, title, role, mem, imageKey }) => {
           (
             (id===0)? (
               <React.Fragment>
-                <LandCardImage src={landcard1} alt={title} />
+                <LandCardImage src={landcard0} alt={title} />
                 <JoinNewLand>새로운 공모전에 참여해보세요</JoinNewLand>
               </React.Fragment>
             ) : (
                 <React.Fragment>
                   <LandCardImage src={imageSrc} alt={title} />
-                  <Num>{imageKey}</Num>
                   <Title>{title}</Title>
                   <Role>{roleLabel}</Role>
                   <Status>종료</Status>

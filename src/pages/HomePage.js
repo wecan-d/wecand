@@ -57,7 +57,7 @@ const HomePage = () => {
         return {
           id: post.postId+1,
           title: post.title,
-          // status: .status,
+          status: "PENDING",
         }
       
 
@@ -90,14 +90,15 @@ const HomePage = () => {
   }
 
 
-  const landCardData = [
+  const [landCardData, setLandCardData] = useState([
     {
       "landId": 0,
       "landName": "랜드이름",
       "role": "owner",
       "countMember": 1,
     }
-  ];
+  ]);
+
 
   const filteredlandCardData = landCardData.length < 4 ? [
     ...landCardData, ...new Array(4 - landCardData.length).fill(null)
@@ -116,7 +117,7 @@ const HomePage = () => {
   const [searchWord, setSearchWord] = useState("");
   
 
-  useEffect( () => {
+  useEffect(() => {
     if(userInfo.isLoggedIn) getApplyPosts(userInfo.token);
   }, [userInfo.isLoggedIn]); 
 
