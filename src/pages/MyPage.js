@@ -9,9 +9,27 @@ import reject from "../assets/common/reject.svg"
 import accept from "../assets/common/accept.svg"
 import wait from "../assets/common/wait.svg"
 
+import mem1 from "../assets/mypage/mem1.svg"
+import mem2 from "../assets/mypage/mem2.svg"
+import mem3 from "../assets/mypage/mem3.svg"
+import mem4 from "../assets/mypage/mem4.svg"
+import mem5 from "../assets/mypage/mem5.svg"
+
+import profile from "../assets/profile.png"
+
 //임시 데이터
 import { owner, applied } from "./MyPageData"
 import { AuthContext } from "../context/AuthContext";
+import { useNavigate } from "react-router-dom";
+
+
+function chunkArray(array, size) {
+  const result = [];
+  for (let i = 0; i < array.length; i += size) {
+    result.push(array.slice(i, i + size));
+  }
+  return result;
+}
 
 export default function MyPage() {
 
@@ -20,30 +38,46 @@ export default function MyPage() {
     const { userInfo, handleLogout } = useContext(AuthContext);
     const userId = userInfo.token;  
 
+    const navigate = useNavigate();
+
+    // 인원 수에 따른 이미지를 리턴
+    const getMemImage = (count) => {
+      if (count === 1) return mem1;
+      if (count === 2) return mem2;
+      if (count === 3) return mem3;
+      if (count === 4) return mem4;
+      return mem5; // 5명 이상
+    };
+  
+    // 2개씩 나누어 행(row)을 구성
+
     // 유저 역량 카드 겟또 /card/{userId}
     const [card, setCard] = useState([{}]);
 
+    const fetchUsers = async () => {
+      try {
+          // 사용자 카드 데이터 가져와버렸어
+        const cardResponse = await axios.get(`${server}/card/${userInfo.token}`);
+            const cardData = Array.isArray(cardResponse.data)
+          ? cardResponse.data
+          : [cardResponse.data];
+            setCard(cardData); // 항상 배열 안에 객체 형태로 설정
+          console.log(cardData);
+      } catch (err) {
+          setError(err);
+      }
+  };
+
     //데이터 GET
     useEffect(() => {
-      const fetchUsers = async () => {
-          try {
-              // 사용자 카드 데이터 가져와버렸어
-                  const cardResponse = await axios.get(`${server}/card/${userInfo.token}`);
-                  const cardData = Array.isArray(cardResponse.data)
-                ? cardResponse.data
-                : [cardResponse.data];
-                  setCard(cardData); // 항상 배열 안에 객체 형태로 설정
-                  console.log(cardData);
-          } catch (err) {
-              setError(err);
-          }
-      };
-      fetchUsers();
-    }, [server]);
+      if(userInfo.isLoggedIn) {
+        fetchUsers();
+        getJoinedLandData();
+      }
+    }, [userInfo.isLoggedIn]);
 
-    // 테스트 용    
+
     const [userPosts, setUserPosts] = useState([]);
-
     const [applyPosts, setApplyPosts] = useState([]);
 
 
@@ -148,27 +182,6 @@ const OwnerProjects = userPosts.reduce((acc, create) => {
 
 
 
-    // 역량 카드 관련 서버 연결
-    // useEffect(() => {
-    //     const fetchExtraData = async () => {
-    //         try {
-    //             const response = await axios.get(
-    //               `${mock}`
-    //                 // `http://${server}/card/1`
-    //             );
-    //             setExtraData(Array.isArray(response.data) ? response.data : []);
-                
-    //         } catch (err) {
-              
-    //             console.error("Error fetching data:", err.message);
-    //             setError(err);
-    //         }
-    //     };
-    //     fetchExtraData();
-    // }, []);
-
-
-
 
 
 
@@ -176,24 +189,14 @@ const OwnerProjects = userPosts.reduce((acc, create) => {
 
 
     // 현재 참여중인 공모전 목업 데이터
-    const data = [
-      { title: "나는야 파드 공모전", author: "박경민", members: 2 },
-      { title: "나는야 파드 공모전", author: "박경민", members: 2 },
-      { title: "나는야 파드 공모전", author: "박경민", members: 2 },
-      { title: "나는야 파드 공모전", author: "박경민", members: 2 },
-      { title: "나는야 파드 공모전", author: "박경민", members: 2 },
-      { title: "나는야 파드 공모전", author: "박경민", members: 2 },
-      { title: "나는야 파드 공모전", author: "박경민", members: 2 },
-      { title: "나는야 파드 공모전", author: "박경민", members: 2 },
-      { title: "나는야 파드 공모전", author: "박경민", members: 2 },
-      { title: "나는야 파드 공모전", author: "박경민", members: 2 },
-    ];
+    const [data, setData] = useState([]);
+    const getJoinedLandData = async () => {
+      const d = await axios.get(`${server}/user/${userId}/lands`);
+      setData(d.data);
+    };
 
-   
+    const chunkedData = chunkArray(data, 2);
 
-    // 좌측과 우측으로 나누기
-    const leftColumn = data.slice(0, 5);
-    const rightColumn = data.slice(5);
 
     return (
       <>
@@ -205,7 +208,7 @@ card.length > 0 && card[0] && Object.keys(card[0]).length > 0 ? (
     <div key={index}>
       <CardContainer>
         <ImageWrapper>
-          <ProfileImage src="" alt="Profile" style={{ width: '100px', height: '100px' }} />
+          <ProfileImage src={profile} alt="Profile" style={{ width: '100px', height: '100px' }} />
         </ImageWrapper>
         <TextWrapper2>
           <Name>{cardItem.cardName || "이름 없음"}</Name>
@@ -431,21 +434,28 @@ card.length > 0 && card[0] && Object.keys(card[0]).length > 0 ? (
        
                           {/* 현재 참여중인 공모전 */}
         <Container>
-          <Column>
-            {leftColumn.map((item, idx) => (
-              <Card2 key={`left-${idx}`}>
-                <CardInfo>
-                  <ProjectTitle>{item.title}</ProjectTitle>
-                  <TeamLeader>{item.author} <span style={({fontSize:'18px',fontWeight:'400'})}>팀장</span></TeamLeader>
-                </CardInfo>
-                <TeamMember>
-                  <Avatar>👤👤👤👤</Avatar>
-                  <MemberCount>+ 멤버 4명{item.member}</MemberCount>
-                </TeamMember>
-              </Card2>
-            ))}
-          </Column>
-         <Column></Column>
+          {/* chunkedData의 각 row를 렌더링 */}
+          {chunkedData.map((row, rowIndex) => (
+            <Row key={rowIndex}>
+              {row.map((item) => (
+                <Card2
+                  key={item.landId}
+                  onClick={() => navigate(`/land/${item.landId}`)}
+                >
+                  <CardInfo>
+                    <ProjectTitle>{item.landName}</ProjectTitle>
+                    <TeamLeader>
+                      {item.role === "owner" ? "팀장" : "팀원"}
+                    </TeamLeader>
+                  </CardInfo>
+                  <TeamMember>
+                    <MemImage src={getMemImage(item.countMember)} alt="memIcon" />
+                    {(item.countMember > 4)? <Num>+{(item.countMember-4) || 1}</Num> : <></>}
+                  </TeamMember>
+                </Card2>
+              ))}
+            </Row>
+          ))}
         </Container>
 
 
@@ -701,6 +711,16 @@ const CardGrid = styled.div`
         "conflict time important important";
 `;
 
+const Num = styled.p`
+  position: absolute;
+  right: 3px;
+  top: 3px;
+  font-size: 12px;
+  font-weight: 500;
+
+  transform: translate(-50%, -50%);
+`;
+
 const Card = styled.div`
     background: white;
     border-radius: 8px;
@@ -862,12 +882,16 @@ margin-left: 10px;
 //현재 참여중인 공모전 스타일
 const Container = styled.div`
   display: flex;
-  justify-content: space-between;
-  gap: 20px;
-  
-  
+  flex-direction: column;
+  gap: 20px; 
+  width: 1580px;
   margin: 0 114px;
   margin-bottom: 114px;
+`;
+
+const Row = styled.div`
+  display: flex;
+  gap: 20px; 
 `;
 
 const Column = styled.div`
@@ -878,12 +902,18 @@ const Column = styled.div`
 `;
 
 const Card2 = styled.div`
+  width: 775px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 23.5px 25px;
   background: #f0f3fa;
   border-radius: 8px;
+  cursor: pointer;
+
+  &:hover {
+    background: #e6e8f0;
+  }
 `;
 
 const Card3 = styled.div`
@@ -900,6 +930,7 @@ const Card3 = styled.div`
 const CardInfo = styled.div`
   display: flex;
   flex-direction: row;
+  align-items: baseline;
   gap:24px;
 `;
 
@@ -910,17 +941,19 @@ const ProjectTitle = styled.div`
 `;
 
 const TeamLeader = styled.div`
-  font-size: 22px;
+  font-size: 20px;
+  font-weight: 400;
 `;
 
 const TeamMember = styled.div`
   display: flex;
   align-items: center;
   gap: 4px;
+  position: relative;
 `;
 
-const Avatar = styled.div`
-  font-size: 18px;
+const MemImage = styled.img`
+  height: 28px; 
 `;
 
 const MemberCount = styled.div`
