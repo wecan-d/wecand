@@ -15,6 +15,8 @@ import nonmun from "../assets/homepage/nonmun.svg"
 import programming from "../assets/homepage/programming.svg"
 import searchicon from "../assets/homepage/search.svg"
 
+const server = process.env.REACT_APP_SERVER;
+
 const RecruitmentPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -39,14 +41,16 @@ const RecruitmentPage = () => {
     sortParam === "deadline" ? "마감임박순" : "최신순"
   );
   
-  // 데이터 fetch
+  // 모든 게시물 데이터 fetch
   useEffect(() => {
     const fetchUsers = async () => {
       try {
         const response = await axios.get(
-          "https://676e83a3df5d7dac1ccae100.mockapi.io/post"
+          // "https://676e83a3df5d7dac1ccae100.mockapi.io/post"
+          `${server}/post`
         );
         setPost(response.data);
+        console.log(response.data);
       } catch (err) {
         console.error(err);
       }
@@ -243,7 +247,7 @@ const RecruitmentPage = () => {
             <React.Fragment key={index}>
               <Divide />
               <PostCard onClick={() => handlePostClick(user.postId)}>
-                <PostLeft />
+                <PostLeft src={user.img}/>
                 <PostCenter>
                   <div style={{ width: "450px", height: "255px" }}>
                     <div style={{ display: "flex", justifyContent: "flex-start" }}>
@@ -463,11 +467,13 @@ const PostCard = styled.div`
   max-width: 1487px;
 `;
 const PostLeft = styled.img`
-  flex: 0.8;
-  width: 100%;
+  flex: 1;
+  width: 216px;
+  height: auto;
   border-radius: 16px;
   background: #f0f3fa;
-  padding: 3rem;
+  
+  
 `;
 const PostCenter = styled.div`
   flex: 4;
