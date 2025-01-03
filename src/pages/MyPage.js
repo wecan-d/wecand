@@ -15,7 +15,6 @@ import { AuthContext } from "../context/AuthContext";
 
 export default function MyPage() {
 
-    const { userInfo, handleLogout } = useContext(AuthContext);
     // 서버 url 관리 변수
     const server = process.env.REACT_APP_SERVER;
     const { userInfo, handleLogout } = useContext(AuthContext);
