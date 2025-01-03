@@ -57,7 +57,8 @@ const QuestionButton = styled.button`
 
 
 const RegisterPage2 = () => {
-  const { formData, setFormData } = useForm();
+  
+  const { formData, setFormData, userId } = useForm();
   const navigate = useNavigate();
   const [isUpdated, setIsUpdated] = useState(false); // 상태 변수와 상태 업데이트 함수 정의
 
@@ -82,10 +83,14 @@ const RegisterPage2 = () => {
 
   const handleTextChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prevData) => ({ ...prevData, [name]: value }));
+    // 60자 이하로 제한하는 유효성 검사
+    if (value.length <= 60) {
+      setFormData((prevData) => ({ ...prevData, [name]: value }));
+    }
   };
 
   const handleNext = async () => {
+    console.log("RegisterPage2 - 현재 userId:", userId);
     const {
       communication = "",
       teamwork = "",
@@ -112,16 +117,8 @@ const RegisterPage2 = () => {
       alert(`다음 항목을 입력해 주세요: ${missingFields.join(", ")}`);
       return;
     }
-  
-    try {
-      const response = await updateMemberAPI(formData.id, formData);  // userId와 업데이트할 formData를 전달
-      console.log("Update response:", response.data);
-      setIsUpdated(true);  // 업데이트 상태를 true로 변경
-      navigate("/register/3");
-    } catch (error) {
-      console.error("Error during update:", error);
-      setIsUpdated(false);  // 오류 발생 시 상태를 false로 변경
-    }
+    console.log("RegisterPage2 저장된 데이터:", formData);
+    navigate("/register/3");
   };
   
 
@@ -142,6 +139,7 @@ const RegisterPage2 = () => {
 
   useEffect(() => {
     window.scrollTo(0, 0); // 페이지 가장 상단으로 이동
+    console.log("RegisterPage2에서 formData 확인:", formData);
   }, []);
 
   return (
@@ -169,7 +167,7 @@ const RegisterPage2 = () => {
         <RightPanelTitle>작업 스타일을 선택해 주세요</RightPanelTitle>
         {options.map((item) => (
           <QuestionRow2 key={item.category} className="question2">
-            <QuestionLabel2>{item.label}:</QuestionLabel2>
+            <QuestionLabel2>{item.label}</QuestionLabel2>
             <QuestionButtonsDiv>
               {item.options.map((option) => (
                 <QuestionButton
@@ -184,10 +182,10 @@ const RegisterPage2 = () => {
             </QuestionButtonsDiv>
           </QuestionRow2>
         ))}
-        <QuestionLabel2>중요하게 생각해요 (선택):</QuestionLabel2>
+        <QuestionLabel2>이것만큼은 중요하게 생각하시는게 있나요? (60자 내외, 선택)</QuestionLabel2>
         <TextArea
           name="important"
-          placeholder="~은 꼭 지켜줬으면 좋겠어요."
+          placeholder="가장 중요하게 생각 하는것을 한문장으로 작성해 주세요"
           value={formData.important}
           onChange={handleTextChange}
         />

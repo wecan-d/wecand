@@ -10,7 +10,6 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 // import landcard2 from "../assets/homepage/landcard2.svg";
 // import landcard3 from "../assets/homepage/landcard3.svg";
 // import landcard4 from "../assets/homepage/landcard4.svg";
-import { loginInfo } from "../context/Auth";
 import { useGoogleLogin } from "./Login";
 
 import { PurpleText } from "../components/RegisterComponents";
@@ -20,7 +19,8 @@ import { AuthContext } from "../context/AuthContext";
 import { SearchIcon, SearchInput, SearchWrapper } from "../components/Header";
 
 
-const server = process.env.REACT_APP_SERVER;
+
+// const server = process.env.REACT_APP_SERVER;
 
 const HomePage = () => {
   const { userInfo, handleLogout } = useContext(AuthContext);
@@ -28,6 +28,7 @@ const HomePage = () => {
   
   // 로그인, 로그아웃
   const handleGoogleLogin = useGoogleLogin();
+
   const handleLogin = async () => {
     try {
       await handleGoogleLogin();
@@ -122,7 +123,6 @@ const HomePage = () => {
     }, 1000);
     return () => clearInterval(interval);
   }, [words.length]);
-
 
   // 검색 로직
   // const [filteredUsers, setFilteredUsers] = useState([]); // 필터링된 데이터
@@ -434,11 +434,6 @@ const HomePage = () => {
 
 export default HomePage;
 
-const NoResults = styled.div`
-  text-align: center;
-  color: #999;
-`;
-
 // const GlobalStyle = createGlobalStyle`
 //   * {
 //     margin: 0;
@@ -711,7 +706,6 @@ const TeamAllowStateBoxWrapper = styled.div`
   &::-webkit-scrollbar {
     display: none; /* Chrome, Safari, Opera */
   }
-
   margin-bottom: 80px;
 `;
 
@@ -807,11 +801,6 @@ const SectionTitle2 = styled.h2`
   font-weight: 600;
   color: #111;
   margin-bottom: 20px;
-`;
-
-const Description2 = styled.p`
-  font-size: 18px;
-  color: #333;
 `;
 
 

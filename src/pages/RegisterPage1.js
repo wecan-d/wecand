@@ -1,10 +1,11 @@
-import React from "react";
+import React, { useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { postMemberAPI, useForm } from "../context/FormContext";
 import "../styles/CommonStyles.css";
 import SurveyIcon from "../assets/register.svg";
 import { Container, LeftPanel, LeftPanelImage, LeftPanelText, LeftPanelTextBox, LeftPanelTitle, NextButton, ProgressBar, ProgressStepOff, ProgressStepOn, PurpleText, QuestionBox, QuestionInput, QuestionLabel, QuestionRadioDiv, QuestionRadioInput, QuestionRadioLabel, QuestionRow, RightPanel, RightPanelText, RightPanelTitle } from "../components/RegisterComponents";
 import styled from "styled-components";
+import { AuthContext } from "../context/AuthContext";
 
 const RightPanel1 = styled(RightPanel)`
   margin-right: 50px;
@@ -15,6 +16,9 @@ const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
 
 const RegisterPage1 = () => {
+  const { userInfo, handleLogout } = useContext(AuthContext);
+  const userId = userInfo.token;
+
   const { formData, setFormData } = useForm();
   const navigate = useNavigate();
 
@@ -22,37 +26,14 @@ const RegisterPage1 = () => {
     const { name, value } = e.target;
     setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
-
-  const sanitizeFormData = (data) => {
-    const sanitizedData = { ...data };
-  
-    // 배열 필드가 비어 있으면 기본값을 추가 (예: ["string"])
-    const arrayFields = [
-      'communication', 'teamwork', 'thinking', 'role', 
-      'conflictResolution', 'timePreference', 'restPreference', 'friendship',
-      'goal', 'certificates', 'tools', 'awards', 'portfolio', 'additionalInfo', 'url'
-    ];
-  
-    arrayFields.forEach((field) => {
-      if (Array.isArray(sanitizedData[field])) {
-        if (sanitizedData[field].length === 0) {
-          sanitizedData[field] = ["string"]; // 기본값 추가
-        } else {
-          // 배열이 있으면 빈 문자열이 포함되지 않도록 처리
-          sanitizedData[field] = sanitizedData[field].filter(item => item !== "");
-        }
-      }
-    });
-  
-    return sanitizedData;
-  };
-  
   
   const handleNext = async () => {
-    const { name, gender, identity, major, age, phone, email } = formData;
+
+    console.log("RegisterPage1 - 현재 userId:", userId);
+    const { cardName, gender, identity, major, age, phone, email } = formData;
 
     const missingFields = [];
-    if (!name) missingFields.push("이름");
+    if (!cardName) missingFields.push("이름");
     if (!gender) missingFields.push("성별");
     if (!identity) missingFields.push("신분");
     if (!major) missingFields.push("직종/학과");
@@ -77,43 +58,8 @@ const RegisterPage1 = () => {
       alert("나이는 숫자만 입력할 수 있습니다.");
       return;
     }
-
-    // 데이터 정리
-  const sanitizedData = sanitizeFormData(formData);
-
-   // 서버로 데이터 전송 전에 출력하여 디버깅
-   console.log("POST 전송 데이터:", sanitizedData);
-  
-  try {
-    const response = await postMemberAPI(sanitizedData);
-    console.log("POST 응답:", response);
-
-    if (response && response.data) {
-      const { id } = response.data;
-
-      if (!id) {
-        alert("서버에서 id를 반환하지 않았습니다.");
-        return; // id가 없으면 네비게이션을 하지 않음
-      }
-
-      setFormData((prevData) => ({
-        ...prevData,
-        id: id,
-      }));
-
-      console.log("네비게이션 실행");
-      navigate("/register/2");
-    } else {
-      alert("응답 데이터가 올바르지 않습니다.");
-    }
-  } catch (error) {
-    console.error("RegisterPage1 POST error:", error);
-    if (error.response) {
-      // 서버의 상세 오류 메시지 출력
-      console.error("Error response data:", error.response.data);
-    }
-  }
-  // navigate("/register/2");
+    console.log("RegisterPage1 저장된 데이터:", formData);
+    navigate("/register/2");
   };
 
   return (
@@ -177,8 +123,8 @@ const RegisterPage1 = () => {
             <QuestionLabel>이름 <PurpleText>*</PurpleText></QuestionLabel>
             <QuestionInput
               type="text"
-              name="name"
-              value={formData.name}
+              name="cardName"
+              value={formData.cardName}
               onChange={handleInputChange}
               placeholder="이름을 입력해주세요"
             />

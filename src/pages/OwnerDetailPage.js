@@ -5,503 +5,273 @@ import file from "../assets/mypage/File.svg";
 import link from "../assets/mypage/Link.svg";
 
 
-//임시 데이터
-import { owner, applied, applicants } from "./MyPageData"
-
-
-
-
 export default function OwnerDetailPage() {
-
-    //테스트 용 applied
-
-
-
-    // 테스트 용
-    const userId = 2;
-    const userId2 = applicants.userId2;
-    const [userPosts, setUserPosts] = useState([]);
-
-    const [applyUsers, setApplyUsers] = useState([]);
-
-   
-    useEffect(() => {
-      // 주어진 데이터를 기반으로 userId에 해당하는 게시글 필터링
-      const filteredOwnPosts = owner[0].filter(post => post.ownerId === userId);
-      // 주어진 데이터를 기반으로 userId에 해당하는 게시글 필터링
-      const filteredPostsInApplicants = applied.filter(post =>post.applicants.some(applicant => applicant.userId === userId));
-      
-      setUserPosts(filteredOwnPosts);
-
-      setApplyUsers(filteredPostsInApplicants);
-    }, [userId]);
-
-    
-
-
-
+    // 서버 url 관리 변수
     const server = process.env.REACT_APP_SERVER;
-    const mock = process.env.REACT_APP_POST_MOCK;
+    
 
-    // 전체 게시물 sorting 할려고 가져옴
-    const [users, setUsers] = useState([]);
-    // 내가 지원한 공모전 훅 /post/applied/{userId} -> 승인 상태 수락 ? 거절
+    // 포커스한 아이디에 대하여 관리하는 훅
+    const [focusedId, setFocusedId] = useState(null);
+    // 내가 지원한 공모전 훅 /post/{postId}/with-applicants
     const [apply, setApply] = useState([]);
-    // 내가 작성한 공모전 훅 /post/owner/{userId} -> 진행 중 ? 모집완료 //ApproveCount가 Member-1의 수와 일치할 때 모집완료
-    const [create, setCreate] = useState([]);
     // 유저 역량 카드 겟또 /card/{userId}
-    const [card,setCard] = useState(Array(1).fill({}));
+    const [card, setCard] = useState([{}]);
+    const [, setError] = useState(null);
+
+    const [error,setError2] = useState("");
     
 
-    //!! 이 친구 중요할듯 /card/{userId}
-    //만약 해당 게시글에 지원한 지원자들 applications/post/{postId} 에서
-    //왼쪽을 누를 시 해당 유저의 userId 값을 받아와 그리고
-    //card[userId]로 받아와서 -> 열심히 카드로 출력하는거지
-    const cardZero = card[0]; 
-    const cardOne = card[userId];
-
-   
-    // 클백 역량카드 상태관리
-    const [extraData, setExtraData] = useState(Array(19).fill({}));
-    // const [extraData, setExtraData] = useState([{ tools: [], certificates: [] }]);
-    const [error, setError] = useState(null);
+    // 클릭하면 focusId에 userId가 저장됨
+    const handleFocus = (focusedId) => {
+      setFocusedId(focusedId);
+      console.log(focusedId);
+      console.log("Focused ID:", focusedId); 
+    };
     
 
+    //데이터 GET
+    useEffect(() => {
+      const fetchUsers = async () => {
+          try {
+              // 1. 해당 공모전에 신청한 유저 아이디 받아와버렸어
+              const Postresponse = await axios.get(
+                `${server}/post/1/with-applicants`
+              );
+              setApply(Postresponse.data);
+              console.log(Postresponse.data);
 
+              // 2. FocusedId에 해당하는 사용자 카드 데이터 가져와버렸어
+                if (focusedId) {
+                  const cardResponse = await axios.get(`${server}/card/${focusedId}`);
+                  const cardData = Array.isArray(cardResponse.data)
+              ? cardResponse.data
+              : [cardResponse.data]; // 데이터가 배열이 아니면 배열로 변환
+                  setCard(cardData); // 항상 배열 안에 객체 형태로 설정
+                  // console.log(cardData);
+                }
+              
+          } catch (err) {
+              setError(err);
+          }
+      };
+      fetchUsers();
+    }, [focusedId, server]);
 
-
-    // 드롭 다운 관련 상태관리
-    const [isOpen, setIsOpen] = useState(false);
-    const [isOpen2, setIsOpen2] = useState(false);
-    
-    // 토글 핸들러
-    const toggleDropdown = () => {
-      setIsOpen(!isOpen);
-      setIsOpen2(false);
-  };
-
-  const toggleDropdown2 = () => {
-    setIsOpen2(!isOpen2);
-    setIsOpen(false);
-};
-
-// !!!!데이터 가져옴 PostData 전부
-useEffect(() => {
-  const fetchUsers = async () => {
+    // 신청자 상태 업데이트
+    const handleStatusUpdate = async (applicantId, status) => {
       try {
-          const response = await axios.get(
-            //게시물 데이터 다 받아오기
-              `${mock}`
-              // `http://${server}/post`
-          );
-          const response2 = await axios.get(
-            `${mock}`
-            // `http://${server}/post/applied/1`
-          );
-          const response3 = await axios.get(
-            `${mock}`
-            // `http://${server}/post/owner/1`
-          );
-          const response4 = await axios.get(
-            `${mock}`
-            // `http://${server}/card/1`
-          );
-
-          
-          setUsers(response.data);
-          //내가 지원한 공모전
-          setApply(response2.data);
-          //내가 생성한 공모전
-          setCreate(response3.data);
-          //유저의 카드 데이터
-          setCard(response4.data);
-
-          console.log(response.data);
-          //내가 지원한 공모전
-          console.log(response2.data);
-          //내가 생성한 공모전
-          console.log(response3.data);
-          //유저의 카드 데이터
-          console.log(response4.data);
-          
-
-          
-      } catch (err) {
-          setError(err);
-          console.error(err);
+          const response = await axios.patch(
+              `${server}/applications/1/${focusedId}`, 
+              { status },
+              {
+                headers: {
+                  'Content-Type': 'application/json' // JSON 형식으로 데이터를 전송
+                }
+              }
+            );
+          setError2(response.data, status);
+          console.log(response)
+          console.log('Status updated:', response.data);
+      } catch (error) {
+          console.error("Error updating status:", error);
       }
-  };
-  fetchUsers();
-}, []);
-
-
-
-
-
-const [activeButtons, setActiveButtons] = useState({}); 
-const handleButtonClick = (applicationId, status) => {
-  setActiveButtons((prevState) => ({
-    ...prevState,
-    [applicationId]: status, // 특정 지원자의 상태 업데이트
-  }));
-};
-
-
-// 포커스한 아이디에 대하여 관리하는 훅
-const [focusedId, setFocusedId] = useState(null);
-
-const handleFocus = (applicationId) => {
-  setFocusedId(applicationId);
-};
-
+    };
 
 
     return (
       <>
-      <PageContainer>
+        <PageContainer>
 
-        <PageWrapperLeft>
-          <UserListWrapper>
-            <div style={({color: '#FFF',
-                  fontSize: '28px',
-                  fontWeight: '600',
-                  marginBottom: '20px',
-                  marginLeft: '14px'})}>
-                    지원자 목록
-            </div>
-            
-            
-            {applied
-                // postId 필터링은 detail/{postId}/
-              .filter(post => post.postId === 1) // postId가 1인 게시물만 필터링
-
-              .flatMap(post => post.applicants) // 지원자 배열 펼치기
-              .map(applicant => (
-                <UserContainer
-                      key={applicant.applicationId}
-                      applicationId={applicant.userId} //해당 공모전에 지원한 유저의 id
-                      userId={applicant.userId}
-                      onClick={() => handleFocus(applicant.applicationId)} // 클릭된 ID 설정
-                      focused={focusedId === applicant.applicationId} // 조건부 스타일링
-                >
-                  <UserName
-                      >{applicant.userName} </UserName>
+          {/* 페이지 좌측 유저 리스트 나열하는 섹션 */}
+          <PageWrapperLeft>
+            <UserListWrapper>
+              {apply?.applicants?.length > 0 ? (
+                apply.applicants.map((applicant) => (
+                  <UserContainer
+                    key={applicant.applicationId}
+                    onClick={() => handleFocus(applicant.userId)} // 클릭 시 사용자 ID를 상태로 설정
+                    focused={focusedId === applicant.userId}
+                  >
+                    <UserName>{applicant.userName}</UserName>
                     <StatusButtons>
-                      <StatusButton>
-                          수락
-
-                      </StatusButton>
+                      <StatusButton>수락</StatusButton>
                       <StatusDivider />
-
-                      <StatusButton2>
-                          거절
-                      </StatusButton2>
+                      <StatusButton2>거절</StatusButton2>
                     </StatusButtons>
-                  {/* 지원자 이름 출력 */}
-                </UserContainer>
-              ))}
-
-
-                <UserContainer>
-                  
                   </UserContainer>
-             
-          </UserListWrapper>
-
-          
+                ))
+              ) : (
+                <div>지원자가 없습니다.</div>
+              )}
+            </UserListWrapper>
         </PageWrapperLeft>
 
-      
+          {/* 페이지 우측 focus한 유저 정보 역량 카드 */}
         <PageWrapperRight>
-            {/* extraData[userId] */}
-      <div>
-        <div style={({display:'flex', flexDirection:'row', justifyContent:'space-between', alignItems:'center', marginBottom:'42px'})}>
-            <CardContainer>
-        <ImageWrapper>
-          <ProfileImage src="" alt="Profile" style={({width:'1000px',height:'100px'})}/>
-        </ImageWrapper>
-        <TextWrapper2>
-          <div style={({display:'flex', flexDirection:'row', alignItems: 'center', gap:'12px'})}>
-          <Name>{cardZero.name || "이름 없음"}</Name>
-          <Name2>{cardZero.identity || "정보 없음"}</Name2>
-          </div>
-          <div style={({display:'flex',flexDirection:'row',alignItems:'center',gap:'12px'})}>
-            <Details>{cardZero.major || "전공 정보 없음"}</Details>
-            <div style={({width:'1px',height:'21px',border:'1px solid #DBDBDB'})}/>
-            <Email>{cardZero.email || "이메일 없음"}</Email>
-          </div>
-          
-        </TextWrapper2>
-    </CardContainer>
-    <ButtonContainer>
-      <Button>거절하기</Button>
-      <Button>수락하기</Button>
-    </ButtonContainer>
-    </div>
-   
-
-    </div>
-        <Text>작업 스타일</Text>
-
-                                      {/* 그리드 좌측 */}
-            
-                <CardGrid>
-                    <Card style={{ gridArea: "communication" }}>
-                        <CardTitle>소통</CardTitle>
-                        <CardContent>
-                            {Array.isArray(cardZero?.communication)
-                                ? cardZero.communication.map((contentItem, index) => (
-                                      <p key={index}>{contentItem}</p>
-                                  ))
-                                : "내용 없음"}
+          {card.length > 0 && card[0] && Object.keys(card[0]).length > 0 ? (
+            card.map((cardItem, index) => (
+            <div key={index}>
+              <CardContainer>
+                <ImageWrapper>
+                  <ProfileImage src="" alt="Profile" />
+                  </ImageWrapper>
+                  <TextWrapper2>
+                    <div style={({display:'flex', flexDirection:'row', alignItems: 'center', gap:'12px'})}>
+                      <Name>{cardItem.name || "이름 없음"}</Name>
+                      <Name2>{cardItem.identity || "정보 없음"}</Name2>
+                    </div>
+                    <div>
+                        <Details>{cardItem.major || "전공 정보 없음"}</Details>
+                        <Email>{cardItem.email || "이메일 없음"}</Email>
+                    </div>
+                  </TextWrapper2>
+                </CardContainer>
+                <ButtonContainer>
+                <Button onClick={() => handleStatusUpdate(cardItem.userId, "거절")}>거절하기</Button>
+                  <Button onClick={() => handleStatusUpdate(cardItem.userId, "수락")}>수락하기</Button>
+                </ButtonContainer>
+                <Text>작업 스타일</Text>
 
 
-                                <CardContent><p>비대면소통을 선호해요</p></CardContent>
-                                <CardContent><p>비대면소통을 선호해요</p></CardContent>
-                                <CardContent><p>비대면소통을 선호해요</p></CardContent>
-                                
-                        </CardContent>
-                    </Card>
-                    <Card style={{ gridArea: "work" }}>
+                {/* 카드 그리드 */}
+<CardGrid>
+          <Card style={{ gridArea: "communication" }}>
+            <CardTitle>소통</CardTitle>
+            <CardContent>
+              {Array.isArray(cardItem.communication)
+                ? cardItem.communication.map((contentItem, idx) => (
+                    <p key={idx}>{contentItem}</p>
+                  ))
+                : "내용 없음"}
+            </CardContent>
+          </Card>
+
+
+          <Card style={{ gridArea: "work" }}>
                         <CardTitle>작업</CardTitle>
                         <CardContent>
-                            {Array.isArray(cardZero?.teamwork)
-                                ? cardZero.teamwork.map((contentItem, index) => (
+                            {Array.isArray(cardItem?.teamwork)
+                                ? cardItem.teamwork.map((contentItem, index) => (
                                       <p key={index}>{contentItem}</p>
                                   ))
                                 : "내용 없음"}
                         </CardContent>
-                    </Card>
-                    <Card style={{ gridArea: "thinking" }}>
+          </Card>
+
+
+          <Card style={{ gridArea: "thinking" }}>
                         <CardTitle>사고</CardTitle>
                         <CardContent>
-                            {Array.isArray(cardZero?.thinking)
-                                ? cardZero.thinking.map((contentItem, index) => (
+                            {Array.isArray(cardItem?.thinking)
+                                ? cardItem.thinking.map((contentItem, index) => (
                                       <p key={index}>{contentItem}</p>
                                   ))
                                 : "내용 없음"}
                         </CardContent>
-                    </Card>
-                    <Card style={{ gridArea: "role" }}>
+          </Card>
+
+
+          <Card style={{ gridArea: "role" }}>
                         <CardTitle>역할</CardTitle>
                         <CardContent>
-                            {Array.isArray(cardZero?.role)
-                                ? cardZero.role.map((contentItem, index) => (
+                            {Array.isArray(cardItem?.role)
+                                ? cardItem.role.map((contentItem, index) => (
                                       <p key={index}>{contentItem}</p>
                                   ))
                                 : "내용 없음"}
                         </CardContent>
-                    </Card>
-                    <Card style={{ gridArea: "conflict" }}>
+          </Card>
+
+
+          <Card style={{ gridArea: "conflict" }}>
                         <CardTitle>갈등 해결</CardTitle>
                         <CardContent>
-                            {Array.isArray(cardZero?.conflictResolution)
-                                ? cardZero.conflictResolution.map((contentItem, index) => (
+                            {Array.isArray(cardItem?.conflictResolution)
+                                ? cardItem.conflictResolution.map((contentItem, index) => (
                                       <p key={index}>{contentItem}</p>
                                   ))
                                 : "내용 없음"}
                         </CardContent>
-                        <CardContent><p>비대면소통을 선호해요</p></CardContent>
-                        <CardContent><p>비대면소통을 선호해요</p></CardContent>
-                        <CardContent><p>비대면소통을 선호해요</p></CardContent>
+          </Card>
 
-                    </Card>
-                    <Card style={{ gridArea: "time" }}>
+
+          <Card style={{ gridArea: "time" }}>
                         <CardTitle>시간</CardTitle>
                         <CardContent>
-                            {Array.isArray(cardZero?.timePreference)
-                                ? cardZero.timePreference.map((contentItem, index) => (
+                            {Array.isArray(cardItem?.timePreference)
+                                ? cardItem.timePreference.map((contentItem, index) => (
                                       <p key={index}>{contentItem}</p>
                                   ))
                                 : "내용 없음"}
                         </CardContent>
-                    </Card>
-                    <Card style={{ gridArea: "rest" }}>
+          </Card>
+
+
+          <Card style={{ gridArea: "rest" }}>
                         <CardTitle>휴식</CardTitle>
                         <CardContent>
-                            {Array.isArray(cardZero?.restPreference)
-                                ? cardZero.restPreference.map((contentItem, index) => (
+                            {Array.isArray(cardItem?.restPreference)
+                                ? cardItem.restPreference.map((contentItem, index) => (
                                       <p key={index}>{contentItem}</p>
                                   ))
                                 : "내용 없음"}
                         </CardContent>
-                    </Card>
-                    <Card style={{ gridArea: "friendship" }}>
+          </Card>
+
+
+          <Card style={{ gridArea: "friendship" }}>
                         <CardTitle>친목</CardTitle>
                         <CardContent>
-                            {Array.isArray(cardZero?.goal)
-                                ? cardZero.goal.map((contentItem, index) => (
+                            {Array.isArray(cardItem?.friendship)
+                                ? cardItem.friendship.map((contentItem, index) => (
                                       <p key={index}>{contentItem}</p>
                                   ))
                                 : "내용 없음"}
                         </CardContent>
-                    </Card>
-                    <Card style={{ gridArea: "important" }}>
+          </Card>
+
+
+          <Card style={{ gridArea: "important" }}>
                         <CardTitle>중요하게 생각해요</CardTitle>
                         <CardContent>
-                            {Array.isArray(cardZero?.important)
-                                ? cardZero.important.map((contentItem, index) => (
+                            {Array.isArray(cardItem?.important)
+                                ? cardItem.important.map((contentItem, index) => (
                                       <p key={index}>{contentItem}</p>
                                   ))
                                 : "내용 없음"}
                         </CardContent>
-                        <CardContent><p>비대면소통을 선호해요</p></CardContent>
-                      
-                    </Card>
-                </CardGrid>
+          </Card>
 
 
-                <div style={({marginTop: '30px'})}/>
-                                <Divider/>
-
-                                <AdditionalSection>
-
-                                  {/* 좌측 */}
-                                    <SectionColumn>
-                                        <SectionTitle>경력 / 경험</SectionTitle>
-                                        
-                                    </SectionColumn>
+</CardGrid>
 
 
 
+        <div style={({marginTop: '30px'})}/>
+        <Divider />
 
-                                    {/* 우측  */}
-                                    <SectionColumn>
-                                      
-                                      
-
-                                    <HeaderText>경력</HeaderText>
-
-                                        {/* tools 배열 출력 !! 이거 다 communication에서 awards로 바꾸기*/}
-                                        {Array.isArray(cardZero?.awards) && cardZero.awards.map((awards, index) => ( 
-                                            <ContentItem key={`awards-${index}`}>{awards}</ContentItem>
-                                          ))}
-                                          
-
-                                          <div></div>
-                                        여기 경력 나열 하는 곳 
-
-                                        
-                                        <HeaderText>기타사항</HeaderText>
-
-                                        
-                                        <SectionArea>{extraData[18]?.additionalInfo}</SectionArea>
-                                        
-                                        {/* <SectionArea>{extraData[18]?.file}</SectionArea> */}
-                                        
-                                    </SectionColumn>
-                                </AdditionalSection>
-            
-
-                                          {/* 그리드 우측 */}
-            
+        <AdditionalSection>
+          <SectionColumn>
+            <SectionTitle>경력 / 경험</SectionTitle>
+          </SectionColumn>
+          <SectionColumn>
+            <HeaderText>경력</HeaderText>
+            {Array.isArray(cardItem.awards) &&
+              cardItem.awards.map((award, idx) => (
+                <ContentItem key={idx}>{award}</ContentItem>
+              ))}
+            <HeaderText>기타사항</HeaderText>
+            <SectionArea>{cardItem.additionalInfo || "없음"}</SectionArea>
+          </SectionColumn>
+        </AdditionalSection>
+      </div>
+    ))
+  ) : (
+    <div>지원자를 선택하면 정보가 표시됩니다.</div>
+  )}
+</PageWrapperRight>
 
 
-
-
-              <RightGridWrapper>
-                                  {/* 드롭다운 */}
-                <DropdownContainer>
-                  
-                    <HeaderText>툴 / 자격증</HeaderText>
-                      
-                  
-                  
-
-                       {/* tools 배열 출력 !! 이거 다 communication에서 tools로 바꾸기*/}
-                      {Array.isArray(cardZero?.tools) && cardZero.tools.map((tools, index) => ( 
-                        <ContentItem key={`tools-${index}`}>{tools}</ContentItem>
-                      ))}
-                      {/* tools 배열 출력 !! 이거 다 communication에서 certificates로 바꾸기*/}
-                      {Array.isArray(cardZero?.certificates) && cardZero.certificates.map((certificates, index) => ( 
-                        <ContentItem key={`certificates-${index}`}>{certificates}</ContentItem>
-                      ))}
-                      <div></div>
-                    여기 툴 자격증 나열하는 곳
-                  
-            
-                </DropdownContainer>
-
-                
-                  
-                    
-                <HeaderText2>작업물</HeaderText2>
-                <div></div>
-
-                {card
-                  .filter(item => item.file || item.url)
-                  .map((item, index) =>(
-                    <React.Fragment key={index}>
-
-                        {/* .file 값이 존재하는 경우 */}
-                      {item.file && (
-                        <BoxWrapper>
-                          <ImagePlaceholder>
-                            <ImageStyle src={item.file}/>
-                          </ImagePlaceholder>
-
-                          <TextWrapper>
-                            {/* 이거 파일 이름이랑 사이즈 어캐 받아오지 파일 데이터 안에 있나? */}
-
-                            {/* <FileName>{item.fileName || "파일 이름 없음"}</FileName>
-                            <FileSize>{item.fileSize || "파일 크기 없음"}</FileSize> */}
-                          </TextWrapper>
-                        </BoxWrapper>
-                      )}
-
-                      {/* .url 값이 존재하는 경우 */}
-                      {item.url && (
-                        <BoxWrapper>
-                          <ImagePlaceholder>
-                            <ImageStyle src={item.url} />
-                          </ImagePlaceholder>
-                          <TextWrapper>
-                            이거 어캐해
-                            {/* <FileName>{item.url || "URL 없음"}</FileName> */}
-                          </TextWrapper>
-                        </BoxWrapper>
-                      )}
-
-                    </React.Fragment>
-                  ))
-                }
-
-                
-
-                                
-                                
-                                
-                                
-                                {/* 여기에 파일 추가시 이 박스를 생성하는 로직 짜야함 */}
-                <BoxWrapper>
-                  <ImagePlaceholder>
-                    <ImageStyle src={file}/>
-                  </ImagePlaceholder>
-                  <TextWrapper>
-                    <FileName>잼민이들.pdf</FileName>
-                    <FileSize>1234KB</FileSize>
-                  </TextWrapper>
-                </BoxWrapper>
-
-
-
-                <BoxWrapper>
-                  <ImagePlaceholder>
-                    <ImageStyle src={link}/>
-                  </ImagePlaceholder>
-                  <TextWrapper>
-                    <FileName>www.figma.com</FileName>
-                    
-                  </TextWrapper>
-                </BoxWrapper>
-
-                
-                  <HeaderArea>{cardZero.additionalInfo}</HeaderArea>
-
-              </RightGridWrapper>
-            
-            
-        </PageWrapperRight>
       </PageContainer>
 
 

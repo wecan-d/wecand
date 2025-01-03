@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import styled from "styled-components";
 import axios from "axios";
 import file from "../assets/mypage/File.svg";
@@ -11,48 +11,80 @@ import wait from "../assets/common/wait.svg"
 
 //임시 데이터
 import { owner, applied } from "./MyPageData"
+import { AuthContext } from "../context/AuthContext";
 
 export default function MyPage() {
+    // 서버 url 관리 변수
+    const server = process.env.REACT_APP_SERVER;
+    const { userInfo, handleLogout } = useContext(AuthContext);
+    const userId = userInfo.token;  
 
-    //테스트 용 applied
+    // 유저 역량 카드 겟또 /card/{userId}
+    const [card, setCard] = useState([{}]);
 
+    //데이터 GET
+    useEffect(() => {
+      const fetchUsers = async () => {
+          try {
+              // 사용자 카드 데이터 가져와버렸어
+                  const cardResponse = await axios.get(`${server}/card/${userId}`);
+                  const cardData = Array.isArray(cardResponse.data)
+                ? cardResponse.data
+                : [cardResponse.data];
+                  setCard(cardData); // 항상 배열 안에 객체 형태로 설정
+                  console.log(cardData);
+          } catch (err) {
+              setError(err);
+          }
+      };
+      fetchUsers();
+    }, [server]);
 
-
-    // 테스트 용
-    const userId = 2;
+    // 테스트 용    
     const [userPosts, setUserPosts] = useState([]);
 
     const [applyPosts, setApplyPosts] = useState([]);
 
+
     useEffect(() => {
+      const fetchPosts = async () => {
+        try{
+          const posts = await axios.get(
+            `${server}/post/applied/${userId}`
+          )
+          console.log(posts.data);
+          
+          // const filteredApplyPosts = posts.filter(post =>post.applicants.some(applicant => applicant.userId === userId));
+          const filteredApplyPosts = posts.filter(post =>post.applicants.some(applicant => applicant.status === "APPEND"));
+          
+          setApplyPosts(filteredApplyPosts);
+          console.log(filteredApplyPosts);
+
+        }catch (err) {
+          console.error('Error fetching data:', err);
+          setError(err);
+      }
+    };
+      fetchPosts();
+    }, [userId, server]);
+
+     // 주어진 데이터를 기반으로 userId에 해당하는 게시글 필터링
+      // const filteredOwnPosts = owner[0].filter(post => post.ownerId === userId);
       // 주어진 데이터를 기반으로 userId에 해당하는 게시글 필터링
-      const filteredOwnPosts = owner[0].filter(post => post.ownerId === userId);
-      // 주어진 데이터를 기반으로 userId에 해당하는 게시글 필터링
-      const filteredApplyPosts = applied.filter(post =>post.applicants.some(applicant => applicant.userId === userId));
+      // const filteredApplyPosts = applied.filter(post =>post.applicants.some(applicant => applicant.userId === userId));
 
-      setUserPosts(filteredOwnPosts);
-
-      setApplyPosts(filteredApplyPosts);
-    }, [userId]);
-
-    
-
-
-
-
-    const server = process.env.REACT_APP_SERVER;
+      // setUserPosts(filteredOwnPosts);
     const mock = process.env.REACT_APP_POST_MOCK;
-
+    
+    
+    
     // 전체 게시물 sorting 할려고 가져옴
     const [users, setUsers] = useState([]);
     // 내가 지원한 공모전 훅 /post/applied/{userId} -> 승인 상태 수락 ? 거절
     const [apply, setApply] = useState([]);
     // 내가 작성한 공모전 훅 /post/owner/{userId} -> 진행 중 ? 모집완료 //ApproveCount가 Member-1의 수와 일치할 때 모집완료
     const [create, setCreate] = useState([]);
-    // 유저 역량 카드 겟또 /card/{userId}
-    const [card,setCard] = useState(Array(1).fill({}));
     
-    const cardZero = card[0]; 
 
     // 내가 참여중인 공모전 훅 /land/{landId}/members
     const [join , setJoin] = useState([]);
@@ -80,55 +112,6 @@ export default function MyPage() {
     setIsOpen2(!isOpen2);
     setIsOpen(false);
 };
-
-// !!!!데이터 가져옴 PostData 전부
-useEffect(() => {
-  const fetchUsers = async () => {
-      try {
-          const response = await axios.get(
-            //게시물 데이터 다 받아오기
-              `${mock}`
-              // `http://${server}/post`
-          );
-          const response2 = await axios.get(
-            `${mock}`
-            // `http://${server}/post/applied/1`
-          );
-          const response3 = await axios.get(
-            `${mock}`
-            // `http://${server}/post/owner/1`
-          );
-          const response4 = await axios.get(
-            `${mock}`
-            // `http://${server}/card/1`
-          );
-
-          
-          setUsers(response.data);
-          //내가 지원한 공모전
-          setApply(response2.data);
-          //내가 생성한 공모전
-          setCreate(response3.data);
-          //유저의 카드 데이터
-          setCard(response4.data);
-
-          console.log(response.data);
-          //내가 지원한 공모전
-          console.log(response2.data);
-          //내가 생성한 공모전
-          console.log(response3.data);
-          //유저의 카드 데이터
-          console.log(response4.data);
-          
-
-          
-      } catch (err) {
-          setError(err);
-          console.error(err);
-      }
-  };
-  fetchUsers();
-}, []);
 
 
 // 카테고리별로 그룹화 -> 자신이 지원한 게시물보기
@@ -213,19 +196,22 @@ const OwnerProjects = userPosts.reduce((acc, create) => {
 
     return (
       <>
+
+
+{card.length > 0 && card[0] && Object.keys(card[0]).length > 0 ? (
+  card.map((cardItem, index) => (
+    <div key={index}>
       <CardContainer>
         <ImageWrapper>
-          <ProfileImage src="" alt="Profile" style={({width:'100px',height:'100px'})}/>
+          <ProfileImage src="" alt="Profile" style={{ width: '100px', height: '100px' }} />
         </ImageWrapper>
         <TextWrapper2>
-          <Name>{cardZero.name || "이름 없음"}</Name>
-          <Details>{cardZero.major || "전공 정보 없음"}</Details>
-          <Email>{cardZero.email || "이메일 없음"}</Email>
+          <Name>{cardItem.cardName || "이름 없음"}</Name>
+          <Details>{cardItem.major || "전공 정보 없음"}</Details>
+          <Email>{cardItem.email || "이메일 없음"}</Email>
         </TextWrapper2>
-    </CardContainer>
-
-
-
+      </CardContainer>
+ 
 
 
       <PageContainer>
@@ -241,8 +227,8 @@ const OwnerProjects = userPosts.reduce((acc, create) => {
                     <Card style={{ gridArea: "communication" }}>
                         <CardTitle>소통</CardTitle>
                         <CardContent>
-                            {Array.isArray(cardZero?.communication)
-                                ? cardZero.communication.map((contentItem, index) => (
+                            {Array.isArray(cardItem?.communication)
+                                ? cardItem.communication.map((contentItem, index) => (
                                       <p key={index}>{contentItem}</p>
                                   ))
                                 : "내용 없음"}
@@ -251,8 +237,8 @@ const OwnerProjects = userPosts.reduce((acc, create) => {
                     <Card style={{ gridArea: "work" }}>
                         <CardTitle>작업</CardTitle>
                         <CardContent>
-                            {Array.isArray(cardZero?.teamwork)
-                                ? cardZero.teamwork.map((contentItem, index) => (
+                            {Array.isArray(cardItem?.teamwork)
+                                ? cardItem.teamwork.map((contentItem, index) => (
                                       <p key={index}>{contentItem}</p>
                                   ))
                                 : "내용 없음"}
@@ -261,8 +247,8 @@ const OwnerProjects = userPosts.reduce((acc, create) => {
                     <Card style={{ gridArea: "thinking" }}>
                         <CardTitle>사고</CardTitle>
                         <CardContent>
-                            {Array.isArray(cardZero?.thinking)
-                                ? cardZero.thinking.map((contentItem, index) => (
+                            {Array.isArray(cardItem?.thinking)
+                                ? cardItem.thinking.map((contentItem, index) => (
                                       <p key={index}>{contentItem}</p>
                                   ))
                                 : "내용 없음"}
@@ -271,8 +257,8 @@ const OwnerProjects = userPosts.reduce((acc, create) => {
                     <Card style={{ gridArea: "role" }}>
                         <CardTitle>역할</CardTitle>
                         <CardContent>
-                            {Array.isArray(cardZero?.role)
-                                ? cardZero.role.map((contentItem, index) => (
+                            {Array.isArray(cardItem?.role)
+                                ? cardItem.role.map((contentItem, index) => (
                                       <p key={index}>{contentItem}</p>
                                   ))
                                 : "내용 없음"}
@@ -281,8 +267,8 @@ const OwnerProjects = userPosts.reduce((acc, create) => {
                     <Card style={{ gridArea: "conflict" }}>
                         <CardTitle>갈등 해결</CardTitle>
                         <CardContent>
-                            {Array.isArray(cardZero?.conflictResolution)
-                                ? cardZero.conflictResolution.map((contentItem, index) => (
+                            {Array.isArray(cardItem?.conflictResolution)
+                                ? cardItem.conflictResolution.map((contentItem, index) => (
                                       <p key={index}>{contentItem}</p>
                                   ))
                                 : "내용 없음"}
@@ -291,8 +277,8 @@ const OwnerProjects = userPosts.reduce((acc, create) => {
                     <Card style={{ gridArea: "time" }}>
                         <CardTitle>시간</CardTitle>
                         <CardContent>
-                            {Array.isArray(cardZero?.timePreference)
-                                ? cardZero.timePreference.map((contentItem, index) => (
+                            {Array.isArray(cardItem?.timePreference)
+                                ? cardItem.timePreference.map((contentItem, index) => (
                                       <p key={index}>{contentItem}</p>
                                   ))
                                 : "내용 없음"}
@@ -301,8 +287,8 @@ const OwnerProjects = userPosts.reduce((acc, create) => {
                     <Card style={{ gridArea: "rest" }}>
                         <CardTitle>휴식</CardTitle>
                         <CardContent>
-                            {Array.isArray(cardZero?.restPreference)
-                                ? cardZero.restPreference.map((contentItem, index) => (
+                            {Array.isArray(cardItem?.restPreference)
+                                ? cardItem.restPreference.map((contentItem, index) => (
                                       <p key={index}>{contentItem}</p>
                                   ))
                                 : "내용 없음"}
@@ -311,8 +297,8 @@ const OwnerProjects = userPosts.reduce((acc, create) => {
                     <Card style={{ gridArea: "friendship" }}>
                         <CardTitle>친목</CardTitle>
                         <CardContent>
-                            {Array.isArray(cardZero?.goal)
-                                ? cardZero.goal.map((contentItem, index) => (
+                            {Array.isArray(cardItem?.friendship)
+                                ? cardItem.friendship.map((contentItem, index) => (
                                       <p key={index}>{contentItem}</p>
                                   ))
                                 : "내용 없음"}
@@ -321,11 +307,7 @@ const OwnerProjects = userPosts.reduce((acc, create) => {
                     <Card style={{ gridArea: "important" }}>
                         <CardTitle>중요하게 생각해요</CardTitle>
                         <CardContent>
-                            {Array.isArray(cardZero?.important)
-                                ? cardZero.important.map((contentItem, index) => (
-                                      <p key={index}>{contentItem}</p>
-                                  ))
-                                : "내용 없음"}
+                            {cardItem.important}
                         </CardContent>
                     </Card>
                 </CardGrid>
@@ -345,11 +327,11 @@ const OwnerProjects = userPosts.reduce((acc, create) => {
                   <DropdownContent>
 
                        {/* tools 배열 출력 !! 이거 다 communication에서 tools로 바꾸기*/}
-                      {Array.isArray(cardZero?.tools) && cardZero.tools.map((tools, index) => ( 
+                      {Array.isArray(cardItem?.tools) && cardItem.tools.map((tools, index) => ( 
                         <ContentItem key={`tools-${index}`}>{tools}</ContentItem>
                       ))}
                       {/* tools 배열 출력 !! 이거 다 communication에서 certificates로 바꾸기*/}
-                      {Array.isArray(cardZero?.certificates) && cardZero.certificates.map((certificates, index) => ( 
+                      {Array.isArray(cardItem?.certificates) && cardItem.certificates.map((certificates, index) => ( 
                         <ContentItem key={`certificates-${index}`}>{certificates}</ContentItem>
                       ))}
                       
@@ -366,7 +348,7 @@ const OwnerProjects = userPosts.reduce((acc, create) => {
             {isOpen2 && (
                   <DropdownContent>
                      {/* tools 배열 출력 !! 이거 다 communication에서 awards로 바꾸기*/}
-                     {Array.isArray(cardZero?.awards) && cardZero.awards.map((awards, index) => ( 
+                     {Array.isArray(cardItem?.awards) && cardItem.awards.map((awards, index) => ( 
                         <ContentItem key={`awards-${index}`}>{awards}</ContentItem>
                       ))}
                   </DropdownContent>
@@ -375,43 +357,7 @@ const OwnerProjects = userPosts.reduce((acc, create) => {
 
                 <HeaderText2>작업물</HeaderText2>
 
-                {card
-                  .filter(item => item.file || item.url)
-                  .map((item, index) =>(
-                    <React.Fragment key={index}>
-
-                        {/* .file 값이 존재하는 경우 */}
-                      {item.file && (
-                        <BoxWrapper>
-                          <ImagePlaceholder>
-                            <ImageStyle src={item.file}/>
-                          </ImagePlaceholder>
-
-                          <TextWrapper>
-                            {/* 이거 파일 이름이랑 사이즈 어캐 받아오지 파일 데이터 안에 있나? */}
-
-                            {/* <FileName>{item.fileName || "파일 이름 없음"}</FileName>
-                            <FileSize>{item.fileSize || "파일 크기 없음"}</FileSize> */}
-                          </TextWrapper>
-                        </BoxWrapper>
-                      )}
-
-                      {/* .url 값이 존재하는 경우 */}
-                      {item.url && (
-                        <BoxWrapper>
-                          <ImagePlaceholder>
-                            <ImageStyle src={item.url} />
-                          </ImagePlaceholder>
-                          <TextWrapper>
-                            이거 어캐해
-                            {/* <FileName>{item.url || "URL 없음"}</FileName> */}
-                          </TextWrapper>
-                        </BoxWrapper>
-                      )}
-
-                    </React.Fragment>
-                  ))
-                }
+                
 
                 
 
@@ -420,38 +366,50 @@ const OwnerProjects = userPosts.reduce((acc, create) => {
                                 
                                 
                                 {/* 여기에 파일 추가시 이 박스를 생성하는 로직 짜야함 */}
+                <a href={cardItem.fileUrl} style={({border:'none',textDecoration:'none'})}>
                 <BoxWrapper>
+                
                   <ImagePlaceholder>
                     <ImageStyle src={file}/>
                   </ImagePlaceholder>
                   <TextWrapper>
-                    <FileName>잼민이들.pdf</FileName>
+                    <FileName>
+                      개인작업물.pdf</FileName>
                     <FileSize>1234KB</FileSize>
                   </TextWrapper>
                 </BoxWrapper>
+                </a>
 
 
-
+                <a href={cardItem.url} style={({border:'none',textDecoration:'none'})}>
                 <BoxWrapper>
                   <ImagePlaceholder>
                     <ImageStyle src={link}/>
                   </ImagePlaceholder>
                   <TextWrapper>
                     <FileName>www.figma.com</FileName>
-                    
                   </TextWrapper>
                 </BoxWrapper>
+                </a>
 
 
                         {/* 여기에 기타사항 추가 로직 짜야함 다 짬*/}
                 <HeaderText2>기타사항</HeaderText2>
-                  <HeaderArea>{cardZero.additionalInfo}</HeaderArea>
+                  <HeaderArea>{cardItem.additionalInfo}</HeaderArea>
 
               </RightGridWrapper>
             </RightGrid>
             </GridWrapper>
         </PageWrapper>
       </PageContainer>
+
+      </div>
+  ))
+) : (
+  <div>카드 정보가 없습니다.</div> // 여기에 내용이 없을 때 처리할 추가적인 UI를 넣어도 좋습니다.
+)}
+
+
 
 
 
@@ -530,7 +488,7 @@ const OwnerProjects = userPosts.reduce((acc, create) => {
 
                 .filter(apply =>
                   apply.applicants.some(applicant =>
-                    ["거절", "대기중"].includes(applicant.status)
+                    [ "APPEND"].includes(applicant.status)
                   )
                 ).map((category) => (
                   
@@ -539,9 +497,9 @@ const OwnerProjects = userPosts.reduce((acc, create) => {
                     
                     <img
                         src={
-                          category.applicants.some(applicant => applicant.status === "대기중")
+                          category.applicants.some(applicant => applicant.status === "APPEND")
                             ? wait // 대기 중
-                            : category.applicants.some(applicant => applicant.status === "거절")
+                            : category.applicants.some(applicant => applicant.status === "{\"status\":\"거절\"}")
                             ? reject // 거절
                             : null
                         }
@@ -806,6 +764,10 @@ const HeaderArea = styled.div`
   width: 455px;
   height: auto;
   margin-top: 22px;
+  color: #FFF;
+
+font-family: Pretendard;
+font-size: 18px;
 `;
 
 const Arrow = styled.div`

@@ -4,7 +4,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 export const uploadFileToFirebase = async (file) => {
   try {
-    const fileRef = ref(fbstorage, `${uuidv4()}_${file.name}`);
+    const fileRef = ref(fbstorage, `${uuidv4()}`);
     const uploadResult = await uploadBytes(fileRef, file);
     const fileURL = await getDownloadURL(uploadResult.ref);
     return fileURL;

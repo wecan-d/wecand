@@ -1,9 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { updateMemberAPI, useForm } from "../context/FormContext";
+import { PostMemberAPI, useForm } from "../context/FormContext";
 import SurveyIcon from "../assets/register.svg";
 import { Container, LeftPanel, LeftPanelImage, LeftPanelText, LeftPanelTextBox, LeftPanelTitle, mainColorPurple, NextButton, ProgressBar, ProgressStepOn, QuestionBox, QuestionLabel, QuestionRow, RightPanel, RightPanelTitle, TextArea, PreviousButton } from "../components/RegisterComponents";
 import styled from "styled-components";
+import { uploadFileToFirebase } from "../context/UploadFile"; // 파일 업로드 함수 임포트
+import { AuthContext } from "../context/AuthContext";
 
 
 const QuestionBox3 = styled(QuestionBox)`
@@ -86,6 +88,9 @@ const FileNameSpan = styled.span`
 `;
 
 const RegisterPage3 = () => {
+  const { userInfo, handleLogout } = useContext(AuthContext);
+  const userId = userInfo.token;  
+
   const { formData, setFormData } = useForm();
   useEffect(() => {
     setFormData((prevData) => ({
@@ -93,7 +98,7 @@ const RegisterPage3 = () => {
       certificates: prevData.certificates?.length > 0 ? prevData.certificates : [""],
       tools: prevData.tools?.length > 0 ? prevData.tools : [""],
       awards: prevData.awards?.length > 0 ? prevData.awards : [""],
-      url: prevData.url?.length > 0 ? prevData.url : [""],
+      url: prevData.url || "",
     }));
   }, [setFormData]);
 
@@ -135,23 +140,61 @@ const RegisterPage3 = () => {
    */
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prevData) => ({ ...prevData, [name]: value }));
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: name === "age" ? parseInt(value, 10) || "" : value, // age는 정수로 변환
+    }));
   };
+
+  const sanitizeData = (data) => {
+    const sanitized = { ...data };
+  
+    // age를 정수로 변환
+    sanitized.age = parseInt(data.age, 10) || 0;
+  
+    // 파일 필드 처리
+    sanitized.fileUrl = sanitized.fileUrl || null;
+  
+    // 배열 필드 비어있으면 기본값 추가
+    const arrayFields = ['communication', 'teamwork', 'thinking', 'role', 'certificates', 'tools', 'awards'];
+    arrayFields.forEach((field) => {
+      if (!Array.isArray(sanitized[field]) || sanitized[field].length === 0) {
+        sanitized[field] = [];
+      }
+    });
+  
+    return sanitized;
+  };
+  
 
   /**
    * 파일 선택 시
    */
   const [ fileName, setFileName ] = useState('선택된 파일이 없습니다');
-  const handleFileChange = (e) => {
-    const file = e.target.files[0];
-    setFormData((prevData) => ({ ...prevData, file }));
-    setFileName((file ? file.name: "선택된 파일이 없습니다."));
+  // Handle file change and upload to Firebase
+  const handleFileChange = async (e) => {
+    const fileUrl = e.target.files[0];
+    if (fileUrl) {
+      setFileName(fileUrl.name);
+      try {
+        const fileURL = await uploadFileToFirebase(fileUrl); // 파일 업로드 및 URL 반환
+        setFormData((prevData) => ({ ...prevData, fileUrl: fileURL })); // URL을 formData에 저장
+        console.log("Uploaded File URL:", fileURL); // 확인용 로그
+      } catch (error) {
+        console.error("파일 업로드 실패:", error);
+        alert("파일 업로드 중 문제가 발생했습니다. 다시 시도해주세요.");
+      }
+    } else {
+      setFileName("선택된 파일이 없습니다");
+    }
   };
 
   /**
    * '다음' 버튼 클릭 시 로직
    */
   const handleNext = async () => {
+    console.log("RegisterPage3 - 현재 userId:", userId);
+    const sanitizedData = sanitizeData(formData);
     // 200자 제한 체크
     if (formData.additionalInfo?.length > 200) {
       alert("추가 작성란은 200자 이내로 작성해 주세요.");
@@ -159,14 +202,18 @@ const RegisterPage3 = () => {
     }
 
     try {
-      // PATCH 요청으로 수정 (기존 데이터를 업데이트)
-      const response = await updateMemberAPI(formData.id, formData);  // formData.id와 업데이트할 formData 전달
-      console.log("RegisterPage3 PATCH response:", response.data);
-    } catch (error) {
-      console.error("RegisterPage3 PATCH error:", error);
-    }
+      console.log("POST 요청 데이터:", JSON.stringify(sanitizedData, null, 2));
+      console.log("RegisterPage3 저장된 데이터:", sanitizedData);
+      const response = await PostMemberAPI(userId, sanitizedData);
 
-    navigate("/register/4");
+      console.log("POST 응답 데이터:", response);
+      navigate("/register/4");
+    } catch (error) {
+      console.error("POST 요청 실패:", error);
+      if (error.response) {
+        console.error("서버 응답 데이터:", error.response.data);
+      }
+    }
   };
 
   const handlePrevious = () => {
@@ -185,15 +232,20 @@ const RegisterPage3 = () => {
   ) => {
     const fieldData = Array.isArray(formData[fieldName]) ? formData[fieldName] : []; // 배열이 아니면 빈 배열로 설정
 
+    // "개인 작업물 링크"의 경우 추가 버튼을 숨김
+  const hideAddButton = fieldName === "url";
+
     return (
       <QuestionBox3>
 
         <QuestionRow>
           <QuestionLabel>{label}</QuestionLabel>
           
+          {!hideAddButton && (
           <AnswerAddButton type="button" onClick={() => handleAddItem(fieldName)}>
             추가하기
           </AnswerAddButton>
+          )}
         </QuestionRow>
         
         {fieldData.map((value, index) => (
@@ -267,17 +319,27 @@ const RegisterPage3 = () => {
         {renderArrayField("사용 가능한 툴을 입력해 주세요", "tools", "사용 가능한 툴을 입력해주세요")}
         {renderArrayField("소지하신 자격증을 입력해 주세요", "certificates", "자격증을 입력해주세요")}
         {renderArrayField("수상 경력을 입력해 주세요", "awards", "수상 경력을 입력해주세요")}
-        {renderArrayField("개인 작업물 링크를 첨부해 주세요 (URL)", "url", "개인 작업물 URL을 입력해주세요")}
+
+        <QuestionBox3>
+          <QuestionLabel>개인 작업물 링크를 첨부해 주세요 (URL)</QuestionLabel>
+          <AddInput
+            type="text"
+            name="url"
+            value={formData.url}
+            onChange={handleInputChange}
+            placeholder="개인 작업물 URL을 입력해주세요"
+          />
+        </QuestionBox3>
 
         <QuestionBox3>
           <QuestionLabel>개인 작업물 파일을 첨부해주세요 (PDF)</QuestionLabel>
           <FileInputWrapper>
             <HiddenInput 
-              id="file" 
+              id="fileUrl" 
               type="file" 
               onChange={handleFileChange} 
             />
-            <Label htmlFor="file">파일선택</Label>
+            <Label htmlFor="fileUrl">파일선택</Label>
             <FileNameSpan>{fileName}</FileNameSpan>
           </FileInputWrapper>
 
