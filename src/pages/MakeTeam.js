@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 import MaketeamSVG from "../assets/maketeam.svg";
 import { uploadFileToFirebase } from "../context/UploadFile";
 import { AuthContext } from "../context/AuthContext";
-import "./MakeTeam.css"
 import styled from "styled-components";
 
 const server = process.env.REACT_APP_SERVER;
