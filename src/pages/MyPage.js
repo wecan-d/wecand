@@ -56,7 +56,7 @@ export default function MyPage() {
           console.log(posts.data);
           
           // const filteredApplyPosts = posts.filter(post =>post.applicants.some(applicant => applicant.userId === userId));
-          const filteredApplyPosts = posts.filter(post =>post.applicants.some(applicant => applicant.status === "APPEND"));
+          const filteredApplyPosts = posts.filter(post =>post.applicants.some(applicant => applicant.status === "pending"));
           
           setApplyPosts(filteredApplyPosts);
           console.log(filteredApplyPosts);

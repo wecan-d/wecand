@@ -52,7 +52,7 @@ const HomePage = () => {
 
   const filteredApplyPosts = (data, userToken) => {
     return data.map((post) => {
-      const matchingApplicant = post.applicants.find(
+      const matchingApplicant = post.applicants?.find(
         (applicant) => applicant.userId === userToken
       );
 
@@ -123,8 +123,8 @@ const HomePage = () => {
   const [searchWord, setSearchWord] = useState("");
   
 
-  useEffect( async () => {
-    if(userInfo.isLoggedIn) await getApplyPosts(userInfo.token);
+  useEffect( () => {
+    if(userInfo.isLoggedIn) getApplyPosts(userInfo.token);
     getLatestPosts();
   }, []); 
 
