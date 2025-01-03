@@ -463,16 +463,45 @@ export default function DetailPage() {
                                     </div>
                                 </div>
                             </ModalHeader>
+
+
+                            <CardContainer>
+                              <ImageWrapper>
+                                <ProfileImage src="" alt="Profile" style={{ width: '100px', height: '100px' }} />
+                              </ImageWrapper>
+                              <TextWrapper2>
+                                <div style={({display:'flex',justifyContent:'row',alignItems:'center', gap:'12px'})}>
+                                  <Name>{owner[0].cardName || "이름 없음"}</Name>
+                                  <Details>{owner[0].identity || "전공 정보 없음"}</Details>
+                                </div>
+                                <div style={({display:'flex',justifyContent:'row', gap:'12px'})}>
+                                  <Details2>{owner[0].major || "전공 정보 없음"}</Details2>
+                                  <div style={({width:'1px',height:'21px',border:'0.5px solid blue'})}/>
+                                  <Email>{owner[0].email || "이메일 없음"}</Email>
+                                </div>
+                              </TextWrapper2>
+                            </CardContainer>
+                            <SectionStyle>작업 스타일</SectionStyle>
+
+
                             <Divider/>
                             <ModalBody>
-                                <SectionStyle>작업 스타일</SectionStyle>
+                                
 
                                 {/* 오너카드 그리드 */}
                                 <CardGrid>
+
+
+
+
+
+
+
+
                                   
                                     
 
-                                    
+
                                     <Card style={{ gridArea: "communication" }}>
                                         <CardTitle>소통</CardTitle>
                                         <CardContent>
@@ -1016,4 +1045,63 @@ const CardContent = styled.div `
   font-weight: 400;
   color: #111111;
   
+`;
+
+
+
+const CardContainer = styled.div`
+  width: 493px;
+  height: 109px;
+  display: flex;
+  align-items: center;
+  background-color: #ffffff;
+  border-radius: 8px;
+  padding: 10px;
+  
+  margin-bottom: 42px;
+`;
+
+const ImageWrapper = styled.div`
+  position: relative;
+  margin-right: 24px;
+`;
+
+const ProfileImage = styled.img`
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+`;
+
+
+
+const TextWrapper2 = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+const Name = styled.div`
+  font-size: 32px;
+  font-weight: 600;
+  color: #6C54F7;
+  margin-bottom: 10px;
+`;
+
+const Details = styled.div`
+  font-size: 18px;
+  font-weight: 500;
+  color: #767676;
+  margin-bottom: 4px;
+`;
+
+const Details2 = styled.div`
+   font-size: 18px;
+  font-weight: 500;
+  
+  margin-bottom: 4px;
+`;
+
+const Email = styled.div`
+  font-size: 18px;
+  font-weight: 400;
 `;
