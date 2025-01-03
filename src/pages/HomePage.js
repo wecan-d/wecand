@@ -45,34 +45,25 @@ const HomePage = () => {
 
   const getApplyPosts = async (userId) => {
     const applyPostsData = await axios.get(`${server}/post/applied/${userId}`);
+    console.log("apply:", applyPostsData);
+
     const newApplyPosts = filteredApplyPosts(applyPostsData.data, userId);
-    console.log(newApplyPosts);
+    console.log("filtered: ", newApplyPosts);
     setApplyPosts(newApplyPosts);
   }
 
   const filteredApplyPosts = (data, userToken) => {
     return data.map((post) => {
-      const matchingApplicant = post.applicants?.find(
-        (applicant) => applicant.userId === userToken
-      );
-
-      if(matchingApplicant) {
         return {
-          id: post.postId,
+          id: post.postId+1,
           title: post.title,
-          status: matchingApplicant.status,
+          // status: .status,
         }
-      }
+      
 
-      return null;
     }).filter((item) => item != null);
   }
 
-
-  // 최신순 정렬 함수
-  const sortByLatest = (posts) => {
-    return posts.slice(0,7).sort((a, b) => new Date(b.createTime) - new Date(a.createTime));
-  };
 
   const words = ['iscuss','etermine', 'evelop'];
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
@@ -108,7 +99,9 @@ const HomePage = () => {
     }
   ];
 
-  const filteredlandCardData = landCardData.length < 4 ? [...landCardData, ...new Array(4 - landCardData.length).fill(null)] : landCardData;
+  const filteredlandCardData = landCardData.length < 4 ? [
+    ...landCardData, ...new Array(4 - landCardData.length).fill(null)
+  ] : landCardData;
 
 
   const handleSubmit = () => {
@@ -125,8 +118,11 @@ const HomePage = () => {
 
   useEffect( () => {
     if(userInfo.isLoggedIn) getApplyPosts(userInfo.token);
+  }, [userInfo.isLoggedIn]); 
+
+  useEffect(() => {
     getLatestPosts();
-  }, []); 
+  }, []);
 
   return (
     <Container>
