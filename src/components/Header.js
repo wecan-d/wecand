@@ -90,7 +90,7 @@ const HeaderContainer = styled.div`
 
   background: transparent;
   color: white;
-  padding: 30px 184px 30px 116px;
+  padding: 30px 164px 30px 116px;
 `;
 
 const UserNameP = styled.p`
