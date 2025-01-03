@@ -14,6 +14,7 @@ import business from "../assets/homepage/business.svg"
 import nonmun from "../assets/homepage/nonmun.svg"
 import programming from "../assets/homepage/programming.svg"
 import searchicon from "../assets/homepage/search.svg"
+import profile from "../assets/profile.png"
 
 const server = process.env.REACT_APP_SERVER;
 
@@ -248,13 +249,22 @@ const RecruitmentPage = () => {
               <PostCard onClick={() => handlePostClick(user.postId)}>
                 <PostLeft src={user.img}/>
                 <PostCenter>
-                  <div style={{ width: "450px", height: "255px" }}>
-                    <div style={{ display: "flex", justifyContent: "flex-start" }}>
+                  <div style={{ width: "450px", height: "190px" }}>
+                    {/* <div style={{ display: "flex", justifyContent: "flex-start" }}> */}
                       <Tag>{user.category}</Tag>
-                    </div>
+                    {/* </div> */}
                     <PostTitle>{user.title}</PostTitle>
                     <PostDescription>{user.memo}</PostDescription>
-                    <Author>{user.author}</Author>
+                    {/* 프로필 이미지와 작성자 이름 추가 */}
+                    <div>
+                    <ProfileSection>
+                      <ProfileImage
+                        src={profile} // 프로필 이미지 설정
+                        alt="profile"
+                      />
+                      <OwnerName>{user.ownerName}</OwnerName>
+                    </ProfileSection>
+                    </div>
                   </div>
                 </PostCenter>
                 <div style={{ display: "flex", justifyContent: "flex-end" }}>
@@ -488,9 +498,35 @@ const PostLeft = styled.img`
 `;
 const PostCenter = styled.div`
   flex: 4;
+  height: 100%;
   display: flex;
   flex-direction: column;
   padding-left: 19px;
+  height: 350px;
+  justify-content: space-between;
+`;
+
+const ProfileSection = styled.div`
+  display: flex;
+  align-items: center;
+  margin-top: auto;
+  /* position: absolute;
+  top: 140px;
+  left: 0; */
+`;
+
+const ProfileImage = styled.img`
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 12px;
+`;
+
+const OwnerName = styled.span`
+  font-size: 20px;
+  font-weight: 500;
+  color: #4e5968;
 `;
 const PostRight = styled.div`
   flex: 1;
