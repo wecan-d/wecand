@@ -22,7 +22,7 @@ import SkillCardModal from "../components/modals/LandSkillCard";
 
 import { urls, urlnames, card, card2, members, card1, card4, card3, card5 } from "./LandPageData";
 
-import { getMembersAPI } from "../context/FormContext";
+import { GetMembersAPI } from "../context/FormContext";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import AddTeamPageModal from "../components/modals/AddTeamPageModal";
@@ -530,7 +530,7 @@ const LandPage = () => {
     });
   };
 
-  document.body.style.overflow = 'hidden';
+  // document.body.style.overflow = 'hidden';
 
   const navigate = useNavigate();
   const handleRightBottomButtonClick = () => {

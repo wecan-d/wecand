@@ -18,6 +18,8 @@ export default function MyPage() {
     const { userInfo, handleLogout } = useContext(AuthContext);
     // 서버 url 관리 변수
     const server = process.env.REACT_APP_SERVER;
+    const { userInfo, handleLogout } = useContext(AuthContext);
+    const userId = userInfo.token;  
 
     // 유저 역량 카드 겟또 /card/{userId}
     const [card, setCard] = useState([{}]);
@@ -40,9 +42,7 @@ export default function MyPage() {
       fetchUsers();
     }, [server]);
 
-    // 테스트 용
-    const userId = 2;
-    
+    // 테스트 용    
     const [userPosts, setUserPosts] = useState([]);
 
     const [applyPosts, setApplyPosts] = useState([]);
@@ -52,7 +52,7 @@ export default function MyPage() {
       const fetchPosts = async () => {
         try{
           const posts = await axios.get(
-            `${server}/post/applied/2`
+            `${server}/post/applied/${userId}`
           )
           console.log(posts.data);
           

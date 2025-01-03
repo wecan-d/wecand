@@ -1,6 +1,5 @@
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { auth } from "../firebaseConfig";
-import { loginInfo } from "../context/Auth";
 import { useNavigate } from "react-router-dom";
 import { useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
@@ -45,8 +44,6 @@ export const useGoogleLogin = () => {
       };
 
       handleLogin(newUserData);
-      // localStorage.setItem('loginInfo', JSON.stringify(newUserData));
-
       console.log('로그인 성공', newUserData);
 
       if(isNewUser) {

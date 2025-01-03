@@ -57,7 +57,8 @@ const QuestionButton = styled.button`
 
 
 const RegisterPage2 = () => {
-  const { formData, setFormData } = useForm();
+  
+  const { formData, setFormData, userId } = useForm();
   const navigate = useNavigate();
   const [isUpdated, setIsUpdated] = useState(false); // 상태 변수와 상태 업데이트 함수 정의
 
@@ -89,6 +90,7 @@ const RegisterPage2 = () => {
   };
 
   const handleNext = async () => {
+    console.log("RegisterPage2 - 현재 userId:", userId);
     const {
       communication = "",
       teamwork = "",
@@ -115,16 +117,8 @@ const RegisterPage2 = () => {
       alert(`다음 항목을 입력해 주세요: ${missingFields.join(", ")}`);
       return;
     }
-  
-    try {
-      const response = await updateMemberAPI(formData.id, formData);  // userId와 업데이트할 formData를 전달
-      console.log("Update response:", response.data);
-      setIsUpdated(true);  // 업데이트 상태를 true로 변경
-      navigate("/register/3");
-    } catch (error) {
-      console.error("Error during update:", error);
-      setIsUpdated(false);  // 오류 발생 시 상태를 false로 변경
-    }
+    console.log("RegisterPage2 저장된 데이터:", formData);
+    navigate("/register/3");
   };
   
 
@@ -145,6 +139,7 @@ const RegisterPage2 = () => {
 
   useEffect(() => {
     window.scrollTo(0, 0); // 페이지 가장 상단으로 이동
+    console.log("RegisterPage2에서 formData 확인:", formData);
   }, []);
 
   return (
