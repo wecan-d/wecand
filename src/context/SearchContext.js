@@ -6,6 +6,8 @@ export const SearchContext = createContext();
 
 const server = process.env.REACT_APP_SERVER;
 
+
+
 export const SearchProvider = ({ children }) => {
   const [searchParams] = useSearchParams();
   const [data, setData] = useState([]); // 전체 데이터
@@ -13,6 +15,8 @@ export const SearchProvider = ({ children }) => {
   const [searchTerm, setSearchTerm] = useState(""); // 검색어 상태
 
   useEffect(() => {
+    
+
     const fetchData = async () => {
       try {
         const response = await axios.get(`${server}/post`);

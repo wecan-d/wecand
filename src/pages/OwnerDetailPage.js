@@ -1,14 +1,20 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import styled from "styled-components";
 import axios from "axios";
 import file from "../assets/mypage/File.svg";
 import link from "../assets/mypage/Link.svg";
+import { AuthContext } from "../context/AuthContext";
 
+// 오우너의 공모전 제목을 불러와야하는데 이거 은근 짜증남 일단 보류
+
+
+const server = process.env.REACT_APP_SERVER;
 
 export default function OwnerDetailPage() {
     // 서버 url 관리 변수
-    const server = process.env.REACT_APP_SERVER;
     
+    const { userInfo, handleLogout } = useContext(AuthContext);
+    const userId = userInfo.token;
 
     // 포커스한 아이디에 대하여 관리하는 훅
     const [focusedId, setFocusedId] = useState(null);
@@ -17,6 +23,7 @@ export default function OwnerDetailPage() {
     // 유저 역량 카드 겟또 /card/{userId}
     const [card, setCard] = useState([{}]);
     const [, setError] = useState(null);
+
 
     const [error,setError2] = useState("");
     
@@ -27,7 +34,6 @@ export default function OwnerDetailPage() {
       console.log(focusedId);
       console.log("Focused ID:", focusedId); 
     };
-    
 
     //데이터 GET
     useEffect(() => {
@@ -35,7 +41,7 @@ export default function OwnerDetailPage() {
           try {
               // 1. 해당 공모전에 신청한 유저 아이디 받아와버렸어
               const Postresponse = await axios.get(
-                `${server}/post/1/with-applicants`
+                `${server}/post/1/with-applicants` //이거 나중에 1을 postId로 바꿔야함
               );
               setApply(Postresponse.data);
               console.log(Postresponse.data);
@@ -61,7 +67,7 @@ export default function OwnerDetailPage() {
     const handleStatusUpdate = async (applicantId, status) => {
       try {
           const response = await axios.patch(
-              `${server}/applications/1/${focusedId}`, 
+              `${server}/applications/1/${focusedId}`, //이거 나중에 postId로 바꿔야함
               { status },
               {
                 headers: {
@@ -79,8 +85,12 @@ export default function OwnerDetailPage() {
 
 
     return (
-      <>
+      <> 
+      <div>지원자들의 역량카드를 읽은 후 거절, 수락을 눌러주세요</div>
+      {/* 이거 공모전 타이틀 */}
+       <div>{apply.title}</div>
         <PageContainer>
+          
 
           {/* 페이지 좌측 유저 리스트 나열하는 섹션 */}
           <PageWrapperLeft>
@@ -117,7 +127,7 @@ export default function OwnerDetailPage() {
                   </ImageWrapper>
                   <TextWrapper2>
                     <div style={({display:'flex', flexDirection:'row', alignItems: 'center', gap:'12px'})}>
-                      <Name>{cardItem.name || "이름 없음"}</Name>
+                      <Name>{cardItem.cardName || "이름 없음"}</Name>
                       <Name2>{cardItem.identity || "정보 없음"}</Name2>
                     </div>
                     <div>
@@ -233,12 +243,7 @@ export default function OwnerDetailPage() {
 
           <Card style={{ gridArea: "important" }}>
                         <CardTitle>중요하게 생각해요</CardTitle>
-                        <CardContent>
-                            {Array.isArray(cardItem?.important)
-                                ? cardItem.important.map((contentItem, index) => (
-                                      <p key={index}>{contentItem}</p>
-                                  ))
-                                : "내용 없음"}
+                        <CardContent>{cardItem.important}
                         </CardContent>
           </Card>
 
