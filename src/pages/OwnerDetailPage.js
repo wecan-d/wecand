@@ -4,17 +4,17 @@ import axios from "axios";
 import file from "../assets/mypage/File.svg";
 import link from "../assets/mypage/Link.svg";
 import { AuthContext } from "../context/AuthContext";
+import { useParams } from "react-router-dom";
 
 // 오우너의 공모전 제목을 불러와야하는데 이거 은근 짜증남 일단 보류
 
 
-const server = process.env.REACT_APP_SERVER;
 
-export default function OwnerDetailPage() {
-    // 서버 url 관리 변수
-    
+export default function OwnerDetailPage() {    
     const { userInfo, handleLogout } = useContext(AuthContext);
     const userId = userInfo.token;
+    const server = process.env.REACT_APP_SERVER;
+
 
     // 포커스한 아이디에 대하여 관리하는 훅
     const [focusedId, setFocusedId] = useState(null);
@@ -27,6 +27,7 @@ export default function OwnerDetailPage() {
 
     const [error,setError2] = useState("");
     
+    const { postId } = useParams();
 
     // 클릭하면 focusId에 userId가 저장됨
     const handleFocus = (focusedId) => {
@@ -41,7 +42,7 @@ export default function OwnerDetailPage() {
           try {
               // 1. 해당 공모전에 신청한 유저 아이디 받아와버렸어
               const Postresponse = await axios.get(
-                `${server}/post/1/with-applicants` //이거 나중에 1을 postId로 바꿔야함
+                `${server}/post/${postId}/with-applicants` //이거 나중에 1을 postId로 바꿔야함
               );
               setApply(Postresponse.data);
               console.log(Postresponse.data);
@@ -63,19 +64,23 @@ export default function OwnerDetailPage() {
       fetchUsers();
     }, [focusedId, server]);
 
+    const createLand = async () => {
+      const response = await axios.post(`${server}/land/${postId}/create`, {
+        postId: postId,
+        userId: userId,
+      });
+
+      console.log(`server/land/${postId}/create`, response);
+
+    }
+
     // 신청자 상태 업데이트
     const handleStatusUpdate = async (applicantId, status) => {
       try {
           const response = await axios.patch(
-              `${server}/applications/1/${focusedId}`, //이거 나중에 postId로 바꿔야함
-              { status },
-              {
-                headers: {
-                  'Content-Type': 'application/json' // JSON 형식으로 데이터를 전송
-                }
-              }
+              `${server}/applications/${postId}/${focusedId}`, status
             );
-          setError2(response.data, status);
+          // setError2(response.data, status);
           console.log(response)
           console.log('Status updated:', response.data);
       } catch (error) {
@@ -85,10 +90,10 @@ export default function OwnerDetailPage() {
 
 
     return (
-      <> 
-      <div>지원자들의 역량카드를 읽은 후 거절, 수락을 눌러주세요</div>
+      <OutSidePageContainer> 
+      <PageH1>지원자들의 역량카드를 읽은 후 거절, 수락을 눌러주세요</PageH1>
       {/* 이거 공모전 타이틀 */}
-       <div>{apply.title}</div>
+       <PageH2>{apply.title}</PageH2>
         <PageContainer>
           
 
@@ -137,8 +142,8 @@ export default function OwnerDetailPage() {
                   </TextWrapper2>
                 </CardContainer>
                 <ButtonContainer>
-                <Button onClick={() => handleStatusUpdate(cardItem.userId, "거절")}>거절하기</Button>
-                  <Button onClick={() => handleStatusUpdate(cardItem.userId, "수락")}>수락하기</Button>
+                  <Button onClick={() => handleStatusUpdate(cardItem.userId, "DECLINED")}>거절하기</Button>
+                  <Button onClick={() => handleStatusUpdate(cardItem.userId, "APPROVED")}>수락하기</Button>
                 </ButtonContainer>
                 <Text>작업 스타일</Text>
 
@@ -274,24 +279,49 @@ export default function OwnerDetailPage() {
   ) : (
     <div>지원자를 선택하면 정보가 표시됩니다.</div>
   )}
+  
 </PageWrapperRight>
 
-
       </PageContainer>
+        <Button style={{"margin": "20px 120px 150px 0", "alignSelf": "flex-end"}} onClick={createLand}>확인하기</Button>
 
-
-
-                          {/* 현재 참여중인 공모전 */}
-        
-
-
-
-        
-        </>
+      </OutSidePageContainer>
     );
 }
 
 // 개인정보
+
+const PageH1 = styled.h1`
+  margin-left: 120px;
+  font-size: 30px;
+  font-weight: 600;
+  margin-bottom: 5px;
+`;
+
+const PageH2 = styled.h2`
+  margin-left: 120px;
+  font-size: 26px;
+  font-weight: 500;
+  color: #767676;
+  margin-top: 7px;
+  margin-bottom: 20px;
+
+`;
+
+const OutSidePageContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+`;
+
+const PageContainer = styled.div`
+  width: 100%;
+  height: auto;
+  display: flex;
+  justify-content: center;
+  
+`;
 
 const CardContainer = styled.div`
   width: 493px;
@@ -327,6 +357,8 @@ const Button = styled.button`
   border-radius: 8px;
   
 `;
+
+
 const ImageWrapper = styled.div`
   position: relative;
   margin-right: 24px;
@@ -374,20 +406,12 @@ const Email = styled.div`
 
 // 역량카드
 
-const PageContainer = styled.div`
-  width: 1726px;
-  height: auto;
-  display: flex;
-  justify-content: center;
-  margin-bottom: 120px;
-  
-`;
+
 
 const PageWrapperLeft = styled.div`
     width: 428px;
     height: auto;
     
-    margin-left: 76px;
     background: #6C54F7;
     border-radius: 16px;
     /* overflow: auto; */

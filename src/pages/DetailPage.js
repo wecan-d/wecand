@@ -199,7 +199,7 @@ if (owner[0] && owner[0].url) {
                     {/* !ERD title! */}
                     <Title>{selectedPostData.title} <span><a href={selectedPostData.url} target="_blank" style={({fontSize:'22px',fontWeight:'500',
                             
-                    })} target="_blank">자세히 보기</a></span>
+                    })}>자세히 보기</a></span>
                     </Title>
                    
                 </CategoryAndTitle>
