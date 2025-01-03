@@ -16,6 +16,8 @@ export const useGoogleLogin = () => {
 
     try {
       const result = await signInWithPopup(auth, provider);
+      
+      console.log(result, "로그인여부");
       const user = result.user;
       const isNewUser = result._tokenResponse?.isNewUser;
       let token = 0;
