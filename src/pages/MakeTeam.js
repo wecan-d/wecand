@@ -4,7 +4,8 @@ import { useNavigate } from "react-router-dom";
 import MaketeamSVG from "../assets/maketeam.svg";
 import { uploadFileToFirebase } from "../context/UploadFile";
 import { AuthContext } from "../context/AuthContext";
-
+import "./MakeTeam.css"
+import styled from "styled-components";
 
 const server = process.env.REACT_APP_SERVER;
 
@@ -170,7 +171,7 @@ const MakeTeam = () => {
               <label style={styles.label}>제목</label>
               {errors.title && <span style={styles.errorMessage}>정보를 입력해 주세요</span>}
             </div>
-            <input
+            <TitleInput
               type="text"
               name="title"
               placeholder="공모전 이름을 정확하게 입력해 주세요"
@@ -293,15 +294,20 @@ const MakeTeam = () => {
   );
 };
 
+const TitleInput = styled.input`
+  ::placeholder {
+
+  }
+`;
+
 const styles = {
   container: {
-    padding: "2rem",
-    backgroundColor: "#f9f9f9",
+    paddingTop: "20px",
   },
   pageTitle: {
     textAlign: "left",
     fontSize: "1.8rem",
-    marginLeft: "160px",
+    marginLeft: "120px",
     marginBottom: "1.5rem",
   },
   contentWrapper: {
@@ -310,7 +316,7 @@ const styles = {
     gap: "2rem",
   },
   leftPanel: {
-    marginLeft: "150px",
+    marginLeft: "90px",
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
@@ -322,8 +328,7 @@ const styles = {
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#f0f0f0",
-    border: "2px dashed #ddd",
+    background: "#F0F3FA",
     borderRadius: "8px",
     overflow: "hidden",
     cursor: "pointer",
@@ -342,7 +347,7 @@ const styles = {
     display: "none",
   },
   rightPanel: {
-    paddingRight: "300px",
+    paddingRight: "188px",
     flex: 1,
     justifyContent: "left",
     display: "flex",
@@ -362,7 +367,10 @@ const styles = {
     gap: "1rem",
   },
   label: {
-    fontWeight: "bold",
+    fontWeight: "500",
+    color: "#111",
+    fontSize: "22px",
+    
   },
   errorMessage: {
     fontSize: "0.65rem",
@@ -376,6 +384,7 @@ const styles = {
     border: "1px solid #ddd",
     borderRadius: "5px",
     width: "100%",
+    height: "52px",
   },
   select: {
     padding: "0.5rem",
@@ -396,7 +405,7 @@ const styles = {
   submitButton: {
     padding: "0.8rem 2rem",
     color: "#fff",
-    backgroundColor: "#007bff",
+    background: "#6C54F7",
     border: "none",
     borderRadius: "5px",
     cursor: "pointer",
