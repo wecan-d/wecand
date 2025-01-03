@@ -7,10 +7,7 @@ import { AuthContext } from "../context/AuthContext";
 
 
 const server = process.env.REACT_APP_SERVER;
-const userId = 2;
 
-
-// const server = "https://67625e5846efb373237455b0.mockapi.io/gemlense/post";
 export const postMemberAPI = async (userId, data) => {
   try {
     const response = await axios.post(`${server}/post/${userId}`, data);
@@ -26,6 +23,8 @@ export const postMemberAPI = async (userId, data) => {
 
 
 const MakeTeam = () => {
+  const { userInfo, handleLogout } = useContext(AuthContext);
+  const userId = userInfo.token;
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     title: "",
@@ -37,6 +36,7 @@ const MakeTeam = () => {
     memo2: "",
     img: "",
   });
+  
 
   const [imagePreview, setImagePreview] = useState(null);
   const [errors, setErrors] = useState({});
