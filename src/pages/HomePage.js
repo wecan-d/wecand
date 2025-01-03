@@ -504,7 +504,7 @@ const Container = styled.div`
 
 const Header = styled.div`
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   align-items: center;
 
   position: absolute;
@@ -521,6 +521,7 @@ const Header = styled.div`
 const Logo = styled.img`
   width: 119px;
   height: 30.311px;
+  margin-right: auto;
 `;
 
 const LoginButton = styled.button`

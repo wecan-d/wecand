@@ -135,17 +135,17 @@ export const SearchInput = styled.input`
   border: none;
   outline: none;
   background: transparent;
-  font-size: 1rem;
-  color: #6c6c6c;
+  font-size: 18px;
+  color: white;
 
   &::placeholder {
-    color:#767676;
+    color:white;
   }
 `;
 
 export const SearchIcon = styled.span`
   font-size: 1.2rem;
-  color: #6c6c6c;
+  color: white;
   cursor: pointer;
 `;
 
