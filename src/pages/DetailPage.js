@@ -10,6 +10,7 @@ import {useParams, useNavigate} from "react-router-dom";
 import axios from "axios";
 import DetailSVG from "../assets/detail.svg";
 import { AuthContext } from "../context/AuthContext";
+import profile from "../assets/profile.png"
 
 export default function DetailPage() {
     const navigate = useNavigate();
@@ -142,7 +143,7 @@ export default function DetailPage() {
               // Hide success modal after another 2 seconds
               setTimeout(() => {
                   setIsConfirmationVisible(false);
-                  navigate(`/detail/${postId}`); // Optionally navigate to another page after 2 seconds
+                  navigate(`/mypage`); // Navigate to MyPage`); // Optionally navigate to another page after 2 seconds
               }, 2000);
           }));
       } catch (err) {
@@ -197,9 +198,19 @@ if (owner[0] && owner[0].url) {
                       {selectedPostData.category}
                     </Category>
                     {/* !ERD title! */}
-                    <Title>{selectedPostData.title} <span><a href={selectedPostData.url} target="_blank" style={({fontSize:'22px',fontWeight:'500',
-                            
-                    })}>자세히 보기</a></span>
+                    <Title>
+                      <TitleText>{selectedPostData.title}</TitleText>
+                      <StyledLink
+                          href={selectedPostData.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          style={{
+                            fontSize: "22px",
+                            fontWeight: "500",
+                          }}
+                        >
+                          자세히 보기 &gt;
+                          </StyledLink>
                     </Title>
                    
                 </CategoryAndTitle>
@@ -588,7 +599,7 @@ if (owner[0] && owner[0].url) {
 
                             <CardContainer2>
                               <ImageWrapper>
-                                <ProfileImage src="" alt="Profile" style={{ width: '100px', height: '100px' }} />
+                                <ProfileImage src={profile} alt="Profile" style={{ width: '100px', height: '100px' }} />
                               </ImageWrapper>
                               <TextWrapper2>
                                 <div style={({display:'flex',justifyContent:'row',alignItems:'center', gap:'12px'})}>
@@ -918,11 +929,29 @@ const Category = styled.span `
   font-size: 18px;
 `;
 
+// TitleText: Styles for the main title text
+const TitleText = styled.span`
+  /* You can add additional styles here if needed */
+`;
+
 const Title = styled.h1 `
+  display: flex;
+  align-items: center; /* Vertically centers the items */
+  gap: 14px; /* Adjusts the horizontal spacing between items */
   font-weight: 600;
   font-size: 32px;
 `;
+const StyledLink = styled.a`
+  font-weight: 600;
+  font-size: 32px;
+  color: #000;
+  text-decoration: none;
 
+  &:hover {
+    color: #555; /* Slightly lighter black on hover */
+    text-decoration: underline; /* Optionally, add underline on hover */
+  }
+`;
 const MainContent = styled.div `
   display: flex;
   
