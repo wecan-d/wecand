@@ -73,4 +73,4 @@
 
 —
 ### GemLense-BE Url
-: [https://github.com/Club-PARD/GemLense-BE/blob/main/README.md](https://github.com/Club-PARD/GemLense-BE?tab=readme-ov-fi
+: [https://github.com/Club-PARD/GemLense-BE/blob/main/README.md]

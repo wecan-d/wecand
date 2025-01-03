@@ -472,7 +472,7 @@ const PostLeft = styled.img`
   height: auto;
   border-radius: 16px;
   background: #f0f3fa;
-  
+  object-fit: cover; // 이거 화면 크기 조절
   
 `;
 const PostCenter = styled.div`
