@@ -49,6 +49,9 @@ const Routers = () => {
 
         {/* Land */}
         <Route path="/land/:landId" element={<LandPage/>}/>
+
+        {/* url 경로 에러 처리 */}
+        <Route path="*" element={<HomePage />} />
       </Routes>
   )
 }

@@ -222,7 +222,9 @@ if (owner[0] && owner[0].url) {
                         <InfoRow>
                             <InfoLabel>작성자</InfoLabel>
                             <InfoValue>
-                                {selectedPostData.name} {/* 작성자의 역량카드 열람 모달 열기 */}
+                              <div style={({whiteSpace:"nowrap"})}>
+                                {selectedPostData.ownerName} {/* 작성자의 역량카드 열람 모달 열기 */}
+                                </div>
                                 <RoleTag onClick={handleOwnerCard}>역량카드</RoleTag>
 
                             </InfoValue>
@@ -236,7 +238,9 @@ if (owner[0] && owner[0].url) {
                         <InfoRow>
                             <InfoLabel>현재 모집 인원</InfoLabel>
                             {/* !ERD member = 현재원 */}
-                            <InfoValue>{selectedPostData.approvedCount || 0}/{selectedPostData.member || 0}</InfoValue>
+                            <div style={({display:'flex', justifyContent:"row",position:'relative'})}>
+                            <InfoValue2>{selectedPostData.approvedCount || 0}</InfoValue2><span style={({color: "#4E5968", fontSize:"22px",position:'absolute',top:'4px',left:'16px'})}>/{selectedPostData.member || 0}</span>
+                            </div>
                         </InfoRow>
                         <InfoRow>
                           <InfoLabel>총 지원자</InfoLabel>
@@ -921,6 +925,8 @@ const Title = styled.h1 `
 
 const MainContent = styled.div `
   display: flex;
+  
+  gap: 44px;
 
   @media (max-width: 768px) {
     flex-direction: column;
@@ -930,14 +936,16 @@ const MainContent = styled.div `
 const MainBox = styled.div `
   display: flex;
   
+  
+  
   @media (max-width: 768px) {
     flex: 1;
   }
 `;
 
 const Image = styled.img `
-  max-width: 84%; /* 너비를 90%로 줄임 */
-  max-height: 820px;
+  width: 582px;
+  height: 820px;
   border-radius: 8px;
   object-fit: contain;
   
@@ -947,7 +955,10 @@ const SideBox = styled.div `
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 0.2rem;
+  
+  
+
+  
 `;
 
 const InfoSection = styled.div `
@@ -978,13 +989,26 @@ const InfoLabel = styled.span `
 `;
 
 const InfoValue = styled.span `
-  font-size: 26px;
+  font-size: 28px;
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  gap: 1rem; /* 역할 태그와 텍스트 간 간격 */
+  
+`;
+
+const InfoValue2 = styled.span `
+  font-size: 28px;
   display: flex;
   font-weight: 500;
   align-items: center;
   gap: 0.5rem; /* 역할 태그와 텍스트 간 간격 */
   margin-top: 8px;
+  position: absolute;
+  top: -8px;
+  left: 0;  
 `;
+
 
 const RoleTag = styled.span `
   background-color: #6c54f7;
@@ -993,6 +1017,11 @@ const RoleTag = styled.span `
   padding: 0.3rem 0.5rem;
   border-radius: 30px;
   display: inline-block;
+  width: 101px;
+  white-space: nowrap;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;
 
 const Section = styled.div `
@@ -1014,7 +1043,8 @@ const Text = styled.div `
   width: 851px;
   border-radius: 16px;
   /* padding: 20px; */
-  padding-top: 20px;
+  padding: 20px;
+  border: 1px solid #DBDBDB;
 `;
 
 const Description = styled.div `
@@ -1023,8 +1053,9 @@ const Description = styled.div `
   line-height: 1.6;
   font-weight: 400;
   color: #4E5968;
-  /* border: 1px solid  #DBDBDB; */
+  border: 1px solid  #DBDBDB;
   height: 170px;
+  padding: 0 20px 0 20px;
 
 `;
 
@@ -1032,7 +1063,7 @@ const ActionButtons = styled.div `
   display: flex;
   justify-content: flex-end;
   gap: 1rem;
-  margin-top: 1rem;
+  margin-top: 44px;
 `;
 
 const LinkButton = styled.button `
@@ -1198,9 +1229,9 @@ const SectionColumn = styled.div `
 const SectionTitle = styled.h4 `
   color: #111;
 font-family: Pretendard;
-font-size: 18px;
+font-size: 28px;
 font-style: normal;
-font-weight: 600;
+font-weight: 500;
 line-height: normal;
 `;
 
