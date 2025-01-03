@@ -4,6 +4,8 @@ import axios from "axios";
 
 export const SearchContext = createContext();
 
+const server = process.env.REACT_APP_SERVER;
+
 export const SearchProvider = ({ children }) => {
   const [searchParams] = useSearchParams();
   const [data, setData] = useState([]); // 전체 데이터
