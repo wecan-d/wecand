@@ -4,7 +4,8 @@ import { useNavigate } from "react-router-dom";
 import MaketeamSVG from "../assets/maketeam.svg";
 import { uploadFileToFirebase } from "../context/UploadFile";
 import { AuthContext } from "../context/AuthContext";
-
+import "./MakeTeam.css"
+import styled from "styled-components";
 
 const server = process.env.REACT_APP_SERVER;
 
@@ -170,7 +171,7 @@ const MakeTeam = () => {
               <label style={styles.label}>제목</label>
               {errors.title && <span style={styles.errorMessage}>정보를 입력해 주세요</span>}
             </div>
-            <input
+            <TitleInput
               type="text"
               name="title"
               placeholder="공모전 이름을 정확하게 입력해 주세요"
@@ -293,6 +294,12 @@ const MakeTeam = () => {
   );
 };
 
+const TitleInput = styled.input`
+  ::placeholder {
+
+  }
+`;
+
 const styles = {
   container: {
     paddingTop: "20px",
@@ -360,7 +367,10 @@ const styles = {
     gap: "1rem",
   },
   label: {
-    fontWeight: "bold",
+    fontWeight: "500",
+    color: "#111",
+    fontSize: "22px",
+    
   },
   errorMessage: {
     fontSize: "0.65rem",
@@ -374,6 +384,7 @@ const styles = {
     border: "1px solid #ddd",
     borderRadius: "5px",
     width: "100%",
+    height: "52px",
   },
   select: {
     padding: "0.5rem",
