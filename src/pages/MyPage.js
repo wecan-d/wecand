@@ -199,7 +199,8 @@ const OwnerProjects = userPosts.reduce((acc, create) => {
       <>
 
 
-{card.length > 0 && card[0] && Object.keys(card[0]).length > 0 ? (
+{
+card.length > 0 && card[0] && Object.keys(card[0]).length > 0 ? (
   card.map((cardItem, index) => (
     <div key={index}>
       <CardContainer>
@@ -367,11 +368,13 @@ const OwnerProjects = userPosts.reduce((acc, create) => {
                                 
                                 
                                 {/* 여기에 파일 추가시 이 박스를 생성하는 로직 짜야함 */}
-                <a href={cardItem.fileUrl} style={({border:'none',textDecoration:'none'})}>
+                <a href={cardItem.fileUrl} target="_blank" style={({border:'none',textDecoration:'none'})}>
                 <BoxWrapper>
                 
                   <ImagePlaceholder>
-                    <ImageStyle src={file}/>
+
+                    <ImageStyle src={file} />
+                    
                   </ImagePlaceholder>
                   <TextWrapper>
                     <FileName>

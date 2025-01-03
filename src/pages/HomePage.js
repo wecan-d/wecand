@@ -45,7 +45,7 @@ const HomePage = () => {
 
   const getApplyPosts = async (userId) => {
     const applyPostsData = await axios.get(`${server}/post/applied/${userId}`);
-    const newApplyPosts = filteredApplyPosts(applyPostsData, userId);
+    const newApplyPosts = filteredApplyPosts(applyPostsData.data, userId);
     console.log(newApplyPosts);
     setApplyPosts(newApplyPosts);
   }
@@ -87,14 +87,15 @@ const HomePage = () => {
   // 검색 로직
   const [last, setLast] = useState([
     {
-      "category": " ",
-      "title": " ",
+      "category": "",
+      "title": "",
+      "postId": 0,
     }
   ]);
 
   const getLatestPosts = async () => {
     const allPosts = await axios.get(`${server}/post`);
-    setLast(allPosts.data?.slice(0,7));
+    setLast(allPosts.data?.slice(-7));
   }
 
 
@@ -115,11 +116,15 @@ const HomePage = () => {
     navigate(`/recruiting?searchword=${searchWord}`);
   };
 
+  const goToDetailPage = (postId) => {
+    navigate(`/detail/${postId}`)
+  };
+
   const [searchWord, setSearchWord] = useState("");
   
 
-  useEffect(() => {
-    if(userInfo.isLoggedIn) getApplyPosts(userInfo.token);
+  useEffect( async () => {
+    if(userInfo.isLoggedIn) await getApplyPosts(userInfo.token);
     getLatestPosts();
   }, []); 
 
@@ -256,7 +261,7 @@ const HomePage = () => {
             <Category>
               {post.category}
             </Category>
-            <Title>
+            <Title onClick={() => goToDetailPage(post.postId)}>
               {post.title}
             </Title>
           </TagContainer>
@@ -762,104 +767,6 @@ const CardDescription = styled.p`
   font-size: 14px;
   color: #777;
 `;
-
-
-
-// import React, {useState, useEffect, useContext} from "react";
-// import styled from "styled-components";
-// import {useNavigate} from "react-router-dom";
-// import axios from "axios";
-// import { SearchContext } from '../context/SearchContext';
-
-// const HomePage = () => {
-
-//     // 임시 목업데이터 확인용 hook
-//     const [users, setUsers] = useState([]);
-
-//     const [filteredUsers, setFilteredUsers] = useState([]); // 필터링된 데이터
-//     const { searchTerm } = useContext(SearchContext); // 전역 검색 상태 가져오기
-
-//     useEffect(() => {
-//         const fetchUsers = async () => {
-//             try {
-//                 const response = await axios.get(
-//                     "https://676e83a3df5d7dac1ccae100.mockapi.io/post"
-//                 );
-//                 setUsers(response.data);
-//                 setFilteredUsers(response.data); // 초기 데이터 설정
-//             } catch (err) {
-//                 console.error(err);
-//             }
-//         };
-//         fetchUsers();
-//     }, []);
-//     //
-
-   
-//   useEffect(() => {
-//     if (searchTerm === "") {
-//       setFilteredUsers(users); // 검색어가 없으면 전체 데이터 표시
-//     } else {
-//       const filtered = users.filter((user) =>
-//         user.title.toLowerCase().includes(searchTerm.toLowerCase())
-//       );
-//       setFilteredUsers(filtered);
-//     }
-//   }, [searchTerm, users]);
-
-//     // 한 화면에 6개만 표시
-//     const visibleUsers = users.slice(0, 6);
-
-//     const navigate = useNavigate();
-
-//     const categoryHandler = (category) => {
-//         navigate(`/recruiting/${category}?sort=latest`);
-//     };
-
-//     const newFeedHandler = (postId) => {
-//         navigate(`/detail/${postId}`)
-//     }
-
-//     const categories = [
-//         {
-//             id: "art",
-//             name: "미술"
-//         }, {
-//             id: "design",
-//             name: "디자인"
-//         }, {
-//             id: "media",
-//             name: "영상/미디어"
-//         }, {
-//             id: "programming",
-//             name: "프로그래밍"
-//         }, {
-//             id: "business",
-//             name: "창업/비즈니스"
-//         }, {
-//             id: "photography",
-//             name: "사진"
-//         }, {
-//             id: "literature",
-//             name: "문학/에세이"
-//         }, {
-//             id: "music",
-//             name: "음악/공연"
-//         }, {
-//             id: "volunteering",
-//             name: "사회공헌/봉사"
-//         }, {
-//             id: "idea",
-//             name: "기획/아이디어"
-//         }
-//     ];
-
-//     return (
-//         <PageContainer>
-
-
-
-
 
 
 
