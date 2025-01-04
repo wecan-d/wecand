@@ -71,7 +71,7 @@ export const TeamAllowStateBox = ({ id, title, status }) => {
     APPROVED: "#54B8A7",
     PENDING: "#EF8C3E",
     REJECTED: "#D74F8B",
-  }
+  };
 
   const handleClick = () => {
     if(id !== 0) navigate(`/details/${id}`);

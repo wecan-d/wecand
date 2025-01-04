@@ -21,6 +21,7 @@ import profile from "../assets/profile.png"
 import { owner, applied } from "./MyPageData"
 import { AuthContext } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
+import { TeamAllowStateBox } from "../components/homepage/TeamAllowStateBox";
 
 function truncateString(str, maxLength) {
   if (!str) return "";
@@ -58,6 +59,38 @@ export default function MyPage() {
 
     // 유저 역량 카드 겟또 /card/{userId}
     const [card, setCard] = useState([{}]);
+    const [applyPosts, setApplyPosts] = useState([
+      {
+        id: 0,
+        title: "새로운 공모전을 신청해보세요",
+        status: "approved",
+        category: "category",
+      }
+    ]);
+
+    const getApplyPosts = async (userId) => {
+      const applyPostsData = await axios.get(`${server}/post/applied/${userId}`);
+      console.log("apply:", applyPostsData);
+  
+      const newApplyPosts = filteredApplyPosts(applyPostsData.data, userId);
+      console.log("filtered: ", newApplyPosts);
+      setApplyPosts(newApplyPosts);
+    }
+
+    const filteredApplyPosts = (data, userToken) => {
+      return data.map((post) => {
+          return {
+            id: post.postId+1,
+            title: post.title,
+            status: post.status,
+            category: post.category,
+          }
+        
+  
+      }).filter((item) => item != null);
+    }
+  
+  
 
     const fetchUsers = async () => {
       try {
@@ -73,57 +106,60 @@ export default function MyPage() {
       }
   };
 
+  const fetch2Posts = async () => {
+    try{
+      const own = await axios.get(
+        `${server}/post/owner/${userId}`
+      );
+      setUserPosts(own.data);
+      console.log(own.data);
+    }catch (err){
+      console.error('Error fetching data:', err);
+      setError(err);
+    }
+};
+
     //데이터 GET
     useEffect(() => {
       if(userInfo.isLoggedIn) {
         fetchUsers();
         getJoinedLandData();
+        fetch2Posts();
       }
     }, [userInfo.isLoggedIn]);
 
 
     const [userPosts, setUserPosts] = useState([]);
-    const [applyPosts, setApplyPosts] = useState([]);
+    // const [applyPosts, setApplyPosts] = useState([]);
 
 
-    useEffect(() => {
-      const fetchPosts = async () => {
-        try{
-          const posts = await axios.get(
-            `${server}/post/applied/${userId}`
-          )
-          console.log (posts.data)
-          console.log(posts.data);
+    // useEffect(() => {
+    //   const fetchPosts = async () => {
+    //     try{
+    //       const posts = await axios.get(
+    //         `${server}/post/applied/${userId}`
+    //       )
+    //       console.log (posts.data)
+    //       console.log(posts.data);
           
-          // const filteredApplyPosts = posts.filter(post =>post.applicants.some(applicant => applicant.userId === userId));
-          const filteredApplyPosts = posts.filter(post =>post.applicants.some(applicant => applicant.status === "PENDING"));
+    //       // const filteredApplyPosts = posts.filter(post =>post.applicants.some(applicant => applicant.userId === userId));
+    //       const filteredApplyPosts = posts.filter(post =>post.applicants.some(applicant => applicant.status === "PENDING"));
           
-          setApplyPosts(filteredApplyPosts);
-          console.log(filteredApplyPosts);
+    //       setApplyPosts(filteredApplyPosts);
+    //       console.log(filteredApplyPosts);
 
-        }catch (err) {
-          console.error('Error fetching data:', err);
-          setError(err);
-      }
-    };
-      fetchPosts();
-    }, [userId, server]);
+    //     }catch (err) {
+    //       console.error('Error fetching data:', err);
+    //       setError(err);
+    //   }
+    // };
+    //   fetchPosts();
+    // }, [userId, server]);
 
-    useEffect(()=> {
-      const fetch2Posts = async () => {
-        try{
-          const own = await axios.get(
-            `${server}/post/owner/${userId}`
-          )
-          setUserPosts(own.data);
-          console.log(own.data);
-        }catch (err){
-          console.error('Error fetching data:', err);
-          setError(err);
-        }
-    };
-  fetch2Posts();
-},[])
+//     useEffect(()=> {
+
+//   fetch2Posts();
+// },[])
 
      // 주어진 데이터를 기반으로 userId에 해당하는 게시글 필터링
       // const filteredOwnPosts = owner[0].filter(post => post.ownerId === userId);
@@ -171,15 +207,15 @@ export default function MyPage() {
 };
 
 
-// 카테고리별로 그룹화 -> 자신이 지원한 게시물보기
-const ApplyProjects = applyPosts.reduce((acc, apply) => {
-  const { category } = apply;
-  if (!acc[category]) {
-    acc[category] = [];
-  }
-  acc[category].push(apply);
-  return acc;
-}, {});
+// // 카테고리별로 그룹화 -> 자신이 지원한 게시물보기
+// const ApplyProjects = applyPosts.reduce((acc, apply) => {
+//   const { category } = apply;
+//   if (!acc[category]) {
+//     acc[category] = [];
+//   }
+//   acc[category].push(apply);
+//   return acc;
+// }, {});
 
 
 
@@ -202,7 +238,26 @@ const OwnerProjects = userPosts.reduce((acc, create) => {
   return acc;
 }, {});
 
+const AppliedProjects = applyPosts.reduce((acc, create) => {
+  const { category } = create;
+  if (!acc[category]) {
+    acc[category] = [];
+  }
+  acc[category].push(create);
+  return acc;
+}, {});
 
+const statusText = {
+  APPROVED: "수락",
+  PENDING: "대기 중",
+  REJECTED: "거절",
+};
+
+const statusColor = {
+  APPROVED: "#54B8A7",
+  PENDING: "#EF8C3E",
+  REJECTED: "#D74F8B",
+};
 
 
 
@@ -218,6 +273,7 @@ const OwnerProjects = userPosts.reduce((acc, create) => {
     };
 
     const chunkedData = chunkArray(data, 2);
+
 
 
     return (
@@ -403,7 +459,7 @@ card.length > 0 && card[0] && Object.keys(card[0]).length > 0 ? (
                   </ImagePlaceholder>
                   <TextWrapper>
                     <FileName>
-                      개인작업물.pdf</FileName>
+                      개인작업물 파일</FileName>
                     <FileSize>1234KB</FileSize>
                   </TextWrapper>
                 </BoxWrapper>
@@ -416,7 +472,7 @@ card.length > 0 && card[0] && Object.keys(card[0]).length > 0 ? (
                     <ImageStyle src={link}/>
                   </ImagePlaceholder>
                   <TextWrapper>
-                    <FileName>www.figma.com</FileName>
+                    <FileName>개인 URL</FileName>
                   </TextWrapper>
                 </BoxWrapper>
                 </a>
@@ -489,6 +545,15 @@ card.length > 0 && card[0] && Object.keys(card[0]).length > 0 ? (
               <div style={({fontSize: '32px', fontWeight: '600', marginBottom:'40px'})}>
                 내가 지원한 공모전
               </div>
+              {/* {applyPosts.map((post) => (
+                <TeamAllowStateBox
+                  key={post.id}
+                  id={post.id}
+                  title={post.title}
+                  status={post.status}
+                  category={post.category}
+                />
+              ))} */}
             </GridLeft>
             <GridLeft>
             <div style={({fontSize: '32px', fontWeight: '600', marginBottom:'40px'})}>
@@ -509,8 +574,8 @@ card.length > 0 && card[0] && Object.keys(card[0]).length > 0 ? (
           
 
         <GridSection>
-           {/* 카테고리 정렬 배열 변수만 다 박으면 되삼*/}
-            {Object.keys(ApplyProjects).map((category, index) => (
+           {/* 카테고리 정렬 배열 */}
+            {Object.keys(AppliedProjects).map((category, index) => (
               <Card3 key={index}>
 
                 <SectionLeft>
@@ -520,28 +585,16 @@ card.length > 0 && card[0] && Object.keys(card[0]).length > 0 ? (
                 <SectionRight>
                   <Column>
                   {/* 카테고리 별 포스트 배열 */}
-                {ApplyProjects[category]
-
-                .filter(apply =>
-                  apply.applicants.some(applicant =>
-                    [ "APPEND"].includes(applicant.status)
-                  )
-                ).map((category) => (
-
+                {AppliedProjects[category].map((category) => (
+                  
                   <Card3 key={category.postId}>
-                    <ProjectTitle>{category.title} </ProjectTitle>
+                    <ProjectTitle onClick={() => navigate(`/detail/${category.postId}`)}>{category.title} </ProjectTitle>
+                    {/* <div>{category.approvedCount}</div> */}
                     
-                    <img
-                        src={
-                          category.applicants.some(applicant => applicant.status === "APPEND")
-                            ? wait // 대기 중
-                            : category.applicants.some(applicant => applicant.status === "{\"status\":\"거절\"}")
-                            ? reject // 거절
-                            : null
-                        }
-                        alt=""
-                        style={{ width: "110px", height: "35px" }}
-                      />
+                    <StatusBox>
+                      {statusText[category.status] || "거절됨"}
+                      <StatusColor clr={statusColor[category.status] || "#D7F48B"} />
+                    </StatusBox>
                   </Card3>
                  
                 ))}
@@ -550,6 +603,7 @@ card.length > 0 && card[0] && Object.keys(card[0]).length > 0 ? (
               </Card3>
             ))}
         </GridSection>
+
 
         </GridLeft>
 
@@ -602,6 +656,8 @@ card.length > 0 && card[0] && Object.keys(card[0]).length > 0 ? (
                   <Card3 key={category.postId}>
                     <ProjectTitle>{truncatedTitle} </ProjectTitle>
                     
+                    <ProjectTitle  onClick={() => navigate(`/detail/${category.postId}`)}>{category.title} </ProjectTitle>
+                    <div>{category.approvedCount}</div>
                     
                     
                       <img
@@ -632,6 +688,28 @@ card.length > 0 && card[0] && Object.keys(card[0]).length > 0 ? (
 }
 
 // 개인정보
+
+
+
+const StatusBox = styled.div`
+  display: flex;
+  align-items: center;
+  border-radius: 8px;
+  padding: 10px;
+  height: 32px;
+  background-color: white;
+  gap: 10px;
+  font-size: 17px;
+  font-weight: 500;
+`;
+
+const StatusColor = styled.div`
+  background-color: ${(props) => props.clr};
+  border-radius: 20px;
+  width: 18px;
+  height: 18px;
+`;
+
 
 const CardContainer = styled.div`
   width: 493px;

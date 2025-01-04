@@ -167,6 +167,12 @@ const RecruitmentPage = () => {
   const handleSearchInputChange = (e) => {
     setSearchWord(e.target.value);
   };
+
+  const handleSubmit = () => {
+    // 예: 검색 페이지 혹은 /recruiting으로 이동하면서 쿼리 파라미터로 searchword 넘기기
+    navigate(`/recruiting?searchword=${searchWord}`);
+  };
+
   const handleSearchIconClick = () => {
     // /recruiting?searchword=xxx&sort=xxx
     navigate(`/recruiting?searchword=${searchWord}&sort=${sortParam}`);
@@ -224,16 +230,23 @@ const RecruitmentPage = () => {
           </DropdownContainer>
         </>
         {/* <SearchWrapper>
+
           <SearchInput
             type="text"
-            placeholder="원하는 검색어를 입력하세요"
+            placeholder="검색어를 입력하세요"
             value={searchWord}
-            onChange={handleSearchInputChange}
+            onChange={(e) => setSearchWord(e.target.value)}
+          />
+          <SearchIcon 
+            src={searchicon} 
+            onClick={() => handleSubmit()} 
+            style={{"zIndex": 10}}
           />
           <SearchIcon onClick={handleSearchIconClick}>
             <SearchIcon2 src={searchicon} alt="searchIcon" />
           </SearchIcon>
         </SearchWrapper> */}
+
 
         <WriteButton onClick={() => navigate("/maketeam")}>
           글 작성하기
@@ -428,29 +441,24 @@ const SearchWrapper = styled.div`
   /* top: 354px;
   right: 335px; */
 `;
+
 const SearchInput = styled.input`
-  font-family: Pretendard;
-  font-size: 20px;
-  font-weight: 500;
-  line-height: 28px;
-  letter-spacing: -0.02em;
-  text-align: left;
-  text-underline-position: from-font;
-  text-decoration-skip-ink: none;
   flex: 1;
   border: none;
   outline: none;
   background: transparent;
-  /* font-size: 1rem; */
-  color: #6c6c6c;
+  font-size: 18px;
+  color: #111;
+
   &::placeholder {
-    color: #767676;
+    color:white;
   }
 `;
 const SearchIcon = styled.span`
-  font-size: 1.2rem;
-  color: #6c6c6c;
+  font-size: 15px;
+  color: white;
   cursor: pointer;
+  z-index: 10;
 `;
 const SearchIcon2 = styled.img`
   width: 21px;
