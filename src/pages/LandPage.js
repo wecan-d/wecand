@@ -525,9 +525,17 @@ const LandPage = () => {
   const handleAddTeamPage = async (teamPageName, teamPageUrl) => {
     try {
       // POST 1) URL
-      await axios.post(`${server}/land/${landId}/url`, teamPageUrl);
+      await axios.post(`${server}/land/${landId}/url`, teamPageUrl
+        // {
+          // headers: { "Content-Type" : "text/plain" }
+        // }
+      );
       // POST 2) URLName
-      await axios.post(`${server}/land/${landId}/urlName`, teamPageName );
+      await axios.post(`${server}/land/${landId}/urlName`, teamPageName
+        // {
+          // headers: { "Content-Type" : "text/plain" }
+        // }
+       );
   
       // 다시 GET 해서 state 갱신
       console.log(teamPageUrl, teamPageName);
@@ -548,7 +556,8 @@ const LandPage = () => {
 
   const combinedUrls = urls.map((url, index) => ({
     name: urlnames[index],
-    url: url
+    url: url,
+    
   }));
   
 
@@ -591,7 +600,7 @@ const LandPage = () => {
   const fetchUrls = async () => {
     try {
       const resUrls = await axios.get(`${server}/land/${landId}/urls`);
-      const resUrlNames = await axios.get(`${server}/land/${landId}/urlNames`);
+      const resUrlNames = await axios.get(`${server}/land/${landId}/urlnames`);
   
       // 예: resUrls.data = ["http://...", ...]
       //     resUrlNames.data = ["구글", "네이버", ...]
@@ -607,10 +616,6 @@ const LandPage = () => {
       getMembers();
       fetchUrls();
     }
-
-    axios.get(`${server}/land/${landId}/urls`).then(res => setUrls(res.data));
-    axios.get(`${server}/land/${landId}/urlnames`).then(res => setUrlNames(res.data));
-
   }, [userInfo.isLoggedIn]);
 
   return (
@@ -623,7 +628,7 @@ const LandPage = () => {
       />
 
       <LandTitleDiv>
-        <LandTitle>PARD</LandTitle>
+        <LandTitle>Wecand</LandTitle>
       </LandTitleDiv>
 
       <Name>{userInfo.userName}</Name>
