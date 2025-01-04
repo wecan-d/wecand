@@ -39,7 +39,9 @@ const Header = () => {
       <Logo src={logo} alt="Wecand Logo" onClick={() => navigate("/home")} />
 
       {/* 검색창 */}
-      {!isRecruitingPage && 
+      {isRecruitingPage && 
+      <div style={({position:'relative'})}>
+        <div style={({position:'absolute',top:'322px',right:'-94px'})}>
         <SearchWrapper onSubmit={(e) => {
           e.preventDefault();
           handleSubmit();
@@ -57,6 +59,8 @@ const Header = () => {
             style={{"zIndex": 10}}
           />
         </SearchWrapper>
+          </div>
+        </div>
       }
       {/* 로그인/프로필 영역 */}
       <LoginWrapper>
@@ -96,7 +100,7 @@ const HeaderContainer = styled.div`
 `;
 
 const UserNameP = styled.p`
-  font-size: 24px;
+  font-size: 18px;
   color: #111;
   font-weight: 600;
 `;

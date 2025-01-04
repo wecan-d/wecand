@@ -229,11 +229,8 @@ const RecruitmentPage = () => {
             )}
           </DropdownContainer>
         </>
-        <SearchWrapper onSubmit={(e) => {
-          e.preventDefault();
-          handleSubmit();
+        {/* <SearchWrapper>
 
-        }}>          
           <SearchInput
             type="text"
             placeholder="검색어를 입력하세요"
@@ -245,7 +242,11 @@ const RecruitmentPage = () => {
             onClick={() => handleSubmit()} 
             style={{"zIndex": 10}}
           />
-        </SearchWrapper>
+          <SearchIcon onClick={handleSearchIconClick}>
+            <SearchIcon2 src={searchicon} alt="searchIcon" />
+          </SearchIcon>
+        </SearchWrapper> */}
+
 
         <WriteButton onClick={() => navigate("/maketeam")}>
           글 작성하기
@@ -464,10 +465,10 @@ const SearchIcon2 = styled.img`
   height: 21px;
 `;
 const WriteButton = styled.button`
-  width: 120px;
+  width: 140px;
   height: 52px;
   border: none;
-  padding: 10px 15px;
+  padding: 10px 25px;
   font-size: 20px;
   background: #6c54f7;
   font-weight: 500;
@@ -479,7 +480,7 @@ const WriteButton = styled.button`
   gap: 10px;
   margin-left: 895px;
   position: absolute;
-  right: 190px;
+  right: 168px;
   font-family: Pretendard;
   font-size: 24px;
 `;

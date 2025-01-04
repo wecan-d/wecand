@@ -23,6 +23,11 @@ import { AuthContext } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { TeamAllowStateBox } from "../components/homepage/TeamAllowStateBox";
 
+function truncateString(str, maxLength) {
+  if (!str) return "";
+  return str.length > maxLength ? str.slice(0, maxLength) + "..." : str;
+}
+
 
 function chunkArray(array, size) {
   const result = [];
@@ -644,9 +649,13 @@ card.length > 0 && card[0] && Object.keys(card[0]).length > 0 ? (
                 <SectionRight>
                   <Column>
                   {/* 카테고리 별 포스트 배열 */}
-                {OwnerProjects[category].map((category) => (
-                  
+                {OwnerProjects[category].map((category) => {
+                    // 원하는 길이(예: 20자)만큼만 잘라내기
+                    const truncatedTitle = truncateString(category.title, 37);
+                    return(
                   <Card3 key={category.postId}>
+                    <ProjectTitle>{truncatedTitle} </ProjectTitle>
+                    
                     <ProjectTitle  onClick={() => navigate(`/detail/${category.postId}`)}>{category.title} </ProjectTitle>
                     <div>{category.approvedCount}</div>
                     
@@ -658,8 +667,8 @@ card.length > 0 && card[0] && Object.keys(card[0]).length > 0 ? (
                       />
                     
                   </Card3>
-                 
-                ))}
+                    );
+})}
                  </Column>
               </SectionRight>
               </Card3>
@@ -832,6 +841,7 @@ const CardTitle = styled.div`
     height: 31px;
     font-weight: 500;
     white-space: nowrap;
+    width: 100px;
 `;
 
 const CardContent = styled.div`

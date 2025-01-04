@@ -15,6 +15,12 @@ import { AuthContext } from "../context/AuthContext";
 import { SearchIcon, SearchInput, SearchWrapper } from "../components/Header";
 
 
+function truncateString(str, maxLength) {
+  if (!str) return "";
+  return str.length > maxLength ? str.slice(0, maxLength) + "..." : str;
+}
+
+
 
 const server = process.env.REACT_APP_SERVER;
 
@@ -234,18 +240,26 @@ const HomePage = () => {
         <RowContainer  style={{
           display:"flex",
           width: "100%",
-          justifyContent: "space-between",
+          justifyContent: "flex-start",
+          gap: '16px',
         }}>
-          {landCardData.map((cardData, index) => (
+          {landCardData.map((cardData, index) => {
+
+             // 원하는 길이(예: 20자)만큼만 잘라내기
+             const truncatedTitle = truncateString(cardData.landName, 15);
+             return(
+
+             
             <LandCard
               key={index}
               id={cardData ? cardData.landId : 0}
-              title={cardData ? cardData.landName : ''}
+              title={cardData ? truncatedTitle : ''}
               role={cardData ? cardData.role : ''}
               mem={cardData ? cardData.countMember : 0}
               imageKey = {index+1}
             />
-          ))}
+          );
+})}
         </RowContainer>
 
 
