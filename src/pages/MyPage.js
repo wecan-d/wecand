@@ -87,10 +87,11 @@ export default function MyPage() {
           const posts = await axios.get(
             `${server}/post/applied/${userId}`
           )
+          console.log (posts.data)
           console.log(posts.data);
           
           // const filteredApplyPosts = posts.filter(post =>post.applicants.some(applicant => applicant.userId === userId));
-          const filteredApplyPosts = posts.filter(post =>post.applicants.some(applicant => applicant.status === "pending"));
+          const filteredApplyPosts = posts.filter(post =>post.applicants.some(applicant => applicant.status === "PENDING"));
           
           setApplyPosts(filteredApplyPosts);
           console.log(filteredApplyPosts);
@@ -102,6 +103,22 @@ export default function MyPage() {
     };
       fetchPosts();
     }, [userId, server]);
+
+    useEffect(()=> {
+      const fetch2Posts = async () => {
+        try{
+          const own = await axios.get(
+            `${server}/post/owner/${userId}`
+          )
+          setUserPosts(own.data);
+          console.log(own.data);
+        }catch (err){
+          console.error('Error fetching data:', err);
+          setError(err);
+        }
+    };
+  fetch2Posts();
+},[])
 
      // 주어진 데이터를 기반으로 userId에 해당하는 게시글 필터링
       // const filteredOwnPosts = owner[0].filter(post => post.ownerId === userId);
@@ -470,7 +487,7 @@ card.length > 0 && card[0] && Object.keys(card[0]).length > 0 ? (
             </GridLeft>
             <GridLeft>
             <div style={({fontSize: '32px', fontWeight: '600', marginBottom:'40px'})}>
-                내가 작성한 글 / 랜드
+                내가 작성한 글
               </div>
             </GridLeft>
           </OuterGrid>
@@ -505,7 +522,7 @@ card.length > 0 && card[0] && Object.keys(card[0]).length > 0 ? (
                     [ "APPEND"].includes(applicant.status)
                   )
                 ).map((category) => (
-                  
+
                   <Card3 key={category.postId}>
                     <ProjectTitle>{category.title} </ProjectTitle>
                     
