@@ -381,7 +381,7 @@ card.length > 0 && card[0] && Object.keys(card[0]).length > 0 ? (
                   </ImagePlaceholder>
                   <TextWrapper>
                     <FileName>
-                      개인작업물.pdf</FileName>
+                      개인작업물 파일</FileName>
                     <FileSize>1234KB</FileSize>
                   </TextWrapper>
                 </BoxWrapper>
@@ -394,7 +394,7 @@ card.length > 0 && card[0] && Object.keys(card[0]).length > 0 ? (
                     <ImageStyle src={link}/>
                   </ImagePlaceholder>
                   <TextWrapper>
-                    <FileName>www.figma.com</FileName>
+                    <FileName>개인 URL</FileName>
                   </TextWrapper>
                 </BoxWrapper>
                 </a>
