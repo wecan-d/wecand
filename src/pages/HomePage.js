@@ -38,7 +38,6 @@ const HomePage = () => {
     }
   };
   
-  console.log(userInfo);
 
   // 신청 공모전 팀 모임 현황 필터링
   const [applyPosts, setApplyPosts] = useState([
@@ -51,10 +50,10 @@ const HomePage = () => {
 
   const getApplyPosts = async (userId) => {
     const applyPostsData = await axios.get(`${server}/post/applied/${userId}`);
-    console.log("apply:", applyPostsData);
+    
 
     const newApplyPosts = filteredApplyPosts(applyPostsData.data, userId);
-    console.log("filtered: ", newApplyPosts);
+    
     setApplyPosts(newApplyPosts);
   }
 

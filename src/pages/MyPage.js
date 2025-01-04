@@ -654,10 +654,10 @@ card.length > 0 && card[0] && Object.keys(card[0]).length > 0 ? (
                     const truncatedTitle = truncateString(category.title, 37);
                     return(
                   <Card3 key={category.postId}>
-                    <ProjectTitle>{truncatedTitle} </ProjectTitle>
+                    <ProjectTitle
+                    onClick={() => navigate(`/detail/${category.postId}`)}>{truncatedTitle} </ProjectTitle>
                     
-                    <ProjectTitle  onClick={() => navigate(`/detail/${category.postId}`)}>{category.title} </ProjectTitle>
-                    <div>{category.approvedCount}</div>
+                    
                     
                     
                       <img
