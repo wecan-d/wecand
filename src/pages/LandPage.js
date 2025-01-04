@@ -20,7 +20,7 @@ import bubble10 from "../assets/LandPage/Bubbles/bubble10.svg";
 import profile from "../assets/profile.png";
 import SkillCardModal from "../components/modals/LandSkillCard";
 
-import { urls, urlnames, card, card2, members, card1, card4, card3, card5 } from "./LandPageData";
+// import { urls, urlnames, card, card2, members, card1, card4, card3, card5 } from "./LandPageData";
 
 import { GetMembersAPI } from "../context/FormContext";
 import axios from "axios";
@@ -400,7 +400,7 @@ const TeamPageFloating = ({ memberNum, isTeamListExpanded, teamPages, handleOpen
     >
       <TeamPageTitleWrapper>
         <Title>팀 페이지</Title>
-        {teamPages.length < 5 && (
+        {teamPages.length < 10 && ( // TODO
           <AddButton onClick={handleAddClick}>추가하기</AddButton>
         )}
       </TeamPageTitleWrapper>
@@ -504,6 +504,9 @@ const LandPage = () => {
 
   const { landId } = useParams();
 
+  const [urls, setUrls] = useState([]);
+  const [urlnames, setUrlNames] = useState([]);
+
   const getMembers = async () => {
     const memlist = await axios.get(`${server}/land/${landId}/members`);
     setMembers(memlist.data);
@@ -519,16 +522,35 @@ const LandPage = () => {
     setIsAddTeamPageOpen(false);
   };
 
-  const handleAddTeamPage = (teamPageName, teamPageUrl) => {
-    setTeamPage((prevTeamPage) => [...prevTeamPage, {
-      "name": teamPageName,
-      "url": teamPageUrl
-    }]);
+  const handleAddTeamPage = async (teamPageName, teamPageUrl) => {
+    try {
+      // POST 1) URL
+      await axios.post(`${server}/land/${landId}/url`, teamPageUrl);
+      // POST 2) URLName
+      await axios.post(`${server}/land/${landId}/urlName`, teamPageName );
+  
+      // 다시 GET 해서 state 갱신
+      console.log(teamPageUrl, teamPageName);
+      await fetchUrls();
+    } catch (err) {
+      console.error("Error adding team page:", err);
+    }
   };
 
-  const combinedUrls = urls.map((url, index) => {
-    return {name: urlnames[index], url: url};
-  });
+  // const handleAddTeamPage = async (teamPageName, teamPageUrl) => {
+  //   setTeamPage((prevTeamPage) => [...prevTeamPage, {
+  //     "name": teamPageName,
+  //     "url": teamPageUrl
+  //   }]);
+  // };
+
+  
+
+  const combinedUrls = urls.map((url, index) => ({
+    name: urlnames[index],
+    url: url
+  }));
+  
 
   const handleOpenSkillCard = async (userId) => {
     const ucard = await axios.get(`${server}/card/${userId}`);
@@ -566,9 +588,28 @@ const LandPage = () => {
 
 
   // const 
+  const fetchUrls = async () => {
+    try {
+      const resUrls = await axios.get(`${server}/land/${landId}/urls`);
+      const resUrlNames = await axios.get(`${server}/land/${landId}/urlNames`);
+  
+      // 예: resUrls.data = ["http://...", ...]
+      //     resUrlNames.data = ["구글", "네이버", ...]
+      setUrls(resUrls.data);
+      setUrlNames(resUrlNames.data);
+    } catch (error) {
+      console.error("Error fetching urls:", error);
+    }
+  }
 
   useEffect(() => {
-    if(userInfo.isLoggedIn) getMembers();
+    if(userInfo.isLoggedIn) {
+      getMembers();
+      fetchUrls();
+    }
+
+    axios.get(`${server}/land/${landId}/urls`).then(res => setUrls(res.data));
+    axios.get(`${server}/land/${landId}/urlnames`).then(res => setUrlNames(res.data));
 
   }, [userInfo.isLoggedIn]);
 
