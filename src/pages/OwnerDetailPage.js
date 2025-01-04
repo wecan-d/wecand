@@ -16,8 +16,13 @@ export default function OwnerDetailPage() {
     const userId = userInfo.token;
     const server = process.env.REACT_APP_SERVER;
     
-      // 마지막으로 누른 버튼 상태 ("APPROVED" or "DECLINED" or null)
-    const [lastClickedStatus, setLastClickedStatus] = useState(null);
+    const alertAcceptHandler= () => {
+      alert("수락 되었습니다!");
+    };
+
+    const alertDeclinedHandler= () =>{
+      alert("거절 되었습니다!");
+    };
     
 
 
@@ -75,6 +80,7 @@ export default function OwnerDetailPage() {
       const response = await axios.post(`${server}/land/${postId}/create?userId=${userId}`);
 
       console.log(`server/land/${postId}/create`, response);
+      alert("랜드가 생성되었습니다!");
 
     }
 
@@ -94,6 +100,7 @@ export default function OwnerDetailPage() {
           console.error("Error updating status:", error);
       }
     };
+    
 
 
     return (
@@ -109,6 +116,9 @@ export default function OwnerDetailPage() {
             <UserListWrapper>
               {apply?.applicants?.length > 0 ? (
                 apply.applicants.map((applicant) => (
+
+
+                  
                   <UserContainer
                     key={applicant.applicationId}
                     onClick={() => handleFocus(applicant.userId)} // 클릭 시 사용자 ID를 상태로 설정
@@ -116,21 +126,11 @@ export default function OwnerDetailPage() {
                   >
                     <UserName>{applicant.userName}</UserName>
                     <StatusButtons>
-                      <StatusButton
-                      style={{
-                        color:
-                          lastClickedStatus === "APPROVED"
-                            ? "#5020D3A3"
-                            : "#111111", // 기본 색
-                      }}>수락</StatusButton>
+                      <StatusButton 
+                     >수락</StatusButton>
                       <StatusDivider />
-                      <StatusButton2
-                      style={{
-                        color:
-                          lastClickedStatus === "APPROVED"
-                            ? "#5020D3A3"
-                            : "#111111", // 기본 색
-                      }}>거절</StatusButton2>
+                      <StatusButton2 
+                     >거절</StatusButton2>
                     </StatusButtons>
                   </UserContainer>
                 ))
@@ -161,15 +161,14 @@ export default function OwnerDetailPage() {
                   </TextWrapper2>
                 </CardContainer>
                 <ButtonContainer>
-                  <Button style={{
-                      color:
-                        lastClickedStatus === "DECLINED"
-                          ? "#5020D3A3"
-                          : "#111111", // 기본 색
-                    }}
-                    onClick={() => handleStatusUpdate(cardItem.userId, "DECLINED")}>거절하기</Button>
                   <Button 
-                    onClick={() => handleStatusUpdate(cardItem.userId, "APPROVED")}>수락하기</Button>
+                    onClick={() => {
+                      alert("거절 되었습니다!");
+                      handleStatusUpdate(cardItem.userId, "DECLINED");}}>거절하기</Button>
+                  <Button 
+                    onClick={() => {
+                      alert("수락 되었습니다!");
+                    handleStatusUpdate(cardItem.userId, "APPROVED");}}>수락하기</Button>
                 </ButtonContainer>
                 <Text>작업 스타일</Text>
 
@@ -385,7 +384,7 @@ export default function OwnerDetailPage() {
 </PageWrapperRight>
 
       </PageContainer>
-        <Button style={{"margin": "20px 120px 150px 0", "alignSelf": "flex-end"}} onClick={createLand}>확인하기</Button>
+        <Button style={{"margin": "20px 120px 150px 0", "alignSelf": "flex-end"}} onClick={createLand}>랜드생성</Button>
 
       </OutSidePageContainer>
     );

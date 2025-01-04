@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import MaketeamSVG from "../assets/maketeam.svg";
@@ -44,6 +44,9 @@ const MakeTeam = () => {
   const [modalTimer, setModalTimer] = useState(null);  // 모달 타이머 상태 추가
   const [imgFile, setImgFile] = useState(null);
   const [imgURL, setImgURL] = useState("");
+  // "작성 완료" 버튼 활성화 여부
+  const [isFormValid, setIsFormValid] = useState(false);
+
 
   const categories = [
     "디자인",
@@ -85,6 +88,14 @@ const MakeTeam = () => {
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
+
+  // ---------------------------
+  // 폼 데이터가 변경될 때마다 유효성 검사 -> 버튼 색 변경
+  // ---------------------------
+  useEffect(() => {
+    const isValid = validateForm();
+    setIsFormValid(isValid);
+  }, [formData]);
 
   const handleSubmit = async () => {
     if (!validateForm()) {
@@ -275,7 +286,16 @@ const MakeTeam = () => {
             />
           </div>
 
-          <button onClick={handleSubmit} style={styles.submitButton}>
+          {/* 유효성 검사 전에는 #F0F3FA, 통과 시 #6C54F7 */}
+          <button
+            onClick={handleSubmit}
+            disabled={!isFormValid}
+            style={
+              isFormValid
+                ? styles.submitButtonEnabled
+                : styles.submitButtonDisabled
+            }
+          >
             작성 완료
           </button>
         </div>
@@ -366,10 +386,12 @@ const styles = {
     gap: "1rem",
   },
   label: {
-    fontWeight: "500",
-    color: "#111",
-    fontSize: "22px",
-    
+    fontFamily: "Pretendard", // Corrected property name
+    fontSize: "1.6rem", // Increased font size (24px)
+    fontWeight: "600", // Increased font weight for better visibility
+    lineHeight: "2.2rem", // Adjusted line height
+    textAlign: "left",
+    // Removed invalid properties
   },
   errorMessage: {
     fontSize: "0.65rem",
@@ -384,24 +406,29 @@ const styles = {
     borderRadius: "5px",
     width: "100%",
     height: "52px",
+    fontSize: "1.1rem", // Added font size (19px)
   },
   select: {
     padding: "0.5rem",
     border: "1px solid #ddd",
     borderRadius: "5px",
     width: "100%",
+    height: "52px",
+    fontSize: "1.1rem", // Added font size
   },
   textarea: {
     padding: "0.5rem",
     border: "1px solid #ddd",
     borderRadius: "5px",
     resize: "none",
-    height: "80px",
+    height: "100px",
+    fontSize: "1.1rem", // Added font size
   },
   inputError: {
     borderColor: "#D74F8B",
   },
-  submitButton: {
+  // 버튼: 유효성 검사 미통과 시(#F0F3FA), 통과 시(#6C54F7)
+  submitButtonEnabled: {
     padding: "0.8rem 2rem",
     color: "#fff",
     background: "#6C54F7",
@@ -410,6 +437,18 @@ const styles = {
     cursor: "pointer",
     alignSelf: "flex-end",
     marginTop: "2rem",
+    fontSize: "1.1rem", // Added font size
+  },
+  submitButtonDisabled: {
+    padding: "0.8rem 2rem",
+    color: "#111111",
+    background: "#F0F3FA",
+    border: "none",
+    borderRadius: "5px",
+    cursor: "not-allowed",
+    alignSelf: "flex-end",
+    marginTop: "2rem",
+    fontSize: "1.1rem", // Added font size
   },
   labelerror : {
     flexDirection: "column",
