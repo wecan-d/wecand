@@ -495,7 +495,7 @@ if (owner[0] && owner[0].url) {
                                         
                                         <SectionTitle>작업물</SectionTitle>
 
-                                        <a href={extraData[0].fileUrl} target="_blank" style={({border:'none',textDecoration:'none'})}>
+                                        <a href={extraData[0].img} target="_blank" style={({border:'none',textDecoration:'none'})}>
                                         <BoxWrapper>
                                         
                                           <ImagePlaceholder>
@@ -789,7 +789,7 @@ if (owner[0] && owner[0].url) {
                                         
                                         <SectionTitle>작업물</SectionTitle>
 
-                                        <a href={owner[0].fileUrl} target="_blank" style={({border:'none',textDecoration:'none'})}>
+                                        <a href={owner[0].img} target="_blank" style={({border:'none',textDecoration:'none'})}>
                                         <BoxWrapper>
                                         
                                           <ImagePlaceholder>

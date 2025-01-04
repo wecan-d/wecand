@@ -112,6 +112,7 @@ const AddTeamPageModal = ({
 
   const handleAddButtonClick = () => {
     onConfirm(shortcutName, shortcutURL);
+    console.log(shortcutName, shortcutURL);
     clearInput();
     onClose();
   }

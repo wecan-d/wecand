@@ -57,7 +57,7 @@ const HomePage = () => {
         return {
           id: post.postId+1,
           title: post.title,
-          status: "PENDING",
+          status: post.status,
         }
       
 
@@ -98,11 +98,15 @@ const HomePage = () => {
       "countMember": 1,
     }
   ]);
+  const getLandCardData = async (userId) => {
+    const allLandCard = await axios.get(`${server}/user/${userId}/lands`);
+    setLandCardData(allLandCard.data?.slice(-4));
+  }
 
 
-  const filteredlandCardData = landCardData.length < 4 ? [
-    ...landCardData, ...new Array(4 - landCardData.length).fill(null)
-  ] : landCardData;
+  // const filteredlandCardData = landCardData.length < 4 ? [
+  //   ...landCardData, ...new Array(4 - landCardData.length).fill(null)
+  // ] : landCardData;
 
 
   const handleSubmit = () => {
@@ -118,7 +122,11 @@ const HomePage = () => {
   
 
   useEffect(() => {
-    if(userInfo.isLoggedIn) getApplyPosts(userInfo.token);
+    if(userInfo.isLoggedIn) {
+      getApplyPosts(userInfo.token);
+      getLandCardData(userInfo.token);
+    }
+
   }, [userInfo.isLoggedIn]); 
 
   useEffect(() => {
@@ -198,7 +206,7 @@ const HomePage = () => {
         
         <RowContainer>
             <RowContainerTitle>
-              신청 공모전 팀 모임 현황
+              신청한 공모전 팀 모임 현황
             </RowContainerTitle>
             <RowContainerSubTitle>
               최근 신청 한 팀의 대기 중,수락 위주로 보여요
@@ -228,7 +236,7 @@ const HomePage = () => {
           width: "100%",
           justifyContent: "space-between",
         }}>
-          {filteredlandCardData.map((cardData, index) => (
+          {landCardData.map((cardData, index) => (
             <LandCard
               key={index}
               id={cardData ? cardData.landId : 0}
