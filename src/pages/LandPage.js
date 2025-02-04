@@ -396,7 +396,7 @@ const TeamPageFloating = ({ memberNum, isTeamListExpanded, teamPages, handleOpen
 
   return (
     <TeamPageFloatingContainer 
-      style={{ top: `calc(111px + 32.5px + ${(memberNum > 4 && (!isTeamListExpanded))? 190: (memberNum <= 4)? 47 * memberNum - 24.5 : 47 * memberNum}px + 24.5px + 40px)` }}
+      style={{ top: `calc(120px + 32.5px + ${(memberNum > 4 && (!isTeamListExpanded))? 190: (memberNum <= 4)? 49 * memberNum - 24.5 : 49 * memberNum}px + 24.5px + 40px)` }}
     >
       <TeamPageTitleWrapper>
         <Title>팀 페이지</Title>
@@ -640,12 +640,12 @@ const LandPage = () => {
         onOpenSkillCard={handleOpenSkillCard}
         onToggleExpand={setIsTeamListExpanded}
       />
-      <TeamPageFloating
+      {/* <TeamPageFloating
         memberNum={members.length}
         isTeamListExpanded={isTeamListExpanded}
         teamPages={combinedUrls}
         handleOpenAddTeamPage={handleOpenAddTeamPage}
-      />
+      /> */}
 
       <RightBottomButton onClick={handleRightBottomButtonClick} >홈 이동하기</RightBottomButton>
 

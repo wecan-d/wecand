@@ -132,7 +132,7 @@ const LandCard = ({ id, title, role, mem, imageKey }) => {
                   <LandCardImage src={imageSrc} alt={title} />
                   <Title>{title}</Title>
                   <Role>{roleLabel}</Role>
-                  <Status>종료</Status>
+                  <Status>진행 중</Status>
                   <MemberCount src={profile} />
                 </React.Fragment>
             )
