@@ -144,7 +144,6 @@ const HomePage = () => {
         <SearchWrapper onSubmit={(e) => {
           e.preventDefault();
           handleSubmit();
-
         }}>
           <SearchInput
             type="text"
@@ -409,11 +408,11 @@ const CTAButtonWrapper = styled.div`
   gap: 22px;
   margin-top: 30px;
   margin-bottom: 200px;
+  cursor: pointer;
 `;
 
 const CTAButton = styled.a`
   display: flex;
-
   width: 219px;
   height: 54px;
   margin-top: 20px;
@@ -429,6 +428,7 @@ const CTAButton = styled.a`
   text-align: center;
   border-radius: 8px;
   font-weight: 600;
+  
 `;
 
 const RowContainer = styled.div`
@@ -454,6 +454,7 @@ const RowContainerSubTitle = styled.p`
 const MoreText = styled.div`
   margin-left: auto;
   font-size: 18px;
+  cursor: pointer;
 `;
 
 
