@@ -14,10 +14,10 @@ import profile from "../assets/profile.png"
 
 export default function DetailPage() {
     const navigate = useNavigate();
-    // 지원자용 카드 관리 훅
+    // 지원자용 역량 카드 관리 훅
     const [extraData, setExtraData] = useState([]);
     
-    // 오너용 카드 관리 훅
+    // 오너용 역량카드 관리 훅
     const [owner, setOwner] = useState([]);
     const [ownerId, setOwnerId] = useState();
     const [selectedPostData, setSelectedPostData] = useState(null);
