@@ -125,6 +125,7 @@ export default function MyPage() {
         fetchUsers();
         getJoinedLandData();
         fetch2Posts();
+        getApplyPosts(userId);
       }
     }, [userInfo.isLoggedIn]);
 
@@ -588,8 +589,7 @@ card.length > 0 && card[0] && Object.keys(card[0]).length > 0 ? (
                 {AppliedProjects[category].map((category) => (
                   
                   <Card3 key={category.postId}>
-                    console.log(category.postId);
-                    <ProjectTitle onClick={() => navigate(`/detail/${category.postId}`)}>{category.title} </ProjectTitle>
+                    <ProjectTitle onClick={() => navigate(`/detail/${category.id-1}`)}>{category.title} </ProjectTitle>
                     {/* <div>{category.approvedCount}</div> */}
                     
                     <StatusBox>

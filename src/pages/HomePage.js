@@ -213,7 +213,7 @@ const HomePage = () => {
             <RowContainerSubTitle>
               최근 신청 한 팀의 대기 중,수락 위주로 보여요
             </RowContainerSubTitle>
-          <MoreText>수락 현황 더보기</MoreText>
+          <MoreText onClick={() => navigate('/mypage')}>수락 현황 더보기</MoreText>
         </RowContainer>
 
         <TeamAllowStateBoxWrapper>
@@ -230,7 +230,7 @@ const HomePage = () => {
 
         <RowContainer>
           <RowContainerTitle>최근 사용한 내 아일랜드</RowContainerTitle>
-          <MoreText>내 아일랜드 더보기</MoreText>
+          <MoreText onClick={() => navigate('/mypage')}>내 아일랜드 더보기</MoreText>
         </RowContainer>
 
         <RowContainer  style={{
