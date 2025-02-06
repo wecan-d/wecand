@@ -5,29 +5,19 @@ import file from "../assets/mypage/File.svg";
 import link from "../assets/mypage/Link.svg";
 import progress from "../assets/common/progress.svg"
 import complete from "../assets/common/complete.svg"
-import reject from "../assets/common/reject.svg"
-import accept from "../assets/common/accept.svg"
-import wait from "../assets/common/wait.svg"
-
 import mem1 from "../assets/mypage/mem1.svg"
 import mem2 from "../assets/mypage/mem2.svg"
 import mem3 from "../assets/mypage/mem3.svg"
 import mem4 from "../assets/mypage/mem4.svg"
 import mem5 from "../assets/mypage/mem5.svg"
-
 import profile from "../assets/profile.png"
-
-//임시 데이터
-import { owner, applied } from "./MyPageData"
 import { AuthContext } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
-import { TeamAllowStateBox } from "../components/homepage/TeamAllowStateBox";
 
 function truncateString(str, maxLength) {
   if (!str) return "";
   return str.length > maxLength ? str.slice(0, maxLength) + "..." : str;
 }
-
 
 function chunkArray(array, size) {
   const result = [];
@@ -54,10 +44,8 @@ export default function MyPage() {
       if (count === 4) return mem4;
       return mem5; // 5명 이상
     };
-  
-    // 2개씩 나누어 행(row)을 구성
 
-    // 유저 역량 카드 겟또 /card/{userId}
+    // [GET] 유저 역량 카드 /card/{userId}
     const [card, setCard] = useState([{}]);
     const [applyPosts, setApplyPosts] = useState([
       {
@@ -85,12 +73,8 @@ export default function MyPage() {
             status: post.status,
             category: post.category,
           }
-        
-  
       }).filter((item) => item != null);
     }
-  
-  
 
     const fetchUsers = async () => {
       try {
@@ -119,7 +103,7 @@ export default function MyPage() {
     }
 };
 
-    //데이터 GET
+    //[GET] 유저 로그인 정보
     useEffect(() => {
       if(userInfo.isLoggedIn) {
         fetchUsers();
@@ -129,70 +113,9 @@ export default function MyPage() {
       }
     }, [userInfo.isLoggedIn]);
 
-
     const [userPosts, setUserPosts] = useState([]);
-    // const [applyPosts, setApplyPosts] = useState([]);
-
-
-    // useEffect(() => {
-    //   const fetchPosts = async () => {
-    //     try{
-    //       const posts = await axios.get(
-    //         `${server}/post/applied/${userId}`
-    //       )
-    //       console.log (posts.data)
-    //       console.log(posts.data);
-          
-    //       // const filteredApplyPosts = posts.filter(post =>post.applicants.some(applicant => applicant.userId === userId));
-    //       const filteredApplyPosts = posts.filter(post =>post.applicants.some(applicant => applicant.status === "PENDING"));
-          
-    //       setApplyPosts(filteredApplyPosts);
-    //       console.log(filteredApplyPosts);
-
-    //     }catch (err) {
-    //       console.error('Error fetching data:', err);
-    //       setError(err);
-    //   }
-    // };
-    //   fetchPosts();
-    // }, [userId, server]);
-
-//     useEffect(()=> {
-
-//   fetch2Posts();
-// },[])
-
-     // 주어진 데이터를 기반으로 userId에 해당하는 게시글 필터링
-      // const filteredOwnPosts = owner[0].filter(post => post.ownerId === userId);
-      // 주어진 데이터를 기반으로 userId에 해당하는 게시글 필터링
-      // const filteredApplyPosts = applied.filter(post =>post.applicants.some(applicant => applicant.userId === userId));
-
-      // setUserPosts(filteredOwnPosts);
-    const mock = process.env.REACT_APP_POST_MOCK;
-    
-    
-    
-    // 전체 게시물 sorting 할려고 가져옴
-    const [users, setUsers] = useState([]);
-    // 내가 지원한 공모전 훅 /post/applied/{userId} -> 승인 상태 수락 ? 거절
-    const [apply, setApply] = useState([]);
-    // 내가 작성한 공모전 훅 /post/owner/{userId} -> 진행 중 ? 모집완료 //ApproveCount가 Member-1의 수와 일치할 때 모집완료
-    const [create, setCreate] = useState([]);
-    
-
-    // 내가 참여중인 공모전 훅 /land/{landId}/members
-    const [join , setJoin] = useState([]);
-
-    // 클백 역량카드 상태관리
-    const [extraData, setExtraData] = useState(Array(19).fill({}));
-    // const [extraData, setExtraData] = useState([{ tools: [], certificates: [] }]);
-    const [error, setError] = useState(null);
-    
-
-
-
-
-    // 드롭 다운 관련 상태관리
+    const [, setError] = useState(null);
+    // 드롭 다운 상태관리
     const [isOpen, setIsOpen] = useState(false);
     const [isOpen2, setIsOpen2] = useState(false);
     
@@ -206,29 +129,6 @@ export default function MyPage() {
     setIsOpen2(!isOpen2);
     setIsOpen(false);
 };
-
-
-// // 카테고리별로 그룹화 -> 자신이 지원한 게시물보기
-// const ApplyProjects = applyPosts.reduce((acc, apply) => {
-//   const { category } = apply;
-//   if (!acc[category]) {
-//     acc[category] = [];
-//   }
-//   acc[category].push(apply);
-//   return acc;
-// }, {});
-
-
-
-// 카테고리별로 그룹화 -> 자신이 작성한 게시물보기
-const CreateProjects = create.reduce((acc, create) => {
-  const { category } = create;
-  if (!acc[category]) {
-    acc[category] = [];
-  }
-  acc[category].push(create);
-  return acc;
-}, {});
 
 const OwnerProjects = userPosts.reduce((acc, create) => {
   const { category } = create;
@@ -260,13 +160,6 @@ const statusColor = {
   REJECTED: "#D74F8B",
 };
 
-
-
-
-    // if (error) return <div>에러가 발생했습니다: {error.message}</div>;
-
-
-    // 현재 참여중인 공모전 목업 데이터
     const [data, setData] = useState([]);
     const getJoinedLandData = async () => {
       const d = await axios.get(`${server}/user/${userId}/lands`);
@@ -276,14 +169,20 @@ const statusColor = {
     const chunkedData = chunkArray(data, 2);
 
 
-
-    return (
-      <>
-
-
-{
-card.length > 0 && card[0] && Object.keys(card[0]).length > 0 ? (
-  card.map((cardItem, index) => (
+    // 역량카드 스타일 배치
+    const cardData = [
+      { key: "communication", title: "소통", gridArea: "communication" },
+      { key: "teamwork", title: "작업", gridArea: "work" },
+      { key: "thinking", title: "사고", gridArea: "thinking" },
+      { key: "role", title: "역할", gridArea: "role" },
+      { key: "conflictResolution", title: "갈등 해결", gridArea: "conflict" },
+      { key: "timePreference", title: "시간", gridArea: "time" },
+      { key: "restPreference", title: "휴식", gridArea: "rest" },
+      { key: "friendship", title: "친목", gridArea: "friendship" },
+  ];
+  return (
+    <>
+    { card.length > 0 && card[0] && Object.keys(card[0]).length > 0 ? (card.map((cardItem, index) => (
     <div key={index}>
       <CardContainer>
         <ImageWrapper>
@@ -295,354 +194,198 @@ card.length > 0 && card[0] && Object.keys(card[0]).length > 0 ? (
           <Email>{cardItem.email || "이메일 없음"}</Email>
         </TextWrapper2>
       </CardContainer>
- 
-
-
-      <PageContainer>
-
-      
-        <PageWrapper>
-            {/* extraData[userId] */}
-            <GridWrapper>
-
-                                      {/* 그리드 좌측 */}
-            <LeftGrid> 
-                <CardGrid>
-                    <Card style={{ gridArea: "communication" }}>
-                        <CardTitle>소통</CardTitle>
-                        <CardContent>
-                            {Array.isArray(cardItem?.communication)
-                                ? cardItem.communication.map((contentItem, index) => (
-                                      <p key={index}>{contentItem}</p>
-                                  ))
-                                : "내용 없음"}
-                        </CardContent>
-                    </Card>
-                    <Card style={{ gridArea: "work" }}>
-                        <CardTitle>작업</CardTitle>
-                        <CardContent>
-                            {Array.isArray(cardItem?.teamwork)
-                                ? cardItem.teamwork.map((contentItem, index) => (
-                                      <p key={index}>{contentItem}</p>
-                                  ))
-                                : "내용 없음"}
-                        </CardContent>
-                    </Card>
-                    <Card style={{ gridArea: "thinking" }}>
-                        <CardTitle>사고</CardTitle>
-                        <CardContent>
-                            {Array.isArray(cardItem?.thinking)
-                                ? cardItem.thinking.map((contentItem, index) => (
-                                      <p key={index}>{contentItem}</p>
-                                  ))
-                                : "내용 없음"}
-                        </CardContent>
-                    </Card>
-                    <Card style={{ gridArea: "role" }}>
-                        <CardTitle>역할</CardTitle>
-                        <CardContent>
-                            {Array.isArray(cardItem?.role)
-                                ? cardItem.role.map((contentItem, index) => (
-                                      <p key={index}>{contentItem}</p>
-                                  ))
-                                : "내용 없음"}
-                        </CardContent>
-                    </Card>
-                    <Card style={{ gridArea: "conflict" }}>
-                        <CardTitle>갈등 해결</CardTitle>
-                        <CardContent>
-                            {Array.isArray(cardItem?.conflictResolution)
-                                ? cardItem.conflictResolution.map((contentItem, index) => (
-                                      <p key={index}>{contentItem}</p>
-                                  ))
-                                : "내용 없음"}
-                        </CardContent>
-                    </Card>
-                    <Card style={{ gridArea: "time" }}>
-                        <CardTitle>시간</CardTitle>
-                        <CardContent>
-                            {Array.isArray(cardItem?.timePreference)
-                                ? cardItem.timePreference.map((contentItem, index) => (
-                                      <p key={index}>{contentItem}</p>
-                                  ))
-                                : "내용 없음"}
-                        </CardContent>
-                    </Card>
-                    <Card style={{ gridArea: "rest" }}>
-                        <CardTitle>휴식</CardTitle>
-                        <CardContent>
-                            {Array.isArray(cardItem?.restPreference)
-                                ? cardItem.restPreference.map((contentItem, index) => (
-                                      <p key={index}>{contentItem}</p>
-                                  ))
-                                : "내용 없음"}
-                        </CardContent>
-                    </Card>
-                    <Card style={{ gridArea: "friendship" }}>
-                        <CardTitle>친목</CardTitle>
-                        <CardContent>
-                            {Array.isArray(cardItem?.friendship)
-                                ? cardItem.friendship.map((contentItem, index) => (
-                                      <p key={index}>{contentItem}</p>
-                                  ))
-                                : "내용 없음"}
-                        </CardContent>
-                    </Card>
-                    <Card style={{ gridArea: "important" }}>
-                        <CardTitle>중요하게 생각해요</CardTitle>
-                        <CardContent>
-                            {cardItem.important}
-                        </CardContent>
-                    </Card>
-                </CardGrid>
-            </LeftGrid>
-
-                                          {/* 그리드 우측 */}
-            <RightGrid>
-
-              <RightGridWrapper>
-                                  {/* 드롭다운 */}
-                <DropdownContainer>
-                  <DropdownHeader onClick={toggleDropdown}>
-                    <HeaderText>툴 / 자격증</HeaderText>
-                      <Arrow isOpen={isOpen}>▼</Arrow>
-                  </DropdownHeader>
-            {isOpen && (
-                  <DropdownContent>
-
-                       {/* tools 배열 출력 !! 이거 다 communication에서 tools로 바꾸기*/}
-                      {Array.isArray(cardItem?.tools) && cardItem.tools.map((tools, index) => ( 
-                        <ContentItem key={`tools-${index}`}>{tools}</ContentItem>
-                      ))}
-                      {/* tools 배열 출력 !! 이거 다 communication에서 certificates로 바꾸기*/}
-                      {Array.isArray(cardItem?.certificates) && cardItem.certificates.map((certificates, index) => ( 
-                        <ContentItem key={`certificates-${index}`}>{certificates}</ContentItem>
-                      ))}
-                      
-                    
-                  </DropdownContent>
-            )}
-                </DropdownContainer>
-
-                <DropdownContainer>
-                  <DropdownHeader onClick={toggleDropdown2}>
-                    <HeaderText>경력</HeaderText>
-                      <Arrow2 isOpen={isOpen2}>▼</Arrow2>
-                  </DropdownHeader>
-            {isOpen2 && (
-                  <DropdownContent>
-                     {/* tools 배열 출력 !! 이거 다 communication에서 awards로 바꾸기*/}
-                     {Array.isArray(cardItem?.awards) && cardItem.awards.map((awards, index) => ( 
-                        <ContentItem key={`awards-${index}`}>{awards}</ContentItem>
-                      ))}
-                  </DropdownContent>
-            )}
-                </DropdownContainer>
-
-                <HeaderText2>작업물</HeaderText2>
-
+    
+    <PageContainer>
+      <PageWrapper>
+          <GridWrapper>
+          {/* extraData[userId] */}
+          {/* 그리드 좌측 */}
+          <LeftGrid>
+            <CardGrid>
+              {cardData.map(({ key, title, gridArea }) => (
+                  <Card key={key} style={{ gridArea }}>
+                      <CardTitle>{title}</CardTitle>
+                      <CardContent>
+                        {Array.isArray(cardItem?.[key])
+                          ? cardItem[key].map((contentItem, index) => (
+                            <p key={index}>{contentItem}</p>
+                        )) : "내용 없음"}
+                      </CardContent>
+                  </Card>
+              ))}
                 
+                {/* 중요하게 생각해요 (별도 처리) */}
+              <Card style={{ gridArea: "important" }}>
+                <CardTitle isImportant>중요하게 생각해요</CardTitle>
+                <CardContent>{cardItem.important || "내용 없음"}</CardContent>
+              </Card>
+            </CardGrid>
+          </LeftGrid>
+          
+          {/* 그리드 우측 */}
+          <RightGrid>
+            <RightGridWrapper>
 
+              <DropdownContainer>
+                <DropdownHeader onClick={toggleDropdown}>
+                  <HeaderText>툴 / 자격증</HeaderText>
+                    <Arrow isOpen={isOpen}>▼</Arrow>
+                </DropdownHeader>
                 
+                {isOpen && (
+                <DropdownContent>
+                  {/* 툴 */}
+                  {Array.isArray(cardItem?.tools) && cardItem.tools.map((tools, index) => ( 
+                    <ContentItem key={`tools-${index}`}>{tools}</ContentItem>
+                  ))}
+                  {/* 자격증 */}
+                  {Array.isArray(cardItem?.certificates) && cardItem.certificates.map((certificates, index) => ( 
+                    <ContentItem key={`certificates-${index}`}>{certificates}</ContentItem>
+                  ))}
+                </DropdownContent>
+                )}
+              </DropdownContainer>
 
-                                
-                                
-                                
-                                
-                                {/* 여기에 파일 추가시 이 박스를 생성하는 로직 짜야함 */}
-                <a href={cardItem.fileUrl} target="_blank" style={({border:'none',textDecoration:'none'})}>
-                <BoxWrapper>
+              <DropdownContainer>
+                <DropdownHeader onClick={toggleDropdown2}>
+                  <HeaderText>경력</HeaderText>
+                    <Arrow2 isOpen={isOpen2}>▼</Arrow2>
+                </DropdownHeader>
                 
-                  <ImagePlaceholder>
+                {isOpen2 && (
+                <DropdownContent>
+                  {/* 경력 */}
+                  {Array.isArray(cardItem?.awards) && cardItem.awards.map((awards, index) => ( 
+                    <ContentItem key={`awards-${index}`}>{awards}</ContentItem>
+                  ))}
+                </DropdownContent>
+                )}
+              </DropdownContainer>
+              <HeaderText2>작업물</HeaderText2>
+              
+              {/* 파일 추가시 박스를 생성 */}
+              <a href={cardItem.fileUrl} target="_blank" style={({border:'none',textDecoration:'none'})}>
+              <BoxWrapper>
+                <ImagePlaceholder>
+                  <ImageStyle src={file} />
+                </ImagePlaceholder>
+                <TextWrapper>
+                  <FileName>개인작업물 파일</FileName>
+                  <FileSize>1234KB</FileSize>
+                </TextWrapper>
+              </BoxWrapper>
+              </a>
 
-                    <ImageStyle src={file} />
-                    
-                  </ImagePlaceholder>
-                  <TextWrapper>
-                    <FileName>
-                      개인작업물 파일</FileName>
-                    <FileSize>1234KB</FileSize>
-                  </TextWrapper>
-                </BoxWrapper>
-                </a>
+              <a href={cardItem.url} style={({border:'none',textDecoration:'none'})}>
+              <BoxWrapper>
+                <ImagePlaceholder>
+                  <ImageStyle src={link}/>
+                </ImagePlaceholder>
+                <TextWrapper>
+                  <FileName>개인 URL</FileName>
+                </TextWrapper>
+              </BoxWrapper>
+              </a>
 
-
-                <a href={cardItem.url} style={({border:'none',textDecoration:'none'})}>
-                <BoxWrapper>
-                  <ImagePlaceholder>
-                    <ImageStyle src={link}/>
-                  </ImagePlaceholder>
-                  <TextWrapper>
-                    <FileName>개인 URL</FileName>
-                  </TextWrapper>
-                </BoxWrapper>
-                </a>
-
-
-                        {/* 여기에 기타사항 추가 로직 짜야함 다 짬*/}
-                <HeaderText2>기타사항</HeaderText2>
-                  <HeaderArea>{cardItem.additionalInfo}</HeaderArea>
-
-              </RightGridWrapper>
+              <HeaderText2>기타사항</HeaderText2>
+              <HeaderArea>{cardItem.additionalInfo}</HeaderArea>
+                </RightGridWrapper>
             </RightGrid>
-            </GridWrapper>
-        </PageWrapper>
-      </PageContainer>
-
-      </div>
-  ))
+          </GridWrapper>
+      </PageWrapper>
+    </PageContainer>
+    </div>
+))
 ) : (
   <div>카드 정보가 없습니다.</div> // 여기에 내용이 없을 때 처리할 추가적인 UI를 넣어도 좋습니다.
 )}
+<MainContainer>
+  <OuterGrid>
+    <GridLeft>
+      <div style={({fontSize: '32px', fontWeight: '600', marginBottom:'40px'})}>
+        현재 참여중인 공모전
+      </div>
+    </GridLeft>
+  </OuterGrid>
+</MainContainer>
 
+{/* 현재 참여중인 공모전 */}
+<Container>
+  {/* chunkedData의 각 row를 렌더링 */}
+  {chunkedData.map((row, rowIndex) => (
+  <Row key={rowIndex}>
+    {row.map((item) => (
+      <Card2 key={item.landId} onClick={() => navigate(`/land/${item.landId}`)}>
+        <CardInfo>
+          <ProjectTitle>{item.landName}</ProjectTitle>
+          <TeamLeader>
+            {item.role === "owner" ? "팀장" : "팀원"}
+          </TeamLeader>
+        </CardInfo>
+        <TeamMember>
+          <MemImage src={getMemImage(item.countMember)} alt="memIcon" />
+          {(item.countMember > 4)? <Num>+{(item.countMember-4) || 1}</Num> : <></>}
+        </TeamMember>
+      </Card2>
+    ))}
+  </Row>
+))}
+</Container>
 
+<MainContainer>
+  {/* 그리드 위에 설명 */}
+  <OuterGrid>
+    <GridLeft>
+      <div style={({fontSize: '32px', fontWeight: '600', marginBottom:'40px'})}>
+        내가 지원한 공모전
+      </div>
+    </GridLeft>
+    <GridLeft>
+      <div style={({fontSize: '32px', fontWeight: '600', marginBottom:'40px'})}>
+          내가 작성한 글
+      </div>
+    </GridLeft>
+  </OuterGrid>
+</MainContainer>
 
-
-
-      <MainContainer>
-          <OuterGrid>
-            <GridLeft>
-              <div style={({fontSize: '32px', fontWeight: '600', marginBottom:'40px'})}>
-                현재 참여중인 공모전
-              </div>
-            </GridLeft>
-          </OuterGrid>
-          <OuterGrid>
-          </OuterGrid>
-        </MainContainer>
-       
-                          {/* 현재 참여중인 공모전 */}
-        <Container>
-          {/* chunkedData의 각 row를 렌더링 */}
-          {chunkedData.map((row, rowIndex) => (
-            <Row key={rowIndex}>
-              {row.map((item) => (
-                <Card2
-                  key={item.landId}
-                  onClick={() => navigate(`/land/${item.landId}`)}
-                >
-                  <CardInfo>
-                    <ProjectTitle>{item.landName}</ProjectTitle>
-                    <TeamLeader>
-                      {item.role === "owner" ? "팀장" : "팀원"}
-                    </TeamLeader>
-                  </CardInfo>
-                  <TeamMember>
-                    <MemImage src={getMemImage(item.countMember)} alt="memIcon" />
-                    {(item.countMember > 4)? <Num>+{(item.countMember-4) || 1}</Num> : <></>}
-                  </TeamMember>
-                </Card2>
-              ))}
-            </Row>
-          ))}
-        </Container>
-
-
-
-        <MainContainer>
-          {/* 그리드 위에 설명 */}
-          <OuterGrid>
-            <GridLeft>
-              <div style={({fontSize: '32px', fontWeight: '600', marginBottom:'40px'})}>
-                내가 지원한 공모전
-              </div>
-              {/* {applyPosts.map((post) => (
-                <TeamAllowStateBox
-                  key={post.id}
-                  id={post.id}
-                  title={post.title}
-                  status={post.status}
-                  category={post.category}
-                />
-              ))} */}
-            </GridLeft>
-            <GridLeft>
-            <div style={({fontSize: '32px', fontWeight: '600', marginBottom:'40px'})}>
-                내가 작성한 글
-              </div>
-            </GridLeft>
-          </OuterGrid>
-         
-        </MainContainer>
-
-        {/* 젤 밑에 컴포넌트 시작*/}
-        <MainContainer>
-      {/* 전체 그리드 */}
+<MainContainer>
+  {/* 전체 그리드 */}
       <OuterGrid>
         {/* 좌측 그리드 */}
         <GridLeft>
-
-          
-
-        <GridSection>
-           {/* 카테고리 정렬 배열 */}
+          <GridSection>
+            {/* 카테고리 정렬 배열 */}
             {Object.keys(AppliedProjects).map((category, index) => (
-              <Card3 key={index}>
+            <Card3 key={index}>
+              <SectionLeft>
+                <CardTitle>{category}</CardTitle>
+              </SectionLeft>
 
-                <SectionLeft>
-                  <CardTitle>{category}</CardTitle>
-                </SectionLeft>
-
-                <SectionRight>
-                  <Column>
-                  {/* 카테고리 별 포스트 배열 */}
+              <SectionRight>
+                <Column>
+                {/* 카테고리 별 포스트 배열 */}
                 {AppliedProjects[category].map((category) => (
-                  
                   <Card3 key={category.postId}>
-                    <ProjectTitle onClick={() => navigate(`/detail/${category.id-1}`)}>{category.title} </ProjectTitle>
-                    {/* <div>{category.approvedCount}</div> */}
-                    
+                    <ProjectTitle onClick={() => navigate(`/detail/${category.id-1}`)}>{truncateString(category.title, 32)} </ProjectTitle>
+                      
                     <StatusBox>
                       {statusText[category.status] || "거절됨"}
                       <StatusColor clr={statusColor[category.status] || "#D7F48B"} />
                     </StatusBox>
                   </Card3>
-                 
                 ))}
-                 </Column>
+                </Column>
               </SectionRight>
-              </Card3>
-            ))}
-        </GridSection>
-
-
+            </Card3>
+          ))}
+          </GridSection>
         </GridLeft>
 
-                    {/* 찐찐 최종  */}
-                    {/* 우측 그리드 섹션 */}
         <GridRight>
-
-        {/* <GridSection> */}
-           {/* 카테고리 정렬 배열 */}
-            {/* {Object.keys(CreateProjects).map((category, index) => (
-              <Card3 key={index}>
-
-                <SectionLeft>
-                  <CardTitle>{category}</CardTitle>
-                </SectionLeft>
-
-                <SectionRight>
-                  <Column> */}
-                  {/* 카테고리 별 포스트 배열 */}
-                {/* {CreateProjects[category].map((category) => (
-                  <Card3 key={category.postId}>
-                    <ProjectTitle>{category.title} </ProjectTitle>
-                    <div>{category.approvedCount}</div>
-                  </Card3>
-                ))}
-                  </Column>
-                </SectionRight>
-              </Card3>
-            ))}
-        </GridSection> */}
-
-
-{/* !!테스트용 여기 변수만 맞추면 되삼 */}
-        <GridSection>
-           {/* 카테고리 정렬 배열 */}
+          <GridSection>
+            {/* 카테고리 정렬 배열 */}
             {Object.keys(OwnerProjects).map((category, index) => (
               <Card3 key={index}>
-
                 <SectionLeft>
                   <CardTitle>{category}</CardTitle>
                 </SectionLeft>
@@ -650,44 +393,31 @@ card.length > 0 && card[0] && Object.keys(card[0]).length > 0 ? (
                 <SectionRight>
                   <Column>
                   {/* 카테고리 별 포스트 배열 */}
-                {OwnerProjects[category].map((category) => {
+                  {OwnerProjects[category].map((category) => {
                     // 원하는 길이(예: 20자)만큼만 잘라내기
                     const truncatedTitle = truncateString(category.title, 37);
                     return(
-                  <Card3 key={category.postId}>
-                    <ProjectTitle
-                    onClick={() => navigate(`/detail/${category.postId}`)}>{truncatedTitle} </ProjectTitle>
-                    
-                    
-                    
-                    
+                    <Card3 key={category.postId}>
+                      <ProjectTitle onClick={() => navigate(`/detail/${category.postId}`)}>{truncatedTitle} </ProjectTitle>
                       <img
                         src={category.approvedCount === category.totalApplicants - 1 ? complete : progress}
                         alt=""
                         style={{ width: "110px", height: "35px" }}
                       />
-                    
-                  </Card3>
+                    </Card3>
                     );
-})}
-                 </Column>
-              </SectionRight>
+                  })}
+                  </Column>
+                </SectionRight>
               </Card3>
             ))}
-        </GridSection>
-
-           
-          
+          </GridSection>
         </GridRight>
       </OuterGrid>
     </MainContainer>
-        </>
-    );
+  </>
+);
 }
-
-// 개인정보
-
-
 
 const StatusBox = styled.div`
   display: flex;
@@ -707,7 +437,6 @@ const StatusColor = styled.div`
   width: 18px;
   height: 18px;
 `;
-
 
 const CardContainer = styled.div`
   width: 493px;
@@ -732,8 +461,6 @@ const ProfileImage = styled.img`
   border-radius: 50%;
   object-fit: cover;
 `;
-
-
 
 const TextWrapper2 = styled.div`
   display: flex;
@@ -795,9 +522,7 @@ const RightGrid = styled.div`
   padding: 7px 150px 0px 30px;
 `;
 
-const RightGridWrapper = styled.div`
-   
-`;
+const RightGridWrapper = styled.div``;
 
 const CardGrid = styled.div`
     display: grid;
@@ -839,7 +564,7 @@ const CardTitle = styled.div`
     height: 31px;
     font-weight: 500;
     white-space: nowrap;
-    width: 100px;
+    width: ${({ isImportant }) => (isImportant ? "150px" : "110px")};
 `;
 
 const CardContent = styled.div`
