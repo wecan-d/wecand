@@ -13,7 +13,6 @@ import music from "../assets/homepage/music.svg"
 import business from "../assets/homepage/business.svg"
 import nonmun from "../assets/homepage/nonmun.svg"
 import programming from "../assets/homepage/programming.svg"
-import searchicon from "../assets/homepage/search.svg"
 import profile from "../assets/profile.png"
 
 const server = process.env.REACT_APP_SERVER;
@@ -47,7 +46,6 @@ const RecruitmentPage = () => {
     const fetchUsers = async () => {
       try {
         const response = await axios.get(
-          // "https://676e83a3df5d7dac1ccae100.mockapi.io/post"
           `${server}/post`
         );
         setPost(response.data);
@@ -229,24 +227,6 @@ const RecruitmentPage = () => {
             )}
           </DropdownContainer>
         </>
-        {/* <SearchWrapper>
-
-          <SearchInput
-            type="text"
-            placeholder="검색어를 입력하세요"
-            value={searchWord}
-            onChange={(e) => setSearchWord(e.target.value)}
-          />
-          <SearchIcon 
-            src={searchicon} 
-            onClick={() => handleSubmit()} 
-            style={{"zIndex": 10}}
-          />
-          <SearchIcon onClick={handleSearchIconClick}>
-            <SearchIcon2 src={searchicon} alt="searchIcon" />
-          </SearchIcon>
-        </SearchWrapper> */}
-
 
         <WriteButton onClick={() => navigate("/maketeam")}>
           글 작성하기
@@ -263,9 +243,7 @@ const RecruitmentPage = () => {
                 <PostLeft src={user.img}/>
                 <PostCenter>
                   <div style={{ width: "450px", height: "190px" }}>
-                    {/* <div style={{ display: "flex", justifyContent: "flex-start" }}> */}
                       <Tag>{user.category}</Tag>
-                    {/* </div> */}
                     <PostTitle>{user.title}</PostTitle>
                     <PostDescription>{user.memo}</PostDescription>
                     {/* 프로필 이미지와 작성자 이름 추가 */}
@@ -352,6 +330,7 @@ const CategoryWrapper = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(10vh, 1fr));
   height: 10vh;
+  cursor: pointer;
 `;
 const CategoryItem = styled.div`
   display: flex;
@@ -483,6 +462,7 @@ const WriteButton = styled.button`
   right: 168px;
   font-family: Pretendard;
   font-size: 24px;
+  cursor: pointer;
 `;
 const PostListSection = styled.section`
   display: flex;

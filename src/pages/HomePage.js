@@ -7,7 +7,6 @@ import userProfile from "../assets/profile.png";
 import landsec from "../assets/homepage/landsec.svg";
 import { useNavigate } from "react-router-dom";
 import { useGoogleLogin } from "./Login";
-
 import { PurpleText } from "../components/RegisterComponents";
 import { TeamAllowStateBox } from "../components/homepage/TeamAllowStateBox";
 import LandCard from "../components/homepage/LandCards";
@@ -19,8 +18,6 @@ function truncateString(str, maxLength) {
   if (!str) return "";
   return str.length > maxLength ? str.slice(0, maxLength) + "..." : str;
 }
-
-
 
 const server = process.env.REACT_APP_SERVER;
 
@@ -147,7 +144,6 @@ const HomePage = () => {
         <SearchWrapper onSubmit={(e) => {
           e.preventDefault();
           handleSubmit();
-
         }}>
           <SearchInput
             type="text"
@@ -332,12 +328,6 @@ const RotatingText = styled.span`
   height: 100%;
 `;
 
-const flexCenter = `
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`;
-
 const Container = styled.div`
   width: 100%;
   position: relative;
@@ -418,11 +408,11 @@ const CTAButtonWrapper = styled.div`
   gap: 22px;
   margin-top: 30px;
   margin-bottom: 200px;
+  cursor: pointer;
 `;
 
 const CTAButton = styled.a`
   display: flex;
-
   width: 219px;
   height: 54px;
   margin-top: 20px;
@@ -438,6 +428,7 @@ const CTAButton = styled.a`
   text-align: center;
   border-radius: 8px;
   font-weight: 600;
+  
 `;
 
 const RowContainer = styled.div`
@@ -463,39 +454,7 @@ const RowContainerSubTitle = styled.p`
 const MoreText = styled.div`
   margin-left: auto;
   font-size: 18px;
-`;
-
-const TeamAllowStateBoxRow = styled.div`
-  width: 1480px;
-  display: flex;
-  margin: 0;
-  justify-content: flex-start;
-`
-
-// const TeamAllowStateBox = styled.div`
-//   display: flex;
-//   justify-content: space-between;
-//   align-items: center;
-//   padding: 10px 14px;
-//   min-width: 300px;
-//   height: 54px;
-//   background-color: #F0F3FA;
-//   margin: 0;
-//   border-radius: 16px;
-
-
-// `;
-
-const TeamAllowStateBoxState = styled.div`
-  width: 100px;
-  height: 100%;
-
-  background-color: white;
-  margin-left: auto;
-
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  cursor: pointer;
 `;
 
 
@@ -512,20 +471,6 @@ const ContentSection = styled.section`
   position: relative;
 `;
 
-const SectionTitle = styled.h2`
-color: #111;
-text-align: center;
-font-family: Pretendard;
-font-size: 28px;
-font-style: normal;
-font-weight: 600;
-line-height: 140%;
-margin-top: 130px;
-display: flex;
-width: 100%;
-margin-left: 260px;
-margin-bottom: 30px;
-`;
 
 const Description = styled.p`
   font-size: 28px;
@@ -534,11 +479,6 @@ const Description = styled.p`
   margin: 5px;
 `;
 
-const ResultContainer = styled.div`
-  border: 1px solid #DBDBDB;
-  overflow: hidden; 
-  padding: 10px;
-`;
 
 const TeamAllowStateBoxWrapper = styled.div`
   width: 100%;
@@ -555,20 +495,6 @@ const TeamAllowStateBoxWrapper = styled.div`
   &::-webkit-scrollbar {
     display: none; /* Chrome, Safari, Opera */
   }
-`;
-
-const Item = styled.div`
-  padding: 10px 20px;
-  background: #f0f3fa;
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 150px; /* 각 항목의 최소 너비 설정 */
-  height: 50px;
-  color: black;
-  font-weight: 500;
-  font-size: 18px;
 `;
 
 
@@ -632,34 +558,6 @@ const Title = styled.div`
   /* max-width: 500px; 최대 너비를 지정하여 레이아웃을 고정 */
 `;
 
-// const TagContainer = styled.div`
-//   display: flex;
-//   align-items: center;
-//   width: 457px;
-//   height: 50px;
-  
-//   border-radius: 8px;
-  
-// `;
-
-// const Category = styled.div`
-//   color: #6c54f7; /* 텍스트 색상 */
-//   font-weight: 600;
-//   font-size: 22px;
-//   padding: 0 10px;
-//   width: 123px;
-//   white-space: nowrap;
-//   margin-right: 22px;
-// `;
-
-
-
-// const Title = styled.div`
-//   font-size: 22px;
-//   font-weight: 400;
-//   color: #000000; /* 텍스트 색상 */
-//   white-space: nowrap;
-// `;
 
 
 const RightSection = styled.div`
@@ -678,112 +576,6 @@ const ImageContainer = styled.img`
   background-color: #F0F3FA;
   object-fit: cover;
   border-radius: 0 16px 16px 0;
-`;
-
-const SectionTitle2 = styled.h2`
-  font-size: 28px;
-  font-weight: 600;
-  color: #111;
-  margin-bottom: 20px;
-`;
-
-
-const TextOverlay = styled.div`
-  position: absolute;
-  top: 20px;
-  left: 20px;
-  color: white;
-  font-size: 18px;
-  font-weight: bold;
-`;
-
-
-const Title2 = styled.div`
-  color: #FFF;
-font-family: Pretendard;
-font-size: 28px;
-font-style: normal;
-font-weight: 600;
-line-height: 140%; /* 39.2px */
-letter-spacing: -0.56px;
-position: absolute;
-white-space: nowrap;
-top: 90px;
-`;
-
-const UserName = styled.span`
-  color: #FFF;
-font-family: Pretendard;
-font-size: 22px;
-font-style: normal;
-font-weight: 400;
-line-height: 140%; /* 30.8px */
-letter-spacing: -0.44px;
-position: absolute;
-top: 130px;
-left: 0;
-white-space: nowrap;
-`;
-
-const CardsWrapper = styled.div`
-  display: flex;
-  gap: 16px;
-  overflow-x: auto; /* 가로 스크롤 활성화 */
-  padding-bottom: 10px;
-  ::-webkit-scrollbar {
-    display: none; /* 스크롤바 숨기기 */
-  }
-`;
-
-const ItemCard = styled.div`
-  width: 360px;
-  height: 457px;
-  background-color: #f0f3fa;
-  border-radius: 10px;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  position: relative;
-`;
-
-const ImageWrapper = styled.div`
-  width: 100%;
-  height: 100%;
-  background-color: #ddd; /* 이미지가 삽입될 부분 */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  position: relative;
-`;
-
-const Img = styled.img`
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-`;
-
-const TextWrapper = styled.div`
-  width: 100%;
-  height: 30%;
-  padding: 10px;
-  background-color: #fff;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: flex-start;
-`;
-
-const CardTitle = styled.h3`
-  font-size: 18px;
-  font-weight: 600;
-  color: #333;
-  margin-bottom: 10px;
-`;
-
-const CardDescription = styled.p`
-  font-size: 14px;
-  color: #777;
 `;
 
 

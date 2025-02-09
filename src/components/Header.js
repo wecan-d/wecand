@@ -1,20 +1,17 @@
 import React, { useState, useContext } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
 import styled from "styled-components";
-
+import { useLocation, useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
+import { useGoogleLogin } from "../pages/Login";
 import logo from "../assets/homepage/HeaderLogo.svg"
 import searchicon from "../assets/homepage/search.svg"
-import { useGoogleLogin } from "../pages/Login";
 import userProfile from "../assets/profile.png";
-
 
 const Header = () => {
   const { userInfo, handleLogout } = useContext(AuthContext);
   const location = useLocation();
   const navigate = useNavigate();
   const googleLogin = useGoogleLogin();
-  
   const [searchWord, setSearchWord] = useState("");
 
   const handleLogin = async () => {
@@ -30,55 +27,37 @@ const Header = () => {
     navigate(`/recruiting?searchword=${searchWord}`);
   };
 
-  // recruitingPage 경로를 확인
-  const isRecruitingPage = location.pathname.includes("/recruiting");
-
   return (
     <HeaderContainer>
-      {/* 로고 클릭 시 홈으로 이동 */}
       <Logo src={logo} alt="Wecand Logo" onClick={() => navigate("/home")} />
 
       {/* 검색창 */}
-      {isRecruitingPage && 
-      <div style={({position:'relative'})}>
-        <div style={({position:'absolute',top:'322px',right:'-94px'})}>
-        <SearchWrapper onSubmit={(e) => {
-          e.preventDefault();
-          handleSubmit();
-
-        }}>
-          <SearchInput
-            type="text"
-            placeholder="검색어를 입력하세요"
-            value={searchWord}
-            onChange={(e) => setSearchWord(e.target.value)}
-          />
-          <SearchIcon 
-            src={searchicon} 
-            onClick={() => handleSubmit()} 
-            style={{"zIndex": 10}}
-          />
-        </SearchWrapper>
-          </div>
-        </div>
+      {location.pathname.includes("/recruiting") && 
+      <SearchContainer>
+        <SearchBox>
+          <SearchWrapper onSubmit={(e) => { e.preventDefault(); handleSubmit(); }}>
+            <SearchInput
+              type="text"
+              placeholder="검색어를 입력하세요"
+              value={searchWord}
+              onChange={(e) => setSearchWord(e.target.value)}
+            />
+            <SearchIcon src={searchicon} onClick={handleSubmit} />
+          </SearchWrapper>
+        </SearchBox>
+      </SearchContainer>
       }
+
       {/* 로그인/프로필 영역 */}
       <LoginWrapper>
-        {!userInfo.isLoggedIn ? (
-          // 로그인 안 된 경우
-          <LoginButton onClick={handleLogin}>로그인</LoginButton>
-        ) : (
-          // 로그인 된 경우
-          <>
-            <UserNameP>{userInfo.userName}님</UserNameP>
-            <LoginButton onClick={handleLogout}>로그아웃</LoginButton>
-          </>
+        {!userInfo.isLoggedIn ? ( <LoginButton onClick={handleLogin}>로그인</LoginButton>)
+        : (
+        <>
+          <UserNameP>{userInfo.userName}님</UserNameP>
+          <LoginButton onClick={handleLogout}>로그아웃</LoginButton>
+        </>
         )}
-        <UserProfile
-          src={userProfile}
-          alt="userIcon"
-          onClick={() => navigate("/mypage")}
-        />
+        <UserProfile src={userProfile} alt="userIcon" onClick={() => navigate("/mypage")} />
       </LoginWrapper>
     </HeaderContainer>
   );
@@ -90,10 +69,8 @@ const HeaderContainer = styled.div`
   display: flex;
   justify-content: flex-end;
   align-items: center;
-
-  /* position: absolute; */
+  position: relative;
   width: 100%;
-
   background: transparent;
   color: white;
   padding: 30px 164px 30px 116px;
@@ -123,9 +100,17 @@ const LoginWrapper = styled.div`
 export const Logo = styled.img`
   width: 116px;
   margin-right: auto;
-
 `;
 
+const SearchContainer = styled.div`
+  position: relative;
+`;
+
+const SearchBox = styled.div`
+  position: absolute;
+  top: 316px;
+  right: -80px;
+`;
 
 export const SearchWrapper = styled.form`
   display: flex;
@@ -136,7 +121,6 @@ export const SearchWrapper = styled.form`
   border-radius: 8px;
   justify-content: space-between;
   padding: 15px;
-
   margin-right: 25px;
 `;
 
