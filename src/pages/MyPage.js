@@ -59,11 +59,10 @@ export default function MyPage() {
 
     const getApplyPosts = async (userId) => {
       const applyPostsData = await axios.get(`${server}/post/applied/${userId}`);
-      console.log("apply:", applyPostsData);
-  
       const newApplyPosts = filteredApplyPosts(applyPostsData.data, userId);
-      console.log("filtered: ", newApplyPosts);
       setApplyPosts(newApplyPosts);
+      console.log("지원한 목록:", applyPostsData);
+      console.log("필터링: ", newApplyPosts);
     }
 
     const filteredApplyPosts = (data, userToken) => {
@@ -74,7 +73,10 @@ export default function MyPage() {
             status: post.status,
             category: post.category,
           }
-      }).filter((item) => item != null);
+      })
+      // APPROVED(수락)상태가 아닐 때만, 지원한 목록 나열
+      .filter((item) => item.status !== "APPROVED" && item != null);
+      // .filter((item) => item != null);
     }
 
     const fetchUsers = async () => {
@@ -368,7 +370,6 @@ const statusColor = {
                 {AppliedProjects[category].map((category) => (
                   <Card3 key={category.postId}>
                     <ProjectTitle onClick={() => navigate(`/detail/${category.id-1}`)}>{truncateString(category.title, 32)} </ProjectTitle>
-                      
                     <StatusBox>
                       {statusText[category.status] || "거절됨"}
                       <StatusColor clr={statusColor[category.status] || "#D7F48B"} />
