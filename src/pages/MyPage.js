@@ -5,6 +5,7 @@ import file from "../assets/mypage/File.svg";
 import link from "../assets/mypage/Link.svg";
 import progress from "../assets/common/progress.svg"
 import complete from "../assets/common/complete.svg"
+
 import mem1 from "../assets/mypage/mem1.svg"
 import mem2 from "../assets/mypage/mem2.svg"
 import mem3 from "../assets/mypage/mem3.svg"
@@ -179,7 +180,7 @@ const statusColor = {
       { key: "timePreference", title: "시간", gridArea: "time" },
       { key: "restPreference", title: "휴식", gridArea: "rest" },
       { key: "friendship", title: "친목", gridArea: "friendship" },
-  ];
+    ];
   return (
     <>
     { card.length > 0 && card[0] && Object.keys(card[0]).length > 0 ? (card.map((cardItem, index) => (
