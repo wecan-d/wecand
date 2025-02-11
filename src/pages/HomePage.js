@@ -173,27 +173,19 @@ const HomePage = () => {
 
       {/* 메인 배너 */}
       <MainBanner>
-            {/* <div>{words[currentWordIndex]}</div>  */}
         <SVGImage src={bgsvg} alt="Main Banner" />
-        
-        <MainText>
-          <RotatingTextContainer>
-            <HighlightBox>
-              <RotatingText>{words[currentWordIndex]}</RotatingText>
-            </HighlightBox>
-          </RotatingTextContainer>
-        </MainText>
+      <HighlightBox>
+        <RotatingText>{words[currentWordIndex]}</RotatingText>
+      </HighlightBox>
       </MainBanner>
-      <HighlightBox><RotatingText>{words[currentWordIndex]}</RotatingText></HighlightBox>
 
       {/* 콘텐츠 섹션 */}
       <ContentSection>
         <Description>환상의 팀워크는 서로를 아는 데서 시작됩니다!</Description>
         <Description>
           팀원들의
-           <PurpleText> 기본정보, 작업 스타일,  경력/경험을 한눈에 파악 후 최적의 팀  
-          </PurpleText>
-           을 찾아보세요.
+          <PurpleText> 기본정보, 작업 스타일,  경력/경험을 한눈에 파악 후 최적의 팀</PurpleText>
+          을 찾아보세요.
         </Description>
 
         <CTAButtonWrapper>
@@ -299,12 +291,13 @@ const HighlightBox = styled.div`
   position: absolute;
   display: inline-flex;
   z-index: 1000;
-  background: #eaf557;
+  /* background: #eaf557; */
   border-radius: 16px;
   padding: 0 20px;
   height: 60px;
-  top: 452px;
-  right: 247px;
+  top: calc(49.5vh - 20px);
+  right: calc(14vw);
+
 `;
 
 const RotatingTextContainer = styled.div`
@@ -316,7 +309,8 @@ const RotatingTextContainer = styled.div`
 
 const RotatingText = styled.span`
   font-family: Roboto;
-  font-size: 60px;
+  /* font-size: 60px; */
+   font-size: clamp(15px, 5vw, 60px); 
   font-weight: 800;
   color: #6c54f7;
   position: absolute;
@@ -382,13 +376,14 @@ const UserProfile = styled.img`
 
 const MainBanner = styled.div`
   width: 100%;
-  height: 1005px;
-  background-color: #e0e7ff;
+  background-color: white;
   overflow: hidden;
 `;
 
 const SVGImage = styled.img`
   width: 100%;
+  height: 100%;
+  object-fit: cover;
 `;
 
 const MainText = styled.div`

@@ -457,7 +457,7 @@ const statusColor = {
                     const truncatedTitle = truncateString(category.title, 37);
                     return(
                     <Card3 key={category.postId}>
-                      <ProjectTitle onClick={() => navigate(`/detail/${category.postId}`)}>{truncatedTitle} </ProjectTitle>
+                      <ProjectTitle onClick={() => navigate(`/detail/${category.postId}`)}>{truncatedTitle || "회원가입 후 이용 가능합니다"}</ProjectTitle>
                       <img
                         src={category.approvedCount === category.totalApplicants - 1 ? complete : progress}
                         alt=""
