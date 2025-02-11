@@ -50,10 +50,16 @@ export default function MyPage() {
     const [card, setCard] = useState([{}]);
     const [applyPosts, setApplyPosts] = useState([
       {
-        id: 0,
-        title: "새로운 공모전을 신청해보세요",
-        status: "approved",
-        category: "category",
+        id: 2,
+        title: "2025 FLY HIGH! FASHION CONTEST",
+        status: "PENDING",
+        category: "category 1",
+      },
+      {
+        id: 3,
+        title: "2025 Design Korea COEX HALL 같이 나가실 분 모집합니다",
+        status: "REJECTED",
+        category: "category 2",
       }
     ]);
 
@@ -274,7 +280,7 @@ const statusColor = {
                 </ImagePlaceholder>
                 <TextWrapper>
                   <FileName>개인작업물 파일</FileName>
-                  <FileSize>1234KB</FileSize>
+                  {/* <FileSize>1234KB</FileSize> */}
                 </TextWrapper>
               </BoxWrapper>
               </a>
@@ -300,7 +306,58 @@ const statusColor = {
     </div>
 ))
 ) : (
-  <div>카드 정보가 없습니다.</div> // 여기에 내용이 없을 때 처리할 추가적인 UI를 넣어도 좋습니다.
+  // 서버 미 로그인시 나타나는 화면
+  <div>
+    <CardContainer>
+      <ImageWrapper>
+        <ProfileImage src={profile} alt="Profile" style={{ width: '100px', height: '100px' }} />
+      </ImageWrapper>
+      <TextWrapper2>
+        <Name>위켄드</Name>
+        <Details>전공 정보 없음</Details>
+        <Email>wecand@site.com</Email>
+      </TextWrapper2>
+    </CardContainer>
+
+
+    <PageContainer>
+      <PageWrapper>
+          <GridWrapper>
+          {/* extraData[userId] */}
+          {/* 그리드 좌측 */}
+          <LeftGrid>
+            <CardGrid>
+              {cardData.map(({ key, title, gridArea }) => (
+                  <Card key={key} style={{ gridArea }}>
+                      <CardTitle>{title}</CardTitle>
+                      <CardContent>
+                        {Array.isArray(cardData?.[key])
+                          ? cardData[key].map((contentItem, index) => (
+                            <p key={index}></p>
+                        )) : "내용 없음"}
+                      </CardContent>
+                  </Card>
+              ))}
+                {/* 중요하게 생각해요 (별도 처리) */}
+              <Card style={{ gridArea: "important" }}>
+                <CardTitle isImportant>중요하게 생각해요</CardTitle>
+                <CardContent>로그인을 해주세요!</CardContent>
+              </Card>
+            </CardGrid>
+          </LeftGrid>
+        </GridWrapper>
+      </PageWrapper>
+    </PageContainer>
+
+  </div> 
+
+
+
+
+
+
+
+
 )}
 <MainContainer>
   <OuterGrid>
