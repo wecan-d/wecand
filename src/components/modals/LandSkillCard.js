@@ -50,7 +50,7 @@ const LandSkillCard = ({
         <ProfileImage src={profile} alt="프로필 이미지" />
         <UserInfoText>
           <UserInfoTitle>
-            <UserName>{userInfo.name}</UserName>
+            <UserName>{userInfo.cardName}</UserName>
             <UserDetail>{userInfo.age}세, {userInfo.gender}</UserDetail>
           </UserInfoTitle>
           <UserSchool>{userInfo.identity}</UserSchool>
@@ -124,12 +124,17 @@ const LandSkillCard = ({
               ))}
             </CardContent>
           </>
-        )}
+          )}
       </Section>
       <Divider />
       <Section>
-        <SectionTitle>기타사항</SectionTitle>
-        <p>{userInfo.addtionalInfo}</p>
+        {userInfo.additionalInfo && (
+          <>
+            <SectionTitle>기타사항</SectionTitle>
+            <p>{userInfo.additionalInfo}</p>
+          </>
+        )}
+      
       </Section>
     </ModalContent>
   );

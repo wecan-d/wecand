@@ -47,8 +47,6 @@ const HomePage = () => {
 
   const getApplyPosts = async (userId) => {
     const applyPostsData = await axios.get(`${server}/post/applied/${userId}`);
-    
-
     const newApplyPosts = filteredApplyPosts(applyPostsData.data, userId);
     
     setApplyPosts(newApplyPosts);
@@ -57,12 +55,10 @@ const HomePage = () => {
   const filteredApplyPosts = (data, userToken) => {
     return data.map((post) => {
         return {
-          id: post.postId+1,
+          id: post.postId + 1,
           title: post.title,
           status: post.status,
         }
-      
-
     }).filter((item) => item != null);
   }
 
@@ -177,10 +173,11 @@ const HomePage = () => {
 
       {/* 메인 배너 */}
       <MainBanner>
+            {/* <div>{words[currentWordIndex]}</div>  */}
         <SVGImage src={bgsvg} alt="Main Banner" />
+        
         <MainText>
           <RotatingTextContainer>
-            {/* <StaticText>D</StaticText> 이스터에그 */}
             <HighlightBox>
               <RotatingText>{words[currentWordIndex]}</RotatingText>
             </HighlightBox>
@@ -216,9 +213,9 @@ const HomePage = () => {
         </RowContainer>
 
         <TeamAllowStateBoxWrapper>
-          {applyPosts.map((post) => (
+          {applyPosts.map((post, index) => (
             <TeamAllowStateBox
-              key={post.id}
+              key={`${post.id}-${index}`} // key 값 고유하게
               id={post.id}
               title={post.title}
               status={post.status}
