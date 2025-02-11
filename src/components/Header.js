@@ -34,7 +34,7 @@ const Header = () => {
       {/* 검색창 */}
       {location.pathname.includes("/recruiting") && 
       <SearchContainer>
-        <SearchBox>
+        <SearchBox isLoggedIn={userInfo.isLoggedIn}>
           <SearchWrapper onSubmit={(e) => { e.preventDefault(); handleSubmit(); }}>
             <SearchInput
               type="text"
@@ -108,8 +108,8 @@ const SearchContainer = styled.div`
 
 const SearchBox = styled.div`
   position: absolute;
-  top: 316px;
-  right: -80px;
+  top: ${({ isLoggedIn }) => (isLoggedIn ? "316px" : "313px")};
+  right: ${({ isLoggedIn }) => (isLoggedIn ? "-80px" : "20px")};
 `;
 
 export const SearchWrapper = styled.form`

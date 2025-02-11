@@ -584,6 +584,7 @@ const Pagination = styled.div`
   display: flex;
   justify-content: center;
   margin-top: 95px;
+  margin-bottom: 200px;
 `;
 const PageButton = styled.button`
   color: #4e5968;
@@ -595,13 +596,5 @@ const PageButton = styled.button`
   position: relative;
   &:hover {
     color: #6c54f7;
-  }
-  &:hover::after {
-    content: "";
-    display: block;
-    width: 35px;
-    height: 2px;
-    background: #6c54f7;
-    margin: 0 auto;
   }
 `;
