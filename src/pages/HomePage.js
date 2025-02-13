@@ -131,6 +131,7 @@ const HomePage = () => {
     getLatestPosts();
   }, []);
 
+
   return (
     <Container>
       {/* 헤더 */}
@@ -158,10 +159,12 @@ const HomePage = () => {
             }}
           />
         </SearchWrapper>
-          <LoginWrapper>
-          {!(userInfo.isLoggedIn) ? ( // 로그인 안한 경우
+        <LoginWrapper>
+          {!(userInfo.isLoggedIn) ? (
+            // 로그인 안된 경우
             <LoginButton onClick={handleLogin}>로그인</LoginButton>
           ) : (
+            // 로그인 된 경우
             <>
               <UserNameP>{userInfo.userName}님</UserNameP>
               <LoginButton onClick={handleLogout}>로그아웃</LoginButton>
@@ -295,8 +298,8 @@ const HighlightBox = styled.div`
   border-radius: 16px;
   padding: 0 20px;
   height: 60px;
-  top: calc(49.5vh - 20px);
-  right: calc(14vw);
+  /* top: calc(49.5vh - 20px);
+  right: calc(14vw); */
 
 `;
 
@@ -310,10 +313,12 @@ const RotatingTextContainer = styled.div`
 const RotatingText = styled.span`
   font-family: Roboto;
   /* font-size: 60px; */
-   font-size: clamp(15px, 5vw, 60px); 
+  font-size: clamp(15px, 5vw, 60px); 
   font-weight: 800;
   color: #6c54f7;
-  position: absolute;
+  position: relative;
+  top: calc(45vh);
+  right: calc(16vw);
   transform: translateX(-50%);
   white-space: nowrap;
   height: 100%;
@@ -343,12 +348,14 @@ const Header = styled.div`
 `;
 
 const Logo = styled.img`
+  cursor: pointer;
   width: 119px;
   height: 30.311px;
   margin-right: auto;
 `;
 
 const LoginButton = styled.button`
+  cursor: pointer;
   background: none;
   border: none;
   font-size: 18px;
@@ -368,6 +375,7 @@ const UserNameP = styled.p`
 `;
 
 const UserProfile = styled.img`
+  cursor: pointer;
   width: 50px;
   height: 50px;
   border-radius: 50%;
@@ -420,7 +428,10 @@ const CTAButton = styled.a`
   text-align: center;
   border-radius: 8px;
   font-weight: 600;
-  
+  &:hover {
+    background-color: #6c54f7;
+    color: white;
+  }
 `;
 
 const RowContainer = styled.div`
@@ -525,6 +536,7 @@ const TagContainer = styled.div`
 `;
 
 const Category = styled.div`
+  cursor: pointer;
   color: #6c54f7; /* 텍스트 색상 */
   font-weight: 600;
   font-size: 22px;
@@ -538,6 +550,7 @@ const Category = styled.div`
 `;
 
 const Title = styled.div`
+  cursor: pointer;
   font-size: 22px;
   font-weight: 400;
   color: #000000; /* 텍스트 색상 */

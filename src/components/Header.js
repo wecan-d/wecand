@@ -98,6 +98,7 @@ const LoginWrapper = styled.div`
 `;
 
 export const Logo = styled.img`
+  cursor: pointer;
   width: 116px;
   margin-right: auto;
 `;
