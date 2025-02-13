@@ -90,6 +90,7 @@ const AddTeamPageModal = ({
 }) => {
   const [shortcutName, setShortcutName] = useState("");
   const [shortcutURL, setShortcutURL] = useState("");
+  
 
   if (!isOpen) return null;
 

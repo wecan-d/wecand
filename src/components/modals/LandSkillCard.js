@@ -10,7 +10,7 @@ const LandSkillCard = ({
   userInfo, 
 }) => {
   const modalRef = useRef(null);
-
+  
   useEffect(() => {
     if (!isOpen) return;
 
@@ -41,7 +41,7 @@ const LandSkillCard = ({
     { id: 'important', title: '중요하게 생각해요' },
   ];
 
-  console.log(userInfo);
+  
 
   return (
     <ModalContent ref={modalRef} onClick={(e) => e.stopPropagation()}>

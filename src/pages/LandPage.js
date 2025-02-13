@@ -407,7 +407,7 @@ const TeamPageFloating = ({ memberNum, isTeamListExpanded, teamPages, handleOpen
       <ShortcutList>
         {teamPages.map((teamPage, index) => (
           <ShortcutRow key={index}>
-            <ShortcutName 
+            <ShortcutName
               onClick={() => {
                 const url = teamPage.url.startsWith("http")? teamPage.url : `https://${teamPage.url}`
                 window.open(url, "_blank")
@@ -524,18 +524,24 @@ const LandPage = () => {
 
   const handleAddTeamPage = async (teamPageName, teamPageUrl) => {
     try {
+      const payload = [{ url: teamPageUrl, urlName: teamPageName }];
+
+      await axios.post(`${server}/land/${landId}/urlPairs`, payload, {
+        headers: { "Content-Type": "application/json" } 
+        // headers: { "Content-Type" : "text/plain" }
+      });
       // POST 1) URL
-      await axios.post(`${server}/land/${landId}/url`, teamPageUrl
+      // await axios.post(`${server}/land/${landId}/url`, teamPageUrl
         // {
           // headers: { "Content-Type" : "text/plain" }
         // }
-      );
+      // );
       // POST 2) URLName
-      await axios.post(`${server}/land/${landId}/urlName`, teamPageName
+      // await axios.post(`${server}/land/${landId}/urlName`, teamPageName
         // {
           // headers: { "Content-Type" : "text/plain" }
         // }
-       );
+      //  );
   
       // 다시 GET 해서 state 갱신
       console.log(teamPageUrl, teamPageName);
@@ -557,7 +563,6 @@ const LandPage = () => {
   const combinedUrls = urls.map((url, index) => ({
     name: urlnames[index],
     url: url,
-    
   }));
   
 
@@ -599,13 +604,19 @@ const LandPage = () => {
   // const 
   const fetchUrls = async () => {
     try {
-      const resUrls = await axios.get(`${server}/land/${landId}/urls`);
-      const resUrlNames = await axios.get(`${server}/land/${landId}/urlnames`);
-  
+      const res = await axios.get(`${server}/land/${landId}/urlPairs`);
+      // const resUrls = await axios.get(`${server}/land/${landId}/urls`);
+      // const resUrlNames = await axios.get(`${server}/land/${landId}/urlnames`);
+      
       // 예: resUrls.data = ["http://...", ...]
       //     resUrlNames.data = ["구글", "네이버", ...]
-      setUrls(resUrls.data);
-      setUrlNames(resUrlNames.data);
+      // setUrls(resUrls.data);
+      // console.log(resUrls.data);
+      // setUrlNames(resUrlNames.data);
+      setUrls(res.data);
+      // setTeamPage(res.data);
+      setUrlNames(res.data);
+      console.log(res.data);
     } catch (error) {
       console.error("Error fetching urls:", error);
     }
@@ -640,12 +651,12 @@ const LandPage = () => {
         onOpenSkillCard={handleOpenSkillCard}
         onToggleExpand={setIsTeamListExpanded}
       />
-      {/* <TeamPageFloating
+      <TeamPageFloating
         memberNum={members.length}
         isTeamListExpanded={isTeamListExpanded}
         teamPages={combinedUrls}
         handleOpenAddTeamPage={handleOpenAddTeamPage}
-      /> */}
+      />
 
       <RightBottomButton onClick={handleRightBottomButtonClick} >홈 이동하기</RightBottomButton>
 
