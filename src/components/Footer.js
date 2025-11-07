@@ -16,10 +16,9 @@ const FooterContainer = styled.div`
   display: flex;
   
   align-items: center;
-  width: 1726px;
+  width: 100%;
   height: 294px;
   background-color: #ffffff;
-  
   
 `;
 

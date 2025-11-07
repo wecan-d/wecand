@@ -47,7 +47,7 @@ const HomePage = () => {
 
   const getApplyPosts = async (userId) => {
     const applyPostsData = await axios.get(`${server}/post/applied/${userId}`);
-    const newApplyPosts = filteredApplyPosts(applyPostsData.data, userId);
+    const newApplyPosts = await filteredApplyPosts(applyPostsData.data, userId);
     
     setApplyPosts(newApplyPosts);
   }
@@ -341,10 +341,11 @@ const Header = styled.div`
   width: 100%;
   z-index: 7;
 
-  padding: 16px 32px;
+  /* padding: 16px 32px; */
   background: transparent;
   color: white;
   padding: 30px 116px;
+  box-sizing: border-box;
 `;
 
 const Logo = styled.img`
@@ -440,7 +441,7 @@ const RowContainer = styled.div`
   justify-content: flex-start;
   align-items: baseline;
 
-  width: 1480px;
+  width: 100%;
 `;
 
 const RowContainerTitle = styled.h3`
@@ -467,7 +468,7 @@ const ContentSection = styled.section`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  width: 1480px;
+  width: 90%;
   
   letter-spacing: -0.56px;
   margin-top: 140px;
@@ -502,7 +503,8 @@ const TeamAllowStateBoxWrapper = styled.div`
 
 
 const BoxWrapper = styled.div`
-  width: 1480px;
+  /* width: 1480px; */
+  width: 100%;
   height: 417px;
   display: flex;
   border: 1px solid #ddd;
@@ -512,7 +514,7 @@ const BoxWrapper = styled.div`
 
 const LeftSection = styled.div`
   /* width: 627px; */
-  width: 700px;
+  width: calc(100% - 861px);
   height: 100%;
   padding: 29px 30px;
   background-color: #f0f3fa;
@@ -567,7 +569,7 @@ const Title = styled.div`
 
 const RightSection = styled.div`
   width: 861px;
-  height: 100%;
+  /* height: 100%; */
   display: flex;
   justify-content: center;
   align-items: center;

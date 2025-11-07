@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const server = "https://672819eb270bd0b975546065.mockapi.io/api/v1";
+const server = process.env.REACT_APP_SERVER;
 
 export const postMemberAPI = async (data) => {
   try {
