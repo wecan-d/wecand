@@ -49,18 +49,18 @@ export default function MyPage() {
     // [GET] 유저 역량 카드 /card/{userId}
     const [card, setCard] = useState([{}]);
     const [applyPosts, setApplyPosts] = useState([
-      {
-        id: 2,
-        title: "2025 FLY HIGH! FASHION CONTEST",
-        status: "PENDING",
-        category: "category 1",
-      },
-      {
-        id: 3,
-        title: "2025 Design Korea COEX HALL 같이 나가실 분 모집합니다",
-        status: "REJECTED",
-        category: "category 2",
-      }
+      // {
+      //   id: 2,
+      //   title: "2025 FLY HIGH! FASHION CONTEST",
+      //   status: "PENDING",
+      //   category: "category 1",
+      // },
+      // {
+      //   id: 3,
+      //   title: "2025 Design Korea COEX HALL 같이 나가실 분 모집합니다",
+      //   status: "REJECTED",
+      //   category: "category 2",
+      // }
     ]);
 
     const getApplyPosts = async (userId) => {
