@@ -51,16 +51,16 @@ export default function MyPage() {
     const [applyPosts, setApplyPosts] = useState([
       {
         id: 2,
-        title: "2025 FLY HIGH! FASHION CONTEST",
+        title: "새로운 공모전에 지원해보세요!",
         status: "PENDING",
         category: "category 1",
       },
-      {
-        id: 3,
-        title: "2025 Design Korea COEX HALL 같이 나가실 분 모집합니다",
-        status: "REJECTED",
-        category: "category 2",
-      }
+      // {
+      //   id: 3,
+      //   title: "2025 Design Korea COEX HALL 같이 나가실 분 모집합니다",
+      //   status: "REJECTED",
+      //   category: "category 2",
+      // }
     ]);
 
     const getApplyPosts = async (userId) => {
@@ -122,7 +122,15 @@ export default function MyPage() {
       }
     }, [userInfo.isLoggedIn]);
 
-    const [userPosts, setUserPosts] = useState([]);
+    const [userPosts, setUserPosts] = useState([
+      {
+        postId: 101,
+        title: "새로운 팀원을 구해보세요!",
+        category: "category 3",
+        approvedCount: 3,
+        totalApplicants: 3
+      }
+    ]);
     const [, setError] = useState(null);
     // 드롭 다운 상태관리
     const [isOpen, setIsOpen] = useState(false);
@@ -169,7 +177,14 @@ const statusColor = {
   REJECTED: "#D74F8B",
 };
 
-    const [data, setData] = useState([]);
+    const [data, setData] = useState([
+      {
+        landId: 1,
+        landName: "새로운 공모전에 참여해보세요!",
+        role: "owner",
+        countMember: 1
+      }
+    ]);
     const getJoinedLandData = async () => {
       const d = await axios.get(`${server}/user/${userId}/lands`);
       setData(d.data);
@@ -375,7 +390,16 @@ const statusColor = {
   {chunkedData.map((row, rowIndex) => (
   <Row key={rowIndex}>
     {row.map((item) => (
-      <Card2 key={item.landId} onClick={() => navigate(`/land/${item.landId}`)}>
+      <Card2 
+        key={item.landId} 
+        onClick={() => {
+          if (item.landName !== "새로운 공모전에 참여해보세요!") {
+            navigate(`/land/${item.landId}`);
+          }
+        }}
+        // 목업 데이터일 경우 커서 스타일 변경
+        style={{ cursor: item.landName === "새로운 공모전에 참여해보세요!" ? 'default' : 'pointer' }}
+      >
         <CardInfo>
           <ProjectTitle>{item.landName}</ProjectTitle>
           <TeamLeader>
@@ -423,16 +447,24 @@ const statusColor = {
 
               <SectionRight>
                 <Column>
-                {/* 카테고리 별 포스트 배열 */}
-                {AppliedProjects[category].map((category) => (
-                  <Card3 key={category.postId}>
-                    <ProjectTitle onClick={() => navigate(`/detail/${category.id-1}`)}>{truncateString(category.title, 32)} </ProjectTitle>
-                    <StatusBox>
-                      {statusText[category.status] || "거절됨"}
-                      <StatusColor clr={statusColor[category.status] || "#D7F48B"} />
-                    </StatusBox>
-                  </Card3>
-                ))}
+                  {AppliedProjects[category].map((project) => {
+                  const isMockApply = project.title === "새로운 공모전에 지원해보세요!";
+                  return (
+                    <Card3 key={project.id}> 
+                      <ProjectTitle 
+                        onClick={isMockApply ? null : () => navigate(`/detail/${project.id-1}`)}
+                        style={{ cursor: isMockApply ? 'default' : 'pointer' }}
+                      >
+                        {truncateString(project.title, 32)} 
+                      </ProjectTitle>
+                      <StatusBox>
+                        {statusText[project.status] || "거절됨"}
+                        <StatusColor clr={statusColor[project.status] || "#D7F48B"} />
+                      </StatusBox>
+                    </Card3>
+                  );
+                })}
+
                 </Column>
               </SectionRight>
             </Card3>
@@ -452,14 +484,19 @@ const statusColor = {
                 <SectionRight>
                   <Column>
                   {/* 카테고리 별 포스트 배열 */}
-                  {OwnerProjects[category].map((category) => {
+                  {OwnerProjects[category].map((project) => {
                     // 원하는 길이(예: 20자)만큼만 잘라내기
                     const truncatedTitle = truncateString(category.title, 37);
+
+                    const isMockData = project.title === "새로운 팀원을 구해보세요!";
                     return(
-                    <Card3 key={category.postId}>
-                      <ProjectTitle onClick={() => navigate(`/detail/${category.postId}`)}>{truncatedTitle || "회원가입 후 이용 가능합니다"}</ProjectTitle>
+                    <Card3 key={project.postId}>
+                      <ProjectTitle onClick={isMockData ? null : () => {
+                        navigate(`/detail/${project.postId}`)}
+                      }>
+                        {truncatedTitle || "회원가입 후 이용 가능합니다"}</ProjectTitle>
                       <img
-                        src={category.approvedCount === category.totalApplicants - 1 ? complete : progress}
+                        src={project.approvedCount === project.totalApplicants - 1 ? complete : progress}
                         alt=""
                         style={{ width: "110px", height: "35px" }}
                       />
