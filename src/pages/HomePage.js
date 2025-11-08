@@ -41,21 +41,37 @@ const HomePage = () => {
     {
       id: 0,
       title: "새로운 공모전을 신청해보세요",
-      status: "approved",
+      status: "APPROVED",
+    }, 
+    {
+      id: 1,
+      title: "새로운 팀원들을 만나보세요",
+      status: "APPROVED"
+    },
+    {
+      id: 2,
+      title: "새로운 분야에 도전해보세요",
+      status: "APPROVED"
+    }, 
+    {
+      id: 3,
+      title: "새로운 추억을 만들어보세요",
+      status: "APPROVED"
     }
   ]);
 
   const getApplyPosts = async (userId) => {
     const applyPostsData = await axios.get(`${server}/post/applied/${userId}`);
     const newApplyPosts = await filteredApplyPosts(applyPostsData.data, userId);
-    
+
     setApplyPosts(newApplyPosts);
+
   }
 
   const filteredApplyPosts = (data, userToken) => {
     return data.map((post) => {
         return {
-          id: post.postId + 1,
+          id: post.postId,
           title: post.title,
           status: post.status,
         }
@@ -177,9 +193,9 @@ const HomePage = () => {
       {/* 메인 배너 */}
       <MainBanner>
         <SVGImage src={bgsvg} alt="Main Banner" />
-      <HighlightBox>
-        <RotatingText>{words[currentWordIndex]}</RotatingText>
-      </HighlightBox>
+        <HighlightBox>
+          <RotatingText>{words[currentWordIndex]}</RotatingText>
+        </HighlightBox>
       </MainBanner>
 
       {/* 콘텐츠 섹션 */}
@@ -230,23 +246,23 @@ const HomePage = () => {
           justifyContent: "flex-start",
           gap: '16px',
         }}>
-          {landCardData.map((cardData, index) => {
+          {
+            landCardData.map((cardData, index) => {
 
-             // 원하는 길이(예: 20자)만큼만 잘라내기
-             const truncatedTitle = truncateString(cardData.landName, 15);
-             return(
-
-             
-            <LandCard
-              key={index}
-              id={cardData ? cardData.landId : 0}
-              title={cardData ? truncatedTitle : ''}
-              role={cardData ? cardData.role : ''}
-              mem={cardData ? cardData.countMember : 0}
-              imageKey = {index+1}
-            />
-          );
-})}
+              // 원하는 길이(예: 20자)만큼만 잘라내기
+              const truncatedTitle = truncateString(cardData.landName, 15);
+              return(
+                <LandCard
+                  key={index}
+                  id={cardData ? cardData.landId : 0}
+                  title={cardData ? truncatedTitle : ''}
+                  role={cardData ? cardData.role : ''}
+                  mem={cardData ? cardData.countMember : 0}
+                  imageKey = {index+1}
+                />
+              );
+            }
+          )}
         </RowContainer>
 
 
@@ -292,14 +308,22 @@ export default HomePage;
 
 const HighlightBox = styled.div`
   position: absolute;
-  display: inline-flex;
-  z-index: 1000;
-  /* background: #eaf557; */
+  /* 아래 값을 이미지 보고 조정해서 노란 박스 중앙에 오도록 맞추면 됨 */
+  top: 44%;      /* 세로 위치 (이미지 비율 기준) */
+  left: 77%;     /* 가로 위치 */
+  /* transform: translate(-50%, -50%); */
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  height: clamp(36px, 6vh, 60px);
+  padding: 0 clamp(10px, 2vw, 24px);
+
+  /* 진짜 노란 박스는 배경 이미지에 있으니까 배경색 X */
   border-radius: 16px;
-  padding: 0 20px;
-  height: 60px;
-  /* top: calc(49.5vh - 20px);
-  right: calc(14vw); */
+  z-index: 10;
+  pointer-events: none; /* 클릭 막지 않게 (필요하면) */
 
 `;
 
@@ -311,17 +335,12 @@ const RotatingTextContainer = styled.div`
 `;
 
 const RotatingText = styled.span`
-  font-family: Roboto;
-  /* font-size: 60px; */
-  font-size: clamp(15px, 5vw, 60px); 
+  font-family: 'Roboto', sans-serif;
+  font-size: clamp(20px, 3vw, 40px);
   font-weight: 800;
   color: #6c54f7;
-  position: relative;
-  top: calc(45vh);
-  right: calc(16vw);
-  transform: translateX(-50%);
   white-space: nowrap;
-  height: 100%;
+
 `;
 
 const Container = styled.div`
@@ -384,15 +403,20 @@ const UserProfile = styled.img`
 `;
 
 const MainBanner = styled.div`
+  position: relative;
   width: 100%;
   background-color: white;
   overflow: hidden;
 `;
 
 const SVGImage = styled.img`
-  width: 100%;
+  /* width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: cover; */
+
+  display: block;
+  width: 100%;
+  height: auto;
 `;
 
 const MainText = styled.div`
@@ -562,6 +586,7 @@ const Title = styled.div`
   overflow: visible; /* 넘치는 텍스트 숨김 */
   text-overflow: ellipsis; /* 말줄임 표시 */
   max-width: calc(100% - 160px); /* Category 너비를 제외한 영역만 사용 */
+  z-index: 100;
   /* max-width: 500px; 최대 너비를 지정하여 레이아웃을 고정 */
 `;
 
