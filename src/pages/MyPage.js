@@ -548,7 +548,7 @@ const Email = styled.div`
 // 역량카드
 
 const PageContainer = styled.div`
-  width: 1726px;
+  width: 100%;
   height: auto;
   display: flex;
   justify-content: center;
@@ -556,9 +556,9 @@ const PageContainer = styled.div`
 `;
 
 const PageWrapper = styled.div`
-    width: 1568px;
+    width: 90%;
     padding: 30px;
-    margin-left: 76px;
+    display: 0 auto;
     background: #836EFF;
     border-radius: 16px;
     
