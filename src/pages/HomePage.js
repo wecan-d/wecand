@@ -177,9 +177,9 @@ const HomePage = () => {
       {/* 메인 배너 */}
       <MainBanner>
         <SVGImage src={bgsvg} alt="Main Banner" />
-      <HighlightBox>
-        <RotatingText>{words[currentWordIndex]}</RotatingText>
-      </HighlightBox>
+        <HighlightBox>
+          <RotatingText>{words[currentWordIndex]}</RotatingText>
+        </HighlightBox>
       </MainBanner>
 
       {/* 콘텐츠 섹션 */}
@@ -292,14 +292,22 @@ export default HomePage;
 
 const HighlightBox = styled.div`
   position: absolute;
-  display: inline-flex;
-  z-index: 1000;
-  /* background: #eaf557; */
+  /* 아래 값을 이미지 보고 조정해서 노란 박스 중앙에 오도록 맞추면 됨 */
+  top: 44%;      /* 세로 위치 (이미지 비율 기준) */
+  left: 77%;     /* 가로 위치 */
+  /* transform: translate(-50%, -50%); */
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  height: clamp(36px, 6vh, 60px);
+  padding: 0 clamp(10px, 2vw, 24px);
+
+  /* 진짜 노란 박스는 배경 이미지에 있으니까 배경색 X */
   border-radius: 16px;
-  padding: 0 20px;
-  height: 60px;
-  /* top: calc(49.5vh - 20px);
-  right: calc(14vw); */
+  z-index: 10;
+  pointer-events: none; /* 클릭 막지 않게 (필요하면) */
 
 `;
 
@@ -311,17 +319,12 @@ const RotatingTextContainer = styled.div`
 `;
 
 const RotatingText = styled.span`
-  font-family: Roboto;
-  /* font-size: 60px; */
-  font-size: clamp(15px, 5vw, 60px); 
+  font-family: 'Roboto', sans-serif;
+  font-size: clamp(20px, 3vw, 40px);
   font-weight: 800;
   color: #6c54f7;
-  position: relative;
-  top: calc(45vh);
-  right: calc(16vw);
-  transform: translateX(-50%);
   white-space: nowrap;
-  height: 100%;
+
 `;
 
 const Container = styled.div`
@@ -384,15 +387,20 @@ const UserProfile = styled.img`
 `;
 
 const MainBanner = styled.div`
+  position: relative;
   width: 100%;
   background-color: white;
   overflow: hidden;
 `;
 
 const SVGImage = styled.img`
-  width: 100%;
+  /* width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: cover; */
+
+  display: block;
+  width: 100%;
+  height: auto;
 `;
 
 const MainText = styled.div`
