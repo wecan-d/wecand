@@ -41,21 +41,37 @@ const HomePage = () => {
     {
       id: 0,
       title: "새로운 공모전을 신청해보세요",
-      status: "approved",
+      status: "APPROVED",
+    }, 
+    {
+      id: 1,
+      title: "새로운 팀원들을 만나보세요",
+      status: "APPROVED"
+    },
+    {
+      id: 2,
+      title: "새로운 분야에 도전해보세요",
+      status: "APPROVED"
+    }, 
+    {
+      id: 3,
+      title: "새로운 추억을 만들어보세요",
+      status: "APPROVED"
     }
   ]);
 
   const getApplyPosts = async (userId) => {
     const applyPostsData = await axios.get(`${server}/post/applied/${userId}`);
     const newApplyPosts = await filteredApplyPosts(applyPostsData.data, userId);
-    
+
     setApplyPosts(newApplyPosts);
+
   }
 
   const filteredApplyPosts = (data, userToken) => {
     return data.map((post) => {
         return {
-          id: post.postId + 1,
+          id: post.postId,
           title: post.title,
           status: post.status,
         }
@@ -230,23 +246,23 @@ const HomePage = () => {
           justifyContent: "flex-start",
           gap: '16px',
         }}>
-          {landCardData.map((cardData, index) => {
+          {
+            landCardData.map((cardData, index) => {
 
-             // 원하는 길이(예: 20자)만큼만 잘라내기
-             const truncatedTitle = truncateString(cardData.landName, 15);
-             return(
-
-             
-            <LandCard
-              key={index}
-              id={cardData ? cardData.landId : 0}
-              title={cardData ? truncatedTitle : ''}
-              role={cardData ? cardData.role : ''}
-              mem={cardData ? cardData.countMember : 0}
-              imageKey = {index+1}
-            />
-          );
-})}
+              // 원하는 길이(예: 20자)만큼만 잘라내기
+              const truncatedTitle = truncateString(cardData.landName, 15);
+              return(
+                <LandCard
+                  key={index}
+                  id={cardData ? cardData.landId : 0}
+                  title={cardData ? truncatedTitle : ''}
+                  role={cardData ? cardData.role : ''}
+                  mem={cardData ? cardData.countMember : 0}
+                  imageKey = {index+1}
+                />
+              );
+            }
+          )}
         </RowContainer>
 
 
@@ -570,6 +586,7 @@ const Title = styled.div`
   overflow: visible; /* 넘치는 텍스트 숨김 */
   text-overflow: ellipsis; /* 말줄임 표시 */
   max-width: calc(100% - 160px); /* Category 너비를 제외한 영역만 사용 */
+  z-index: 100;
   /* max-width: 500px; 최대 너비를 지정하여 레이아웃을 고정 */
 `;
 
